@@ -31,7 +31,7 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
         public async Task UnregisterUser(UserData user)
         {
             var baseAddress = _configuration.Value.ApiBaseUrl;
-            var response = await _httpClient.PostAsync($"{baseAddress}/UnRegisterDetails", user);
+            var response = await _httpClient.PostAsync($"{baseAddress}/unregisterdetails", user);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException($"Error un-registering user: {JsonConvert.SerializeObject(user)}");
         }
