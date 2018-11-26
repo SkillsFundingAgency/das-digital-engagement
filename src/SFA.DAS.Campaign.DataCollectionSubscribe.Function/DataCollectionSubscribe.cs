@@ -1,16 +1,13 @@
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers;
 using SFA.DAS.Campaign.Functions.Domain.DataCollection;
 using SFA.DAS.Campaign.Functions.Framework;
 using SFA.DAS.Campaign.Functions.Framework.Attributes;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 
-namespace SFA.DAS.Campaign.Functions.DataCollectionSubscribe
+namespace SFA.DAS.Campaign.Functions.DataCollection
 {
     public static class DataCollectionSubscribe
     {

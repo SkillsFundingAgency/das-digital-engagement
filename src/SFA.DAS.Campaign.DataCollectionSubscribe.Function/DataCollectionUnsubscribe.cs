@@ -7,7 +7,7 @@ using SFA.DAS.Campaign.Functions.Framework;
 using SFA.DAS.Campaign.Functions.Framework.Attributes;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 
-namespace SFA.DAS.Campaign.Functions.DataCollectionUnsubscribe
+namespace SFA.DAS.Campaign.Functions.DataCollection
 {
     public static class DataCollectionUnsubscribe
     {

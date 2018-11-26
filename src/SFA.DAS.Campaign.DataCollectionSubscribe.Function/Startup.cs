@@ -10,14 +10,14 @@ using SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers;
 using SFA.DAS.Campaign.Functions.Application.DataCollection.Services;
 using SFA.DAS.Campaign.Functions.Application.DataCollection.Validators;
 using SFA.DAS.Campaign.Functions.Application.Services;
-using SFA.DAS.Campaign.Functions.DataCollectionSubscribe;
+using SFA.DAS.Campaign.Functions.DataCollection;
 using SFA.DAS.Campaign.Functions.Domain.DataCollection;
 using SFA.DAS.Campaign.Functions.Domain.Infrastructure;
 using SFA.DAS.Campaign.Functions.Framework.Infrastructure;
 using SFA.DAS.Campaign.Functions.Models.Infrastructure;
 
 [assembly: WebJobsStartup(typeof(Startup))]
-namespace SFA.DAS.Campaign.Functions.DataCollectionSubscribe
+namespace SFA.DAS.Campaign.Functions.DataCollection
 {
     
     internal class Startup : IWebJobsStartup
@@ -52,6 +52,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollectionSubscribe
             services.AddSingleton<ILogger>(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IRegisterHandler, RegisterHandler>();
+            services.AddTransient<IUnregisterHandler, UnregisterHandler>();
             services.AddTransient<IUserDataValidator, UserDataValidator>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient(typeof(IHttpClient<>), typeof(HttpClient<>));
