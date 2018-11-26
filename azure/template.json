@@ -141,7 +141,10 @@
                         "value": "[resourceGroup().name]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "WorkerAppServicePlan"
+            ]
         },
         {
             "apiVersion": "2017-05-10",
@@ -188,7 +191,10 @@
                         ]
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "WorkerAppServicePlan"
+            ]
         }
     ],
     "outputs": {
