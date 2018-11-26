@@ -191,5 +191,14 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "stubFunctionAppName": {
+            "type": "string",
+            "value": "[variables('stubFunctionAppName')]"
+        },
+        "functionAppName": {
+            "type": "string",
+            "value": "[variables('functionAppName')]"
+        }
+    }
 }
