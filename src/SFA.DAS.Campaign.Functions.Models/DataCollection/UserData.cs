@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.Campaign.Functions.Models.DataCollection
 {
     public class UserData
     {
+        [JsonProperty("first_name")]
         public string FirstName { get; set; }
+        [JsonProperty("last_name")]
         public string LastName { get; set; }
+        [JsonProperty("email")]
         public string Email { get; set; }
         public bool Consent { get; set; }
         public string CookieId { get; set; }
