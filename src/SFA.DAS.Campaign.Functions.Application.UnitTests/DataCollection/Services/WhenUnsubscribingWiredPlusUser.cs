@@ -11,9 +11,9 @@ using SFA.DAS.Campaign.Functions.Domain.Infrastructure;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 using SFA.DAS.Campaign.Functions.Models.Infrastructure;
 
-namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
+namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Services
 {
-    public class WhenStoringDataInWiredPlusApi
+    public class WhenUnsubscribingWiredPlusUser
     {
         private WiredPlusService _wiredPlusService;
         private Mock<IHttpClient<Dictionary<string, string>>> _httpClient;
@@ -27,7 +27,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             _httpClient = new Mock<IHttpClient<Dictionary<string, string>>>();
             _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
-            _httpClient.Setup(x=>x.AuthKey).Verifiable();
+            _httpClient.Setup(x => x.AuthKey).Verifiable();
 
             _configuration = new Mock<IOptions<Configuration>>();
             _configuration.Setup(x => x.Value.WiredPlusBaseUrl).Returns(ExpecteBaseUrl);
@@ -43,26 +43,26 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             var expectedUser = new UserData();
 
             //Act
-            await _wiredPlusService.CreateUser(expectedUser);
+            await _wiredPlusService.UnsubscribeUser(expectedUser);
 
             //Assert
             _httpClient.Verify(x => x.PostAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(
-                c=>c.ContainsKey("first_name") &&
+                c => c.ContainsKey("first_name") &&
                    c.ContainsKey("last_name") &&
                    c.ContainsKey("email")
                 )), Times.Once);
         }
 
         [Test]
-        public async Task Then_The_Request_Is_Sent_To_The_Create_User_Endpoint()
+        public async Task Then_The_Request_Is_Sent_To_The_UnsubscribeContact_Endpoint()
         {
             //Arrange
             var expectedUser = new UserData();
 
             //Act
-            await _wiredPlusService.CreateUser(expectedUser);
+            await _wiredPlusService.UnsubscribeUser(expectedUser);
 
-            _httpClient.Verify(x => x.PostAsync(It.Is<string>(c=>c.Equals($"{ExpecteBaseUrl}/v1/CreateContact", StringComparison.CurrentCultureIgnoreCase)), 
+            _httpClient.Verify(x => x.PostAsync(It.Is<string>(c => c.Equals($"{ExpecteBaseUrl}/v1/UnsubscribeContact", StringComparison.CurrentCultureIgnoreCase)),
                 It.IsAny<Dictionary<string, string>>()), Times.Once);
         }
 
@@ -73,10 +73,10 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             var expectedUser = new UserData();
 
             //Act
-            await _wiredPlusService.CreateUser(expectedUser);
+            await _wiredPlusService.UnsubscribeUser(expectedUser);
 
             //Assert
-            _configuration.Verify(c=>c.Value.WiredPlusAuthKey,Times.Once);
+            _configuration.Verify(c => c.Value.WiredPlusAuthKey, Times.Once);
         }
 
 
@@ -84,10 +84,10 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
         public async Task Then_The_Data_Is_Sent_The_Api()
         {
             //Arrange
-            var expectedUser = new UserData{Email = "test@test.com",FirstName = "Test", LastName = "Tester"};
+            var expectedUser = new UserData { Email = "test@test.com", FirstName = "Test", LastName = "Tester" };
 
             //Act
-            await _wiredPlusService.CreateUser(expectedUser);
+            await _wiredPlusService.UnsubscribeUser(expectedUser);
 
             //Assert
             _httpClient.Verify(x => x.PostAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(
@@ -104,7 +104,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             //Act Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await _wiredPlusService.CreateUser(new UserData()));
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _wiredPlusService.UnsubscribeUser(new UserData()));
         }
     }
 }

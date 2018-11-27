@@ -6,11 +6,11 @@ using SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers;
 using SFA.DAS.Campaign.Functions.Domain.DataCollection;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 
-namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
+namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handlers
 {
-    public class WhenHandlingStoreDataRequest
+    public class WhenHandlingUnregisterDataRequest
     {
-        private RegisterHandler _handler;
+        private UnregisterHandler _handler;
         private Mock<IUserDataValidator> _validator;
         private Mock<IUserService> _userService;
         private Mock<IWiredPlusService> _wiredPlusService;
@@ -23,7 +23,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             _wiredPlusService = new Mock<IWiredPlusService>();
 
             _validator.Setup(x => x.Validate(It.IsAny<UserData>())).Returns(true);
-            _handler = new RegisterHandler(_validator.Object, _userService.Object, _wiredPlusService.Object);
+            _handler = new UnregisterHandler(_validator.Object, _userService.Object, _wiredPlusService.Object);
         }
 
         [Test]
@@ -36,8 +36,8 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(new UserData()));
 
             //Assert
-            _validator.Verify(x=>x.Validate(It.IsAny<UserData>()), Times.Once);
-            _userService.Verify(x=>x.RegisterUser(It.IsAny<UserData>()), Times.Never);
+            _validator.Verify(x => x.Validate(It.IsAny<UserData>()), Times.Once);
+            _userService.Verify(x => x.UnregisterUser(It.IsAny<UserData>()), Times.Never);
         }
 
         [Test]
@@ -58,11 +58,12 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             await _handler.Handle(expectedUserData);
 
             //Assert
-            _userService.Verify(x => x.RegisterUser(It.Is<UserData>(c=>c.Equals(expectedUserData))), Times.Once);
+            _userService.Verify(x => x.UnregisterUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
         }
 
+
         [Test]
-        public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_WiredPlus_Api()
+        public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_WiredPlusApi()
         {
             //Arrange
             var expectedUserData = new UserData
@@ -79,7 +80,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
             await _handler.Handle(expectedUserData);
 
             //Assert
-            _wiredPlusService.Verify(x => x.CreateUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
+            _wiredPlusService.Verify(x => x.UnsubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
         }
     }
 }

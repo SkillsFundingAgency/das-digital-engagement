@@ -10,7 +10,7 @@ using SFA.DAS.Campaign.Functions.Domain.Infrastructure;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 using SFA.DAS.Campaign.Functions.Models.Infrastructure;
 
-namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
+namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Services
 {
     public class WhenStoringUserData
     {
