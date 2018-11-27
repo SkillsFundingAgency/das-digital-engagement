@@ -2,10 +2,10 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
-    "AzureWebJobsServiceBus": "UseDevelopmentStorage=true",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-    "ApiBaseUrl": "http://localhost:7071/api"
+    "ApiBaseUrl": "http://localhost:7071/api",
+    "WiredPlusBaseUrl": "http://localhost:7071/api",
+    "WiredPlusAuthKey": "UserName:Key"
   },
   "Host": {
     "LocalHttpPort": 7074,
