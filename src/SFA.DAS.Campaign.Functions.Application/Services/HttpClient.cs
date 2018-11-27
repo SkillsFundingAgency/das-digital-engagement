@@ -19,12 +19,12 @@ namespace SFA.DAS.Campaign.Functions.Application.Services
             if (typeof(T).IsAssignableFrom(typeof(Dictionary<string, string>)))
             {
                 mediaType = "multipart/form-data";
-                content = new StringContent(JsonConvert.SerializeObject(data));
+                content = new FormUrlEncodedContent((IEnumerable<KeyValuePair<string, string>>)data);
             }
             else
             {
                 mediaType = "application/json";
-                content = new FormUrlEncodedContent((IEnumerable<KeyValuePair<string, string>>) data);
+                content = new StringContent(JsonConvert.SerializeObject(data));
             }
                
             var client = new HttpClient();
