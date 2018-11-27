@@ -32,7 +32,6 @@
         "appServicePlanInstances": 1,
         "stubFunctionAppName": "[concat(variables('resourcePrefix'),'-stub-fa')]",
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
-        "serviceBusName": "[concat(variables('resourcePrefix'),'-ns')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),'cpgwkrstr')]"
     },
     "resources": [
@@ -61,23 +60,6 @@
                     },
                     "aspInstances": {
                         "value": "[variables('appServicePlanInstances')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "ServiceBus",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'),'service-bus.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "serviceBusNamespaceName": {
-                        "value": "[variables('serviceBusName')]"
                     }
                 }
             }
