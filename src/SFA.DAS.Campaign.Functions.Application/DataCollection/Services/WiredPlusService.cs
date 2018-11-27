@@ -48,6 +48,18 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
                 throw new InvalidOperationException($"Error Unsubscribing Contact in wiredplus: {JsonConvert.SerializeObject(user)}");
             }
         }
+        public async Task SubscribeUser(UserData user)
+        {
+            var data = UserDataToDictionary(user);
+
+            var response = await _httpClient.PostAsync($"{_configuration.Value.WiredPlusBaseUrl}/v1/ResubscribeContact", data);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException($"Error subscribing Contact in wiredplus: {JsonConvert.SerializeObject(user)}");
+            }
+        }
+
         private static Dictionary<string, string> UserDataToDictionary(UserData user)
         {
             return user.GetType()
