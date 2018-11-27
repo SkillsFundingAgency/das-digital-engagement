@@ -6,5 +6,6 @@ namespace SFA.DAS.Campaign.Functions.Domain.DataCollection
     public interface IWiredPlusService
     {
         Task CreateUser(UserData user);
+        Task UnsubscribeUser(UserData user);
     }
 }
