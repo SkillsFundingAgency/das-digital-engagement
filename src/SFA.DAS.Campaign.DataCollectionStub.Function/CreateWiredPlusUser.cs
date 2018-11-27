@@ -11,7 +11,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollectionStub
         [FunctionName("CreateUser")]
         public static async Task Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/CreateContact")]HttpRequestMessage req, ILogger log)
         {
-            log.LogInformation("C# HTTP trigger RegisterDetails processed a request.");
+            log.LogInformation("C# HTTP trigger CreateContact processed a request.");
 
             var auth = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(req.Headers.Authorization.Parameter));
 
