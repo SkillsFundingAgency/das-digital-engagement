@@ -7,5 +7,6 @@ namespace SFA.DAS.Campaign.Functions.Domain.DataCollection
     {
         Task CreateUser(UserData user);
         Task UnsubscribeUser(UserData user);
+        Task SubscribeUser(UserData user);
     }
 }

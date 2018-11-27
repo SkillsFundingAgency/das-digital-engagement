@@ -81,5 +81,27 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
             //Assert
             _wiredPlusService.Verify(x => x.CreateUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
         }
+
+
+        [Test]
+        public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_WiredPlus_Api_To_Subscribe()
+        {
+            //Arrange
+            var expectedUserData = new UserData
+            {
+                Consent = true,
+                CookieId = "123",
+                Email = "test@test.com",
+                FirstName = "Test",
+                LastName = "Tester",
+                RouteId = "1"
+            };
+
+            //Act
+            await _handler.Handle(expectedUserData);
+
+            //Assert
+            _wiredPlusService.Verify(x => x.SubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
+        }
     }
 }
