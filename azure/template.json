@@ -159,10 +159,6 @@
                                 "value": "[reference('Storage').outputs.storageConnectionString.value]"
                             },
                             {
-                                "name": "AzureWebJobsServiceBus",
-                                "value": "[reference('ServiceBus').outputs.ServiceBusEndpoint.value]"
-                            },
-                            {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
                             },
