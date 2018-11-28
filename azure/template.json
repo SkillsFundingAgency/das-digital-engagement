@@ -29,7 +29,7 @@
         "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-cpgwkr')]",
         "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
         "appServicePlanSize": "1",
-        "appServicePlanInstances": 1,
+        "appServicePlanInstances": 2,
         "stubFunctionAppName": "[concat(variables('resourcePrefix'),'-stub-fa')]",
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),'cpgwkrstr')]"
