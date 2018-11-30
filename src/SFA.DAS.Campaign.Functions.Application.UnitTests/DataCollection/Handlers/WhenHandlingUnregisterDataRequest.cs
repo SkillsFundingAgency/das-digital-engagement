@@ -27,7 +27,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
         }
 
         [Test]
-        public void Then_The_Message_Is_Validated_Exception_Thrown_And_Not_Sent_To_The_Api_If_Not_Valid()
+        public void Then_The_Message_Is_Validated_And_ArgumentException_Thrown_And_Not_Sent_To_The_Api_If_Not_Valid()
         {
             //Arrange
             _validator.Setup(x => x.Validate(It.IsAny<UserData>())).Returns(false);
