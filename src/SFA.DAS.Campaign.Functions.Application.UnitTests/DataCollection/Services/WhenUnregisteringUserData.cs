@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -12,7 +10,7 @@ using SFA.DAS.Campaign.Functions.Domain.Infrastructure;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 using SFA.DAS.Campaign.Functions.Models.Infrastructure;
 
-namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection
+namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Services
 {
     public class WhenUnregisteringUserData
     {
