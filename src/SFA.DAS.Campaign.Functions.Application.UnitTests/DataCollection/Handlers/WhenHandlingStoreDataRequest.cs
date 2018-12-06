@@ -62,7 +62,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
         }
 
         [Test]
-        public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_WiredPlus_Api()
+        public async Task Then_If_The_Message_Is_Valid_And_The_User_Does_Not_Exist_It_Is_Sent_To_The_WiredPlus_Api()
         {
             //Arrange
             var expectedUserData = new UserData
@@ -74,6 +74,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
                 LastName = "Tester",
                 RouteId = "1"
             };
+            _wiredPlusService.Setup(x => x.UserExists(expectedUserData.Email)).ReturnsAsync(false);
 
             //Act
             await _handler.Handle(expectedUserData);
@@ -103,5 +104,30 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
             //Assert
             _wiredPlusService.Verify(x => x.SubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
         }
+
+        [Test]
+        public async Task Then_If_The_User_Exists_The_Store_Data_Command_Is_Not_Called_For_WiredPlus()
+        {
+            //Arrange
+            var expectedUserData = new UserData
+            {
+                Consent = true,
+                CookieId = "123",
+                Email = "test@test.com",
+                FirstName = "Test",
+                LastName = "Tester",
+                RouteId = "1"
+            };
+            _wiredPlusService.Setup(x => x.UserExists(expectedUserData.Email)).ReturnsAsync(true);
+
+            //Act
+            await _handler.Handle(expectedUserData);
+
+            //Assert
+            _wiredPlusService.Verify(x => x.UserExists(It.Is<string>(c => c.Equals(expectedUserData.Email))), Times.Once);
+            _wiredPlusService.Verify(x => x.CreateUser(It.IsAny<UserData>()), Times.Never);
+
+        }
+        
     }
 }
