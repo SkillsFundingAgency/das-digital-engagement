@@ -13,8 +13,12 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
         public string LastName { get; set; }
         [JsonProperty("email")]
         public string Email { get; set; }
+        [JsonProperty("custom[encoded_email]")]
+        public string EncodedEmail { get; set; }
         public bool Consent { get; set; }
+        [JsonProperty("custom[cookie_id]")]
         public string CookieId { get; set; }
+        [JsonProperty("custom[route_id]")]
         public string RouteId { get; set; }
         /*
         * Email validation taken from https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
@@ -55,7 +59,6 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
                 return false;
             }
         }
-
         private string DomainMapper(Match match)
         {
             // IdnMapping class with default property values.
