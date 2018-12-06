@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,6 +69,16 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
                 .ToDictionary(key => 
                         key.CustomAttributes.ToList()[0].ConstructorArguments[0].Value.ToString(),
                     value => value.GetValue(user) == null ? "" : value.GetValue(user).ToString());
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            var user = new UserData{Email = email};
+            var data = UserDataToDictionary(user);
+
+            var response = await _httpClient.PostAsync($"{_configuration.Value.WiredPlusBaseUrl}/v1/GetContactByEmail", data);
+
+            return response.StatusCode != HttpStatusCode.NotFound;
         }
     }
 }
