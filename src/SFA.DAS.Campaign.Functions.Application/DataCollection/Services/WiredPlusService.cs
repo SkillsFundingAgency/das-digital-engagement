@@ -77,8 +77,9 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
             var data = UserDataToDictionary(user);
 
             var response = await _httpClient.PostAsync($"{_configuration.Value.WiredPlusBaseUrl}/v1/GetContactByEmail", data);
-
-            return response.StatusCode != HttpStatusCode.NotFound;
+            var userResponse = await response.Content.ReadAsStringAsync();
+            var userRecord = JsonConvert.DeserializeObject<UserData>(userResponse);
+            return !string.IsNullOrEmpty(userRecord.Email);
         }
     }
 }

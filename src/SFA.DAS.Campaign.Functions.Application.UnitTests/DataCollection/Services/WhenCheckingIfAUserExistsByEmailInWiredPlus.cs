@@ -26,7 +26,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
         {
             _httpClient = new Mock<IHttpClient<Dictionary<string, string>>>();
             _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted){ Content = new StringContent("{}") });
             _httpClient.Setup(x => x.AuthKey).Verifiable();
 
             _configuration = new Mock<IOptions<Configuration>>();
@@ -84,7 +84,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
         public async Task Then_False_Is_Returned_If_The_User_Does_Not_Exist()
         {
             //Arrange
-            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound));
+            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound){Content = new StringContent("{}")});
 
             //Act
             var actual =  await _wiredPlusService.UserExists(ExpectedUserEmail);
@@ -97,7 +97,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
         public async Task Then_True_Is_Returned_If_The_User_Does_Exist()
         {
             //Arrange
-            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Found));
+            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Found) { Content = new StringContent("{'email':'test@test.local'}")});
 
             //Act
             var actual = await _wiredPlusService.UserExists(ExpectedUserEmail);
