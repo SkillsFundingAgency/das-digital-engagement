@@ -9,7 +9,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollectionStub
     public static class UnregisterDetails
     {
         [FunctionName("UnregisterDetails")]
-        public static async Task Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "unregisterdetails")]HttpRequestMessage req, ILogger log)
+        public static async Task Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "update-person")]HttpRequestMessage req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger UnregisterDetails processed a request.");
 
