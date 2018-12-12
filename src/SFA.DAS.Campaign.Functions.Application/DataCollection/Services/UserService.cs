@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -28,6 +29,13 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
             var person = new Person().MapFromUserData(user);
 
             var response = await _httpClient.PostAsync($"{baseAddress}/create-person", person);
+
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                await UnregisterUser(user);
+                return;
+            }
+
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException($"Error registering user: {JsonConvert.SerializeObject(person)}");
         }
