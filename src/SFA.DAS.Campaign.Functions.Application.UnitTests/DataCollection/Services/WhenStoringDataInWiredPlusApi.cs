@@ -81,7 +81,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
 
 
         [Test]
-        public async Task Then_The_Data_Is_Sent_The_Api()
+        public async Task Then_The_Data_Is_Sent_To_The_Api()
         {
             //Arrange
             var expectedUser = new UserData{Email = "test@test.com",FirstName = "Test", LastName = "Tester"};

@@ -22,7 +22,7 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
             _configuration = configuration;
         }
 
-        public async Task RegisterUser(UserData user)
+        public async Task RegisterUser(UserData user, bool fromUpdateUser=false)
         {
             var baseAddress = _configuration.Value.ApiBaseUrl;
 
@@ -30,7 +30,7 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
 
             var response = await _httpClient.PostAsync($"{baseAddress}/create-person", person);
 
-            if (response.StatusCode == HttpStatusCode.Conflict)
+            if (response.StatusCode == HttpStatusCode.Conflict && !fromUpdateUser)
             {
                 await UpdateUser(user);
                 return;
@@ -45,6 +45,13 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
             var baseAddress = _configuration.Value.ApiBaseUrl;
             var person = new Person().MapFromUserData(user);
             var response = await _httpClient.PostAsync($"{baseAddress}/update-person", person);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                await RegisterUser(user,true);
+                return;
+            }
+
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException($"Error updating user: {JsonConvert.SerializeObject(user)}");
         }
