@@ -15,20 +15,32 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
     public class WhenStoringUserData
     {
         private UserService _userService;
-        private Mock<IHttpClient<UserData>> _httpClient;
+        private Mock<IHttpClient<Person>> _httpClient;
         private Mock<IOptions<Configuration>> _configuration;
 
         [SetUp]
         public void Arrange()
         {
-            _httpClient = new Mock<IHttpClient<UserData>>();
+            _httpClient = new Mock<IHttpClient<Person>>();
             _configuration = new Mock<IOptions<Configuration>>();
-            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<UserData>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
+            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
             _configuration.Setup(x => x.Value.ApiBaseUrl).Returns("http://test.local/api");
 
             _userService = new UserService(_httpClient.Object, _configuration.Object);
         }
 
+        [Test]
+        public async Task Then_The_Auth_Key_Is_Set()
+        {
+            //Arrange
+            var expectedUser = new UserData();
+
+            //Act
+            await _userService.RegisterUser(expectedUser);
+
+            //Assert
+            _configuration.Verify(c => c.Value.ApiXFunctionsKey, Times.Once);
+        }
         [Test]
         public async Task Then_The_User_Data_Service_Is_Called_With_The_Passed_In_Model()
         {
@@ -47,14 +59,22 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             await _userService.RegisterUser(userData);
 
             //Assert
-            _httpClient.Verify(x => x.PostAsync("http://test.local/api/registerdetails", userData));
+            _httpClient.Verify(x => x.PostAsync("http://test.local/api/create-person", 
+                It.Is<Person>(p=>
+                    p.Consent.GdprConsentGiven.Equals(userData.Consent) && 
+                    p.ContactDetail.EmailAddress.Equals(userData.Email) &&
+                    p.Cookie.CookieIdentifier.Equals(userData.CookieId) &&
+                    p.FirstName.Equals(userData.FirstName) &&
+                    p.LastName.Equals(userData.LastName) &&
+                    p.Route.RouteIdentifier.Equals(userData.RouteId) 
+            )));
         }
 
         [Test]
         public void Then_If_The_Request_Is_Rejected_A_InvalidOperationException_Is_Thrown()
         {
             //Arrange
-            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<UserData>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
+            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             //Act Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () => await _userService.RegisterUser(new UserData()));

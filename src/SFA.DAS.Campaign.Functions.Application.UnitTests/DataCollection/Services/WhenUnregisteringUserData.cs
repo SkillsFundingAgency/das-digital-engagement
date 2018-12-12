@@ -15,18 +15,31 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
     public class WhenUnregisteringUserData
     {
         private UserService _userService;
-        private Mock<IHttpClient<UserData>> _httpClient;
+        private Mock<IHttpClient<Person>> _httpClient;
         private Mock<IOptions<Configuration>> _configuration;
 
         [SetUp]
         public void Arrange()
         {
-            _httpClient = new Mock<IHttpClient<UserData>>();
+            _httpClient = new Mock<IHttpClient<Person>>();
             _configuration = new Mock<IOptions<Configuration>>();
-            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<UserData>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
+            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
             _configuration.Setup(x => x.Value.ApiBaseUrl).Returns("http://test.local/api");
 
             _userService = new UserService(_httpClient.Object, _configuration.Object);
+        }
+        
+        [Test]
+        public async Task Then_The_Auth_Key_Is_Set()
+        {
+            //Arrange
+            var expectedUser = new UserData();
+
+            //Act
+            await _userService.UnregisterUser(expectedUser);
+
+            //Assert
+            _configuration.Verify(c => c.Value.ApiXFunctionsKey, Times.Once);
         }
 
         [Test]
@@ -47,14 +60,15 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             await _userService.UnregisterUser(userData);
 
             //Assert
-            _httpClient.Verify(x => x.PostAsync("http://test.local/api/unregisterdetails", userData));
+            _httpClient.Verify(x => x.PostAsync("http://test.local/api/update-person", 
+                It.Is<Person>(c=>c.ContactDetail.EmailAddress.Equals(userData.Email))));
         }
 
         [Test]
         public void Then_If_The_Request_Is_Rejected_A_InvalidOperationException_Is_Thrown()
         {
             //Arrange
-            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<UserData>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
+            _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             //Act Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () => await _userService.UnregisterUser(new UserData()));

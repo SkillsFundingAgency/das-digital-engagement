@@ -10,6 +10,7 @@ namespace SFA.DAS.Campaign.Functions.Application.Services
     public class HttpClient<T> : IHttpClient<T>
     {
         public string AuthKey { get; set; }
+        public string XFunctionsKey { get; set; }
 
         public async Task<HttpResponseMessage> PostAsync(string url, T data)
         {
@@ -35,6 +36,11 @@ namespace SFA.DAS.Campaign.Functions.Application.Services
             if (!string.IsNullOrWhiteSpace(AuthKey))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", AuthKey);
+            }
+
+            if (!string.IsNullOrEmpty(XFunctionsKey))
+            {
+                client.DefaultRequestHeaders.Add("x-functions-key", XFunctionsKey);
             }
 
             return await client.PostAsync(url, content);
