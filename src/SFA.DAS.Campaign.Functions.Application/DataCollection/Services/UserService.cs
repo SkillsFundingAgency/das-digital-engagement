@@ -32,7 +32,7 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
 
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
-                await UnregisterUser(user);
+                await UpdateUser(user);
                 return;
             }
 
@@ -40,13 +40,13 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
                 throw new InvalidOperationException($"Error registering user: {JsonConvert.SerializeObject(person)}");
         }
 
-        public async Task UnregisterUser(UserData user)
+        public async Task UpdateUser(UserData user)
         {
             var baseAddress = _configuration.Value.ApiBaseUrl;
             var person = new Person().MapFromUserData(user);
             var response = await _httpClient.PostAsync($"{baseAddress}/update-person", person);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException($"Error un-registering user: {JsonConvert.SerializeObject(user)}");
+                throw new InvalidOperationException($"Error updating user: {JsonConvert.SerializeObject(user)}");
         }
     }
 }

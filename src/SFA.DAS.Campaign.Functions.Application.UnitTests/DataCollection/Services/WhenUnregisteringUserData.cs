@@ -36,7 +36,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             var expectedUser = new UserData();
 
             //Act
-            await _userService.UnregisterUser(expectedUser);
+            await _userService.UpdateUser(expectedUser);
 
             //Assert
             _configuration.Verify(c => c.Value.ApiXFunctionsKey, Times.Once);
@@ -57,7 +57,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             };
 
             //Act
-            await _userService.UnregisterUser(userData);
+            await _userService.UpdateUser(userData);
 
             //Assert
             _httpClient.Verify(x => x.PostAsync("http://test.local/api/update-person", 
@@ -71,7 +71,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             //Act Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await _userService.UnregisterUser(new UserData()));
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _userService.UpdateUser(new UserData()));
         }
     }
 }

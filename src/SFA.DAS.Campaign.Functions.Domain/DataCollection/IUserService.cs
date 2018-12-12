@@ -7,6 +7,6 @@ namespace SFA.DAS.Campaign.Functions.Domain.DataCollection
     {
         Task RegisterUser(UserData user);
 
-        Task UnregisterUser(UserData user);
+        Task UpdateUser(UserData user);
     }
 }

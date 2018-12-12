@@ -37,7 +37,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
 
             //Assert
             _validator.Verify(x => x.Validate(It.IsAny<UserData>()), Times.Once);
-            _userService.Verify(x => x.UnregisterUser(It.IsAny<UserData>()), Times.Never);
+            _userService.Verify(x => x.UpdateUser(It.IsAny<UserData>()), Times.Never);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
             await _handler.Handle(expectedUserData);
 
             //Assert
-            _userService.Verify(x => x.UnregisterUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
+            _userService.Verify(x => x.UpdateUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
         }
 
 
