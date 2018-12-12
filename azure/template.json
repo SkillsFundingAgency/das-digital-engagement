@@ -22,6 +22,15 @@
         },
         "apiBaseUrl": {
             "type": "string"
+        },
+        "apiXFunctionsKey": {
+            "type": "securestring"
+        },
+        "wiredPlusBaseUrl": {
+            "type": "string"
+        },
+        "wiredPlusAuthKey": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -121,6 +130,14 @@
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": [
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            }
+                        ]
                     }
                 }
             },
@@ -165,6 +182,22 @@
                             {
                                 "name": "ApiBaseUrl",
                                 "value": "[parameters('apiBaseUrl')]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            },
+                            {
+                                "name": "ApiXFunctionsKey",
+                                "value": "[parameters('apiXFunctionsKey')]"
+                            },
+                            {
+                                "name": "WiredPlusBaseUrl",
+                                "value": "[parameters('wiredPlusBaseUrl')]"
+                            },
+                            {
+                                "name": "WiredPlusAuthKey",
+                                "value": "[parameters('wiredPlusAuthKey')]"
                             }
                         ]
                     }
