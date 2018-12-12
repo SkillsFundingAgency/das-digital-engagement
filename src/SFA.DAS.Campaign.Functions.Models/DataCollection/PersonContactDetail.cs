@@ -6,10 +6,10 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
     public class PersonContactDetail
     {
         [JsonProperty("Captured")]
-        public DateTime Captured { get; set; }
+        public string Captured { get; set; }
         [JsonProperty("emailAddress")]
         public string EmailAddress { get; set; }
         [JsonProperty("emailVerificationCompletion")]
-        public bool EmailVerificationCompleted { get; set; }
+        public string EmailVerificationCompleted { get; set; }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.Campaign.Functions.Models.DataCollection
@@ -12,7 +10,7 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
         [JsonProperty("lastName")]
         public string LastName { get; internal set; }
         [JsonProperty("enrolled")]
-        public DateTime Enrolled { get; internal set; }
+        public string Enrolled { get; internal set; }
         [JsonProperty("Consent")]
         public PersonConsent Consent { get; internal set; }
         [JsonProperty("Cookie")]
@@ -28,20 +26,26 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                Enrolled = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
                 ContactDetail = new PersonContactDetail
                 {
-                    EmailAddress = user.Email
+                    Captured = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
+                    EmailAddress = user.Email,
+                    EmailVerificationCompleted = null,
                 },
                 Consent = new PersonConsent
                 {
+                    GdprConsentDeclared = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
                     GdprConsentGiven = user.Consent
                 },
                 Cookie = new PersonCookie
                 {
+                    Captured = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
                     CookieIdentifier = user.CookieId
                 },
                 Route = new PersonRoute
                 {
+                    Captured = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
                     RouteIdentifier = user.RouteId
                 }
             };
