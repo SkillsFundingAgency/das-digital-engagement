@@ -180,7 +180,7 @@
                                 "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
                             },
                             {
-                                "name": "ApiBaseUrl",
+                                "name": "Values:ApiBaseUrl",
                                 "value": "[parameters('apiBaseUrl')]"
                             },
                             {
@@ -188,15 +188,15 @@
                                 "value": "~2"
                             },
                             {
-                                "name": "ApiXFunctionsKey",
+                                "name": "Values:ApiXFunctionsKey",
                                 "value": "[parameters('apiXFunctionsKey')]"
                             },
                             {
-                                "name": "WiredPlusBaseUrl",
+                                "name": "Values:WiredPlusBaseUrl",
                                 "value": "[parameters('wiredPlusBaseUrl')]"
                             },
                             {
-                                "name": "WiredPlusAuthKey",
+                                "name": "Values:WiredPlusAuthKey",
                                 "value": "[parameters('wiredPlusAuthKey')]"
                             }
                         ]
