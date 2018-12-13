@@ -4,8 +4,9 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "",
     "ApiBaseUrl": "http://localhost:7071/api",
+    "ApiXFunctionsKey":  "",
     "WiredPlusBaseUrl": "http://localhost:7071/api",
-    "WiredPlusAuthKey": "UserName:Key"
+    "WiredPlusAuthKey": ""
   },
   "Host": {
     "LocalHttpPort": 7074,

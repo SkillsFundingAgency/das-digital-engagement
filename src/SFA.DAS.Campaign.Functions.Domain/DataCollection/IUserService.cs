@@ -5,8 +5,8 @@ namespace SFA.DAS.Campaign.Functions.Domain.DataCollection
 {
     public interface IUserService
     {
-        Task RegisterUser(UserData user);
+        Task RegisterUser(UserData user, bool fromUpdateUser = false);
 
-        Task UnregisterUser(UserData user);
+        Task UpdateUser(UserData user);
     }
 }

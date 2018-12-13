@@ -27,8 +27,13 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
 
             await _userServiceObject.RegisterUser(userData);
 
-            await _wiredPlusService.CreateUser(userData);
+            var userExists = await _wiredPlusService.UserExists(userData.Email);
 
+            if (!userExists)
+            {
+                await _wiredPlusService.CreateUser(userData);
+            }
+            
             await _wiredPlusService.SubscribeUser(userData);
         }
     }

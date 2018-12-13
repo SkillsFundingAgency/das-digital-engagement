@@ -39,7 +39,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollection
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables()
-                .AddJsonFile("local.settings.json").Build();
+                .AddJsonFile("local.settings.json",true).Build();
             Configuration = config;
         }
 

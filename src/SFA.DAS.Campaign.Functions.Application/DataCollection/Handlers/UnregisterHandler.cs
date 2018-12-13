@@ -25,7 +25,9 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
                 throw new ArgumentException("UserData model failed validation", nameof(UserData));
             }
 
-            await _userService.UnregisterUser(userData);
+            userData.Consent = false;
+
+            await _userService.UpdateUser(userData);
 
             await _wiredPlusService.UnsubscribeUser(userData);
         }

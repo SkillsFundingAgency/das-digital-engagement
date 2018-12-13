@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,12 +63,25 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
 
         private static Dictionary<string, string> UserDataToDictionary(UserData user)
         {
-            return user.GetType()
+            var wiredPlusUser = new WiredPlusUser().MapFromUserData(user);
+
+            return wiredPlusUser.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(key => key.CustomAttributes.ToList().Any())
                 .ToDictionary(key => 
                         key.CustomAttributes.ToList()[0].ConstructorArguments[0].Value.ToString(),
-                    value => value.GetValue(user) == null ? "" : value.GetValue(user).ToString());
+                    value => value.GetValue(wiredPlusUser) == null ? "" : value.GetValue(wiredPlusUser).ToString());
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            var user = new UserData{Email = email};
+            var data = UserDataToDictionary(user);
+
+            var response = await _httpClient.PostAsync($"{_configuration.Value.WiredPlusBaseUrl}/v1/GetContactByEmail", data);
+            var userResponse = await response.Content.ReadAsStringAsync();
+            var userRecord = JsonConvert.DeserializeObject<UserData>(userResponse);
+            return !string.IsNullOrEmpty(userRecord.Email);
         }
     }
 }

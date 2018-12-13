@@ -6,6 +6,7 @@ namespace SFA.DAS.Campaign.Functions.Domain.Infrastructure
     public interface IHttpClient<in T>
     {
         string AuthKey { get; set; }
+        string XFunctionsKey { get; set; }
         Task<HttpResponseMessage> PostAsync(string url, T data);
     }
 }

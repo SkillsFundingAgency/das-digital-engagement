@@ -7,12 +7,10 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
 {
     public class UserData
     {
-        [JsonProperty("first_name")]
         public string FirstName { get; set; }
-        [JsonProperty("last_name")]
         public string LastName { get; set; }
-        [JsonProperty("email")]
         public string Email { get; set; }
+        public string EncodedEmail { get; set; }
         public bool Consent { get; set; }
         public string CookieId { get; set; }
         public string RouteId { get; set; }
@@ -55,7 +53,6 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
                 return false;
             }
         }
-
         private string DomainMapper(Match match)
         {
             // IdnMapping class with default property values.

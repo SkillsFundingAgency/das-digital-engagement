@@ -22,6 +22,15 @@
         },
         "apiBaseUrl": {
             "type": "string"
+        },
+        "apiXFunctionsKey": {
+            "type": "securestring"
+        },
+        "wiredPlusBaseUrl": {
+            "type": "string"
+        },
+        "wiredPlusAuthKey": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -121,6 +130,14 @@
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[resourceGroup().name]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": [
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            }
+                        ]
                     }
                 }
             },
@@ -163,8 +180,24 @@
                                 "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
                             },
                             {
-                                "name": "ApiBaseUrl",
+                                "name": "Values:ApiBaseUrl",
                                 "value": "[parameters('apiBaseUrl')]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            },
+                            {
+                                "name": "Values:ApiXFunctionsKey",
+                                "value": "[parameters('apiXFunctionsKey')]"
+                            },
+                            {
+                                "name": "Values:WiredPlusBaseUrl",
+                                "value": "[parameters('wiredPlusBaseUrl')]"
+                            },
+                            {
+                                "name": "Values:WiredPlusAuthKey",
+                                "value": "[parameters('wiredPlusAuthKey')]"
                             }
                         ]
                     }
