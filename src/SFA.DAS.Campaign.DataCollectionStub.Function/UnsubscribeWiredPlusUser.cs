@@ -9,7 +9,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollectionStub
     public static class UnsubscribeWiredPlusUser
     {
         [FunctionName("UnsubscribeContact")]
-        public static async Task Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/UnsubscribeContact")]HttpRequestMessage req, ILogger log)
+        public static async Task Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "v1/UnsubscribeContact")]HttpRequestMessage req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger UnsubscribeContact processed a request.");
 
