@@ -80,6 +80,10 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
 
             var response = await _httpClient.PostAsync($"{_configuration.Value.WiredPlusBaseUrl}/v1/GetContactByEmail", data);
             var userResponse = await response.Content.ReadAsStringAsync();
+            if (userResponse == string.Empty)
+            {
+                return false;
+            }
             var userRecord = JsonConvert.DeserializeObject<UserData>(userResponse);
             return !string.IsNullOrEmpty(userRecord.Email);
         }
