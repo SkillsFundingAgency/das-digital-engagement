@@ -7,11 +7,11 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
 {
     public class UnregisterHandler : IUnregisterHandler
     {
-        private readonly IUserDataValidator _validator;
+        private readonly IUserUnregisterDataValidator _validator;
         private readonly IUserService _userService;
         private readonly IWiredPlusService _wiredPlusService;
 
-        public UnregisterHandler(IUserDataValidator validator, IUserService userService, IWiredPlusService wiredPlusService)
+        public UnregisterHandler(IUserUnregisterDataValidator validator, IUserService userService, IWiredPlusService wiredPlusService)
         {
             _validator = validator;
             _userService = userService;
@@ -20,9 +20,9 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
 
         public async Task Handle(UserData userData)
         {
-            if (!_validator.Validate(userData))
+            if (!_validator.Validate(userData.Email))
             {
-                throw new ArgumentException("UserData model failed validation", nameof(UserData));
+                throw new ArgumentException("UserData model failed validation", nameof(UserData.Email));
             }
 
             userData.Consent = false;
