@@ -72,6 +72,25 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
 
             //Assert
             _wiredPlusService.Verify(x => x.UnsubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
+            _wiredPlusService.Verify(x => x.SubscribeUser(It.IsAny<UserData>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_If_The_User_Has_Consented_To_Be_Contacted_They_Are_Resubscribed()
+        {
+            //Arrange
+            var expectedUserData = new UserData
+            {
+                Email = ExpectedUserEmail,
+                Consent = true
+            };
+
+            //Act
+            await _handler.Handle(expectedUserData);
+
+            //Assert
+            _wiredPlusService.Verify(x => x.UnsubscribeUser(It.IsAny<UserData>()), Times.Never);
+            _wiredPlusService.Verify(x => x.SubscribeUser(It.Is<UserData>(c=>c.Email.Equals(ExpectedUserEmail))), Times.Once);
         }
     }
 }
