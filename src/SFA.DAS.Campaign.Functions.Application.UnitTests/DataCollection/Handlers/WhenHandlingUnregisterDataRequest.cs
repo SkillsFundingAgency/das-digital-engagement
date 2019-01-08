@@ -11,18 +11,19 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
     public class WhenHandlingUnregisterDataRequest
     {
         private UnregisterHandler _handler;
-        private Mock<IUserDataValidator> _validator;
+        private Mock<IUserUnregisterDataValidator> _validator;
         private Mock<IUserService> _userService;
         private Mock<IWiredPlusService> _wiredPlusService;
+        private const string ExpectedUserEmail = "test@test.com";
 
         [SetUp]
         public void Arrange()
         {
-            _validator = new Mock<IUserDataValidator>();
             _userService = new Mock<IUserService>();
             _wiredPlusService = new Mock<IWiredPlusService>();
-
-            _validator.Setup(x => x.Validate(It.IsAny<UserData>())).Returns(true);
+            _validator = new Mock<IUserUnregisterDataValidator>();
+            
+            _validator.Setup(x => x.Validate(It.IsAny<string>())).Returns(true);
             _handler = new UnregisterHandler(_validator.Object, _userService.Object, _wiredPlusService.Object);
         }
 
@@ -30,28 +31,23 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
         public void Then_The_Message_Is_Validated_And_ArgumentException_Thrown_And_Not_Sent_To_The_Api_If_Not_Valid()
         {
             //Arrange
-            _validator.Setup(x => x.Validate(It.IsAny<UserData>())).Returns(false);
+            _validator.Setup(x => x.Validate(It.IsAny<string>())).Returns(false);
 
             //Act
             Assert.ThrowsAsync<ArgumentException>(async () => await _handler.Handle(new UserData()));
 
             //Assert
-            _validator.Verify(x => x.Validate(It.IsAny<UserData>()), Times.Once);
+            _validator.Verify(x => x.Validate(It.IsAny<string>()), Times.Once);
             _userService.Verify(x => x.UpdateUser(It.IsAny<UserData>()), Times.Never);
         }
-
+        
         [Test]
         public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_Api()
         {
             //Arrange
             var expectedUserData = new UserData
             {
-                Consent = true,
-                CookieId = "123",
-                Email = "test@test.com",
-                FirstName = "Test",
-                LastName = "Tester",
-                RouteId = "1"
+                Email = ExpectedUserEmail
             };
 
             //Act
@@ -68,12 +64,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
             //Arrange
             var expectedUserData = new UserData
             {
-                Consent = true,
-                CookieId = "123",
-                Email = "test@test.com",
-                FirstName = "Test",
-                LastName = "Tester",
-                RouteId = "1"
+                Email = ExpectedUserEmail
             };
 
             //Act
@@ -81,6 +72,25 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
 
             //Assert
             _wiredPlusService.Verify(x => x.UnsubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
+            _wiredPlusService.Verify(x => x.SubscribeUser(It.IsAny<UserData>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Then_If_The_User_Has_Consented_To_Be_Contacted_They_Are_Resubscribed()
+        {
+            //Arrange
+            var expectedUserData = new UserData
+            {
+                Email = ExpectedUserEmail,
+                Consent = true
+            };
+
+            //Act
+            await _handler.Handle(expectedUserData);
+
+            //Assert
+            _wiredPlusService.Verify(x => x.UnsubscribeUser(It.IsAny<UserData>()), Times.Never);
+            _wiredPlusService.Verify(x => x.SubscribeUser(It.Is<UserData>(c=>c.Email.Equals(ExpectedUserEmail))), Times.Once);
         }
     }
 }

@@ -25,10 +25,6 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             _userData = new UserData
             {
                 Consent = false,
-                RouteId = "1",
-                CookieId = "23",
-                FirstName = "Test",
-                LastName = "Tester",
                 Email = "test@tester.com"
             };
             _httpClient = new Mock<IHttpClient<Person>>();
@@ -61,37 +57,18 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             //Assert
             _httpClient.Verify(x => x.PostAsync("http://test.local/api/update-person", 
                 It.Is<Person>(c=>c.ContactDetail.EmailAddress.Equals(_userData.Email))));
-            _httpClient.Verify(x => x.PostAsync("http://test.local/api/create-person",
-                It.Is<Person>(c => c.ContactDetail.EmailAddress.Equals(_userData.Email))), Times.Never);
         }
 
         [Test]
-        public async Task Then_If_The_User_Does_Not_Exist_The_Create_Is_Called()
+        public void Then_If_The_User_Does_Not_Exist_An_Exception_Is_Thrown()
         {
             //Arrange
             _httpClient.Setup(x => x.PostAsync("http://test.local/api/update-person", It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound));
-            _httpClient.Setup(x => x.PostAsync("http://test.local/api/create-person", It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
-
-            //Act
-            await _userService.UpdateUser(_userData);
-
-            //Assert
-            _httpClient.Verify(x => x.PostAsync("http://test.local/api/update-person",
-                It.Is<Person>(c => c.ContactDetail.EmailAddress.Equals(_userData.Email))),Times.Once);
-            _httpClient.Verify(x => x.PostAsync("http://test.local/api/create-person",
-                It.Is<Person>(c => c.ContactDetail.EmailAddress.Equals(_userData.Email))), Times.Once);
-        }
-
-
-        [Test]
-        public void Then_If_The_User_Does_Not_Exist_And_A_Conflict_Is_Returned_Then_An_Exception_Is_Thrown()
-        {
-            //Arrange
-            _httpClient.Setup(x => x.PostAsync("http://test.local/api/update-person", It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.NotFound));
-            _httpClient.Setup(x => x.PostAsync("http://test.local/api/create-person", It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Conflict));
 
             //Act Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await _userService.UpdateUser(new UserData()));
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _userService.UpdateUser(_userData));
+            _httpClient.Verify(x => x.PostAsync("http://test.local/api/update-person",
+                It.Is<Person>(c => c.ContactDetail.EmailAddress.Equals(_userData.Email))),Times.Once);
         }
 
         [Test]
