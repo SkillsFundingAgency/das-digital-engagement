@@ -31,14 +31,25 @@
         },
         "wiredPlusAuthKey": {
             "type": "securestring"
+        },
+        "appServicePlanSize": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2",
+                "3"
+            ],
+            "defaultValue": "1"
+        },
+        "appServicePlanInstances": {
+            "type": "int",
+            "defaultValue": 2
         }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-cpgwkr')]",
         "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
-        "appServicePlanSize": "1",
-        "appServicePlanInstances": 2,
         "stubFunctionAppName": "[concat(variables('resourcePrefix'),'-stub-fa')]",
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),'cpgwkrstr')]"
@@ -65,10 +76,10 @@
                         "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
-                        "value": "[variables('appServicePlanSize')]"
+                        "value": "[parameters('appServicePlanSize')]"
                     },
                     "aspInstances": {
-                        "value": "[variables('appServicePlanInstances')]"
+                        "value": "[parameters('appServicePlanInstances')]"
                     }
                 }
             }
