@@ -20,33 +20,39 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
         [JsonProperty("ContactDetail")]
         public PersonContactDetail ContactDetail { get; internal set; }
 
-        public Person MapFromUserData(UserData user)
+        public Person MapFromUserData(UserData user, DateTime? creationDate = null)
         {
+            if(!creationDate.HasValue)
+            {
+                creationDate = DateTime.UtcNow;
+            }
+            var creationDateString = creationDate.Value.ToString("yyyy-MM-dd HH:mm:ss");
+
             var isCreateUser = IsCreateUser(user);
             return new Person
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Enrolled = isCreateUser ? DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss") : null,
+                Enrolled = isCreateUser ? creationDateString : null,
                 ContactDetail = new PersonContactDetail
                 {
-                    Captured = isCreateUser ? DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss") : null,
+                    Captured = isCreateUser ? creationDateString : null,
                     EmailAddress = user.Email,
                     EmailVerificationCompleted = null,
                 },
                 Consent = new PersonConsent
                 {
-                    GdprConsentDeclared = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
+                    GdprConsentDeclared = creationDateString,
                     GdprConsentGiven = user.Consent
                 },
                 Cookie = isCreateUser ? new PersonCookie
                 {
-                    Captured = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
+                    Captured = creationDateString,
                     CookieIdentifier = user.CookieId
                 } : null,
                 Route = isCreateUser ? new PersonRoute
                 {
-                    Captured = DateTime.UtcNow.ToString("yyyy-MM-dd hh:mm:ss"),
+                    Captured = creationDateString,
                     RouteIdentifier = user.RouteId
                 } : null
             };
