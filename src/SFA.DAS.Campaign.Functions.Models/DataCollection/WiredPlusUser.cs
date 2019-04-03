@@ -13,12 +13,12 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
         public string LastName { get; internal set; }
         [JsonProperty("email")]
         public string Email { get; internal set; }
-        [JsonProperty("custom[encoded_email]")]
+        [JsonProperty("custom[ENCODED_EMAIL]")]
         public string EncodedEmail { get; internal set; }
         public bool Consent { get; internal set; }
-        [JsonProperty("custom[cookie_id]")]
+        [JsonProperty("custom[COOKIE_ID]")]
         public string CookieId { get; internal set; }
-        [JsonProperty("custom[route_id]")]
+        [JsonProperty("custom[ROUTE_ID]")]
         public string RouteId { get; internal set; }
 
         public WiredPlusUser MapFromUserData(UserData user)
