@@ -6,7 +6,8 @@
     "ApiBaseUrl": "http://localhost:7071/api",
     "ApiXFunctionsKey":  "",
     "WiredPlusBaseUrl": "http://localhost:7071/api",
-    "WiredPlusAuthKey": ""
+    "WiredPlusAuthKey": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   },
   "Host": {
     "LocalHttpPort": 7074,
