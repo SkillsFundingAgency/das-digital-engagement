@@ -47,7 +47,7 @@
             "type": "func",
             "dependsOn": "build",
             "options": {
-                "cwd": "${workspaceFolder}/SFA.DAS.Campaign.DataCollectionSubscribe.Function/bin/Debug/netstandard2.0"
+                "cwd": "${workspaceFolder}/SFA.DAS.Campaign.DataCollectionSubscribe.Function/bin/Debug/netcoreapp2.2"
             },
             "command": "host start",
             "isBackground": true,
