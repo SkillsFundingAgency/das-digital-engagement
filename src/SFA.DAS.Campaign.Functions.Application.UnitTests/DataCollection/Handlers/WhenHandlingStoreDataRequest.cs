@@ -13,17 +13,15 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
         private RegisterHandler _handler;
         private Mock<IUserDataValidator> _validator;
         private Mock<IUserService> _userService;
-        private Mock<IWiredPlusService> _wiredPlusService;
 
         [SetUp]
         public void Arrange()
         {
             _validator = new Mock<IUserDataValidator>();
             _userService = new Mock<IUserService>();
-            _wiredPlusService = new Mock<IWiredPlusService>();
 
             _validator.Setup(x => x.Validate(It.IsAny<UserData>())).Returns(true);
-            _handler = new RegisterHandler(_validator.Object, _userService.Object, _wiredPlusService.Object);
+            _handler = new RegisterHandler(_validator.Object, _userService.Object);
         }
 
         [Test]
@@ -60,74 +58,5 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
             //Assert
             _userService.Verify(x => x.RegisterUser(It.Is<UserData>(c=>c.Equals(expectedUserData))), Times.Once);
         }
-
-        [Test]
-        public async Task Then_If_The_Message_Is_Valid_And_The_User_Does_Not_Exist_It_Is_Sent_To_The_WiredPlus_Api()
-        {
-            //Arrange
-            var expectedUserData = new UserData
-            {
-                Consent = true,
-                CookieId = "123",
-                Email = "test@test.com",
-                FirstName = "Test",
-                LastName = "Tester",
-                RouteId = "1"
-            };
-            _wiredPlusService.Setup(x => x.UserExists(expectedUserData.Email)).ReturnsAsync(false);
-
-            //Act
-            await _handler.Handle(expectedUserData);
-
-            //Assert
-            _wiredPlusService.Verify(x => x.CreateUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
-        }
-
-
-        [Test]
-        public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_WiredPlus_Api_To_Subscribe()
-        {
-            //Arrange
-            var expectedUserData = new UserData
-            {
-                Consent = true,
-                CookieId = "123",
-                Email = "test@test.com",
-                FirstName = "Test",
-                LastName = "Tester",
-                RouteId = "1"
-            };
-
-            //Act
-            await _handler.Handle(expectedUserData);
-
-            //Assert
-            _wiredPlusService.Verify(x => x.SubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
-        }
-
-        [Test]
-        public async Task Then_If_The_User_Exists_The_Store_Data_Command_Is_Not_Called_For_WiredPlus()
-        {
-            //Arrange
-            var expectedUserData = new UserData
-            {
-                Consent = true,
-                CookieId = "123",
-                Email = "test@test.com",
-                FirstName = "Test",
-                LastName = "Tester",
-                RouteId = "1"
-            };
-            _wiredPlusService.Setup(x => x.UserExists(expectedUserData.Email)).ReturnsAsync(true);
-
-            //Act
-            await _handler.Handle(expectedUserData);
-
-            //Assert
-            _wiredPlusService.Verify(x => x.UserExists(It.Is<string>(c => c.Equals(expectedUserData.Email))), Times.Once);
-            _wiredPlusService.Verify(x => x.CreateUser(It.IsAny<UserData>()), Times.Never);
-
-        }
-        
     }
 }

@@ -1,0 +1,8 @@
+{
+    "azureFunctions.projectSubpath": "SFA.DAS.Campaign.DataCollectionSubscribe.Function",
+    "azureFunctions.deploySubpath": "SFA.DAS.Campaign.DataCollectionSubscribe.Function/bin/Release/netcoreapp2.2/publish",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.projectRuntime": "~2",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "publish"
+}

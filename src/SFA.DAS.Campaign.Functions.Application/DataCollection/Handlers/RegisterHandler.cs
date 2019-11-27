@@ -9,13 +9,11 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
     {
         private readonly IUserDataValidator _validator;
         private readonly IUserService _userServiceObject;
-        private readonly IWiredPlusService _wiredPlusService;
 
-        public RegisterHandler(IUserDataValidator validator, IUserService userServiceObject, IWiredPlusService wiredPlusService)
+        public RegisterHandler(IUserDataValidator validator, IUserService userServiceObject)
         {
             _validator = validator;
             _userServiceObject = userServiceObject;
-            _wiredPlusService = wiredPlusService;
         }
 
         public async Task Handle(UserData userData)
@@ -26,15 +24,6 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
             }
 
             await _userServiceObject.RegisterUser(userData);
-
-            var userExists = await _wiredPlusService.UserExists(userData.Email);
-
-            if (!userExists)
-            {
-                await _wiredPlusService.CreateUser(userData);
-            }
-            
-            await _wiredPlusService.SubscribeUser(userData);
         }
     }
 }

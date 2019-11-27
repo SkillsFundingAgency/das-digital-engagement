@@ -9,13 +9,11 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
     {
         private readonly IUserUnregisterDataValidator _validator;
         private readonly IUserService _userService;
-        private readonly IWiredPlusService _wiredPlusService;
 
-        public UnregisterHandler(IUserUnregisterDataValidator validator, IUserService userService, IWiredPlusService wiredPlusService)
+        public UnregisterHandler(IUserUnregisterDataValidator validator, IUserService userService)
         {
             _validator = validator;
             _userService = userService;
-            _wiredPlusService = wiredPlusService;
         }
 
         public async Task Handle(UserData userData)
@@ -26,16 +24,6 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
             }
 
             await _userService.UpdateUser(userData);
-
-            if (userData.Consent)
-            {
-                await _wiredPlusService.SubscribeUser(userData);
-            }
-            else
-            {
-                await _wiredPlusService.UnsubscribeUser(userData);
-            }
-            
         }
     }
 }

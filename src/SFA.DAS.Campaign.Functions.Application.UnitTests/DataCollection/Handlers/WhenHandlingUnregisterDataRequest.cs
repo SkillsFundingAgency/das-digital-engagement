@@ -13,18 +13,16 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
         private UnregisterHandler _handler;
         private Mock<IUserUnregisterDataValidator> _validator;
         private Mock<IUserService> _userService;
-        private Mock<IWiredPlusService> _wiredPlusService;
         private const string ExpectedUserEmail = "test@test.com";
 
         [SetUp]
         public void Arrange()
         {
             _userService = new Mock<IUserService>();
-            _wiredPlusService = new Mock<IWiredPlusService>();
             _validator = new Mock<IUserUnregisterDataValidator>();
             
             _validator.Setup(x => x.Validate(It.IsAny<string>())).Returns(true);
-            _handler = new UnregisterHandler(_validator.Object, _userService.Object, _wiredPlusService.Object);
+            _handler = new UnregisterHandler(_validator.Object, _userService.Object);
         }
 
         [Test]
@@ -55,42 +53,6 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
 
             //Assert
             _userService.Verify(x => x.UpdateUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
-        }
-
-
-        [Test]
-        public async Task Then_If_The_Message_Is_Valid_Is_Sent_To_The_WiredPlusApi()
-        {
-            //Arrange
-            var expectedUserData = new UserData
-            {
-                Email = ExpectedUserEmail
-            };
-
-            //Act
-            await _handler.Handle(expectedUserData);
-
-            //Assert
-            _wiredPlusService.Verify(x => x.UnsubscribeUser(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
-            _wiredPlusService.Verify(x => x.SubscribeUser(It.IsAny<UserData>()), Times.Never);
-        }
-
-        [Test]
-        public async Task Then_If_The_User_Has_Consented_To_Be_Contacted_They_Are_Resubscribed()
-        {
-            //Arrange
-            var expectedUserData = new UserData
-            {
-                Email = ExpectedUserEmail,
-                Consent = true
-            };
-
-            //Act
-            await _handler.Handle(expectedUserData);
-
-            //Assert
-            _wiredPlusService.Verify(x => x.UnsubscribeUser(It.IsAny<UserData>()), Times.Never);
-            _wiredPlusService.Verify(x => x.SubscribeUser(It.Is<UserData>(c=>c.Email.Equals(ExpectedUserEmail))), Times.Once);
         }
     }
 }

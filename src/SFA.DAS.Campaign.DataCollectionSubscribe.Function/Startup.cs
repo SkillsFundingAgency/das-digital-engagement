@@ -56,7 +56,6 @@ namespace SFA.DAS.Campaign.Functions.DataCollection
             services.AddTransient<IUserDataValidator, UserDataValidator>();
             services.AddTransient<IUserUnregisterDataValidator, UserUnregisterDataValidator>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IWiredPlusService, WiredPlusService>();
             services.AddTransient(typeof(IHttpClient<>), typeof(HttpClient<>));
 
         return services.BuildServiceProvider();
