@@ -26,12 +26,6 @@
         "apiXFunctionsKey": {
             "type": "securestring"
         },
-        "wiredPlusBaseUrl": {
-            "type": "string"
-        },
-        "wiredPlusAuthKey": {
-            "type": "securestring"
-        },
         "appServicePlanSize": {
             "type": "string",
             "allowedValues": [
@@ -201,14 +195,6 @@
                             {
                                 "name": "Values:ApiXFunctionsKey",
                                 "value": "[parameters('apiXFunctionsKey')]"
-                            },
-                            {
-                                "name": "Values:WiredPlusBaseUrl",
-                                "value": "[parameters('wiredPlusBaseUrl')]"
-                            },
-                            {
-                                "name": "Values:WiredPlusAuthKey",
-                                "value": "[parameters('wiredPlusAuthKey')]"
                             }
                         ]
                     }
