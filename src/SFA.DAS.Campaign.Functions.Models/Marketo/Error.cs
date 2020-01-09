@@ -69,7 +69,7 @@ namespace SFA.DAS.Campaign.Functions.Models.Marketo
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Error {\n");
+            sb.Append("Marketo Error {\n");
             sb.Append("  Code: ").Append(Code).Append("\n");
             sb.Append("  Message: ").Append(Message).Append("\n");
             sb.Append("}\n");

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
+using SFA.DAS.Campaign.Functions.Models.DataCollection;
+using SFA.DAS.Campaign.Functions.Models.Infrastructure;
 
 namespace SFA.DAS.Campaign.Functions.Models.Marketo
 {
@@ -24,7 +26,7 @@ namespace SFA.DAS.Campaign.Functions.Models.Marketo
         /// <param name="programStatus">programStatus.</param>
         /// <param name="reason">reason.</param>
         /// <param name="source">source.</param>
-        public PushLeadToMarketoRequest(List<Lead> input = default(List<Lead>), string lookupField = default(string), string partitionName = default(string), string programName = default(string), string programStatus = default(string), string reason = default(string), string source = default(string))
+        public PushLeadToMarketoRequest(List<NewLead> input = default(List<NewLead>), string lookupField = default(string), string partitionName = default(string), string programName = default(string), string programStatus = default(string), string reason = default(string), string source = default(string))
         {
             this.Input = input;
             this.LookupField = lookupField;
@@ -39,7 +41,7 @@ namespace SFA.DAS.Campaign.Functions.Models.Marketo
         /// Gets or Sets Input
         /// </summary>
         [DataMember(Name="input", EmitDefaultValue=false)]
-        public List<Lead> Input { get; set; }
+        public List<NewLead> Input { get; set; }
 
         /// <summary>
         /// Gets or Sets LookupField
@@ -199,6 +201,30 @@ namespace SFA.DAS.Campaign.Functions.Models.Marketo
         IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
+        }
+
+        public PushLeadToMarketoRequest MapFromUserData(UserData user, RegisterInterestProgramConfiguration programConfiguration)
+        {
+
+            var newLeadRequest = new PushLeadToMarketoRequest();
+
+            newLeadRequest.ProgramName = programConfiguration.ProgramName;
+            newLeadRequest.Source = programConfiguration.Source;
+            newLeadRequest.Reason = user.RouteId == "1" ? programConfiguration.CitizenReason : programConfiguration.EmployerReason;
+            newLeadRequest.LookupField = programConfiguration.LookupField;
+
+            newLeadRequest.Input = new List<NewLead>();
+
+            var newLead = new NewLead()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email
+            };
+
+            newLeadRequest.Input.Add(newLead);
+
+            return newLeadRequest;
         }
     }
 

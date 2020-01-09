@@ -9,11 +9,13 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
     {
         private readonly IUserDataValidator _validator;
         private readonly IUserService _userServiceObject;
+        private readonly IMarketoService _marketoService;
 
-        public RegisterHandler(IUserDataValidator validator, IUserService userServiceObject)
+        public RegisterHandler(IUserDataValidator validator, IUserService userServiceObject, IMarketoService marketoService)
         {
             _validator = validator;
             _userServiceObject = userServiceObject;
+            _marketoService = marketoService;
         }
 
         public async Task Handle(UserData userData)
@@ -23,7 +25,10 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
                 throw new ArgumentException("UserData model failed validation", nameof(UserData));
             }
 
+            await _marketoService.PushLead(userData);
             await _userServiceObject.RegisterUser(userData);
+
+           
         }
     }
 }

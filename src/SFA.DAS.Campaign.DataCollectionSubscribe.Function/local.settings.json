@@ -4,11 +4,14 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "",
     "ApiBaseUrl": "http://localhost:7071/api",
-    "ApiXFunctionsKey":  "",
+    "ApiXFunctionsKey": "",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   },
   "Host": {
     "LocalHttpPort": 7074,
     "CORS": "*"
-  }
+  },
+  "AppName": "SFA.DAS.Campaign.Functions",
+  "EnvironmentName": "LOCAL",
+  "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true"
 }

@@ -4,7 +4,7 @@ using SFA.DAS.Campaign.Functions.Models.DataCollection;
 
 namespace SFA.DAS.Campaign.Functions.Models.UnitTests.DataCollection
 {
-    public class WhenMappingUserData
+    public class PersonWhenMappingUserData
     {
         private Person _person;
 

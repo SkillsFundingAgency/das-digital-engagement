@@ -4,8 +4,12 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="4.1.1" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.31" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.8" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="4.6.107" />
+    <PackageReference Include="SFA.DAS.Configuration" Version="3.0.77" />
+    <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="3.0.77" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Campaign.Functions.Framework\SFA.DAS.Campaign.Functions.Framework.csproj" />
