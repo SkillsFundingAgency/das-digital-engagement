@@ -22,6 +22,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
         private Mock<IOptions<MarketoConfiguration>> _configuration;
         private UserData _employerUserData;
         private UserData _citizenUserData;
+        private string _marketoCookieID = "TestCookieId";
 
         [SetUp]
         public void Arrange()
@@ -33,7 +34,8 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
                 CookieId = "23",
                 FirstName = "Test",
                 LastName = "Tester",
-                Email = "test@tester.com"
+                Email = "test@tester.com",
+                MarketoCookieId = _marketoCookieID
             };
             _employerUserData = new UserData
             {
@@ -42,7 +44,8 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
                 CookieId = "23",
                 FirstName = "Test",
                 LastName = "Tester",
-                Email = "test@tester.com"
+                Email = "test@tester.com",
+                MarketoCookieId = _marketoCookieID
             };
             _MarketoLeadClient = new Mock<IMarketoLeadClient>();
             _configuration = new Mock<IOptions<MarketoConfiguration>>();
@@ -155,6 +158,38 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
 
         }
 
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public async Task When_MarketoCookiId_has_no_Value_Then_The_Marketo_AssociateLead_Is_Not_Called(string cookieId)
+        {
+            _employerUserData.MarketoCookieId = cookieId;
+            //Arrange
+            _MarketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
+                .ReturnsAsync(new ResponseOfPushLeadToMarketo()
+                {
+                    Success = true,
+                    Errors = new List<Error>(),
+                    Result = new List<Lead>()
+                    {
+                        new Lead()
+                        {
+                            Id = 123
+                        }
+                    }
+
+                });
+
+            //Act
+            await _marketoLeadService.PushLead(_employerUserData);
+
+            //Assert
+            _MarketoLeadClient.Verify(x => x.PushLead(It.IsAny<PushLeadToMarketoRequest>()), Times.Once);
+            _MarketoLeadClient.Verify(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+
+            _employerUserData.MarketoCookieId = _marketoCookieID;
+        }
+
         [Test]
         public void Then_If_The_PushLead_Request_Is_Rejected_A_Exception_Is_Thrown()
         {
@@ -185,7 +220,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
                 });
             _MarketoLeadClient.Setup(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new ResponseWithoutResult(errors: new List<Error>(), requestId: "") { Success = false, Errors = new List<Error>() });
             //Act Assert
-            Assert.ThrowsAsync<Exception>(async () => await _marketoLeadService.PushLead(new UserData()));
+            Assert.ThrowsAsync<Exception>(async () => await _marketoLeadService.PushLead(_employerUserData));
         }
 
     }

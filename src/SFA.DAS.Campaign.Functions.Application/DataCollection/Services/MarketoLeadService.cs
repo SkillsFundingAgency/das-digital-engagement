@@ -27,20 +27,25 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Services
 
         public async Task PushLead(UserData user)
         {
-          var pushedLead = await _marketoLeadClient.PushLead(new PushLeadToMarketoRequest().MapFromUserData(user,_marketoOptions.Value.RegisterInterestProgramConfiguration));
+            var pushedLead = await _marketoLeadClient.PushLead(
+                new PushLeadToMarketoRequest().MapFromUserData(user,
+                    _marketoOptions.Value.RegisterInterestProgramConfiguration));
 
-          if (pushedLead.Success == false)
-          {
+            if (pushedLead.Success == false)
+            {
                 throw new Exception($"Unable to push lead to Marketo due to errors: {pushedLead.Errors}");
-          }
-         
-          var leadAssociated = await _marketoLeadClient.AssociateLead(pushedLead.Result.First().Id, user.MarketoCookieId);
+            }
 
-          if (leadAssociated.Success == false)
-          {
-              throw new Exception($"Unable to associate lead to Marketo due to errors: {leadAssociated.Errors}");
-          }
+            if (String.IsNullOrWhiteSpace(user.MarketoCookieId) == false)
+            {
+                var leadAssociated =
+                    await _marketoLeadClient.AssociateLead(pushedLead.Result.First().Id, user.MarketoCookieId);
 
+                if (leadAssociated.Success == false)
+                {
+                    throw new Exception($"Unable to associate lead to Marketo due to errors: {leadAssociated.Errors}");
+                }
+            }
         }
     }
 }
