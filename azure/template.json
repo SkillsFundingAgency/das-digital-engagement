@@ -38,6 +38,18 @@
         "appServicePlanInstances": {
             "type": "int",
             "defaultValue": 2
+        },
+        "configNames": {
+            "type": "string",
+            "defaultValue": "SFA.DAS.Campaign.Functions"
+        },
+        "environmentName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "configurationStorageConnectionString": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -195,6 +207,18 @@
                             {
                                 "name": "Values:ApiXFunctionsKey",
                                 "value": "[parameters('apiXFunctionsKey')]"
+                            },
+                            {
+                                "name": "ConfigNames",
+                                "value": "[parameters('configNames')]"
+                            },
+                            {
+                              "name": "environmentName", 
+                              "value": "[parameters('EnvironmentName')]"
+                            },
+                            {
+                              "name": "ConfigurationStorageConnectionString", 
+                              "value": "[parameters('configurationStorageConnectionString')]"
                             }
                         ]
                     }
