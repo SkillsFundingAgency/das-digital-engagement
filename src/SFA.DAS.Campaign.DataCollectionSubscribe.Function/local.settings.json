@@ -11,7 +11,7 @@
     "LocalHttpPort": 7074,
     "CORS": "*"
   },
-  "AppName": "SFA.DAS.Campaign.Functions",
+  "configNames": "SFA.DAS.Campaign.Functions",
   "EnvironmentName": "LOCAL",
   "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true"
 }

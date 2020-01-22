@@ -52,7 +52,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollection
                 .AddEnvironmentVariables()
                 .AddAzureTableStorage(options =>
                 {
-                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("AppName") };
+                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configNames") };
                     options.EnvironmentNameEnvironmentVariableName = tempConfig.GetValue<string>("EnvironmentName");
                     options.StorageConnectionStringEnvironmentVariableName = tempConfig.GetValue<string>("ConfigurationStorageConnectionString");
                     options.PreFixConfigurationKeys = false;
