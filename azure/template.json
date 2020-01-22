@@ -10,7 +10,6 @@
         },
         "environmentName": {
             "type": "string",
-            "defaultValue": ""
         },
         "configNames": {
             "type": "string",
