@@ -48,7 +48,6 @@
         },
         "configurationStorageConnectionString": {
             "type": "string",
-            "defaultValue": ""
         }
     },
     "variables": {
