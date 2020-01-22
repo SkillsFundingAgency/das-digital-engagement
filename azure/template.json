@@ -9,7 +9,7 @@
             }
         },
         "environmentName": {
-            "type": "string",
+            "type": "string"
         },
         "configNames": {
             "type": "string",
