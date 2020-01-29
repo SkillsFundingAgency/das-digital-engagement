@@ -18,6 +18,8 @@ namespace SFA.DAS.Campaign.Functions.Models.DataCollection
         * Email validation taken from https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
         */
         private bool DomainInvalid { get; set; }
+        public string MarketoCookieId { get; set; }
+
         public bool IsValidEmail()
         {
             var strIn = Email;

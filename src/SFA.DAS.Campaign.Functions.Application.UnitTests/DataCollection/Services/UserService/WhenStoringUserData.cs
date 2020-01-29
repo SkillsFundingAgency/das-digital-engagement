@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Campaign.Functions.Application.DataCollection.Services;
 using SFA.DAS.Campaign.Functions.Domain.Infrastructure;
 using SFA.DAS.Campaign.Functions.Models.DataCollection;
 using SFA.DAS.Campaign.Functions.Models.Infrastructure;
 
-namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Services
+namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Services.UserService
 {
     public class WhenStoringUserData
     {
-        private UserService _userService;
+        private Application.DataCollection.Services.UserService _userService;
         private Mock<IHttpClient<Person>> _httpClient;
         private Mock<IOptions<Configuration>> _configuration;
         private UserData _userData;
@@ -36,7 +35,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Servic
             _httpClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<Person>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.Accepted));
             _configuration.Setup(x => x.Value.ApiBaseUrl).Returns("http://test.local/api");
 
-            _userService = new UserService(_httpClient.Object, _configuration.Object);
+            _userService = new Application.DataCollection.Services.UserService(_httpClient.Object, _configuration.Object);
         }
 
         [Test]
