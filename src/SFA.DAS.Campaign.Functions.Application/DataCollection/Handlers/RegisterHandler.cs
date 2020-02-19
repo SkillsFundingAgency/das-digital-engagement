@@ -8,13 +8,11 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
     public class RegisterHandler : IRegisterHandler
     {
         private readonly IUserDataValidator _validator;
-        private readonly IUserService _userServiceObject;
         private readonly IMarketoService _marketoService;
 
-        public RegisterHandler(IUserDataValidator validator, IUserService userServiceObject, IMarketoService marketoService)
+        public RegisterHandler(IUserDataValidator validator, IMarketoService marketoService)
         {
             _validator = validator;
-            _userServiceObject = userServiceObject;
             _marketoService = marketoService;
         }
 
@@ -26,7 +24,6 @@ namespace SFA.DAS.Campaign.Functions.Application.DataCollection.Handlers
             }
 
             await _marketoService.PushLead(userData);
-            await _userServiceObject.RegisterUser(userData);
 
            
         }
