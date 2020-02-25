@@ -185,7 +185,7 @@
                             {
                                 "name": "AzureWebJobsStorage",
                                 "value": "[reference('Storage').outputs.storageConnectionString.value]"
-                            }
+                            },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
