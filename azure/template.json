@@ -187,10 +187,6 @@
                                 "value": "[reference('Storage').outputs.storageConnectionString.value]"
                             },
                             {
-                                "name": "AzureWebJobsDashboard",
-                                "value": "[reference('Storage').outputs.storageConnectionString.value]"
-                            },
-                            {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
                             },
@@ -217,6 +213,10 @@
                             {
                               "name": "ConfigurationStorageConnectionString", 
                               "value": "[parameters('configurationStorageConnectionString')]"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
                             }
                         ]
                     }
