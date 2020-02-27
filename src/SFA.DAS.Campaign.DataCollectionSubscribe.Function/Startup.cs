@@ -73,10 +73,7 @@ namespace SFA.DAS.Campaign.Functions.DataCollection
             services.AddSingleton<ILogger>(_ => _loggerFactory.CreateLogger(LogCategories.CreateFunctionUserCategory("Common")));
 
             services.AddTransient<IRegisterHandler, RegisterHandler>();
-            services.AddTransient<IUnregisterHandler, UnregisterHandler>();
             services.AddTransient<IUserDataValidator, UserDataValidator>();
-            services.AddTransient<IUserUnregisterDataValidator, UserUnregisterDataValidator>();
-            services.AddTransient<IUserService, UserService>();
             services.AddTransient(typeof(IHttpClient<>), typeof(HttpClient<>));
             services.AddTransient<IMarketoService, MarketoLeadService>();
             services.AddTransient<OAuthHttpClientHandler>();

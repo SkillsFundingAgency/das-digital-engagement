@@ -12,18 +12,16 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
     {
         private RegisterHandler _handler;
         private Mock<IUserDataValidator> _validator;
-        private Mock<IUserService> _userService;
         private Mock<IMarketoService> _marketoService;
 
         [SetUp]
         public void Arrange()
         {
             _validator = new Mock<IUserDataValidator>();
-            _userService = new Mock<IUserService>();
             _marketoService = new Mock<IMarketoService>();
 
             _validator.Setup(x => x.Validate(It.IsAny<UserData>())).Returns(true);
-            _handler = new RegisterHandler(_validator.Object, _userService.Object,_marketoService.Object);
+            _handler = new RegisterHandler(_validator.Object,_marketoService.Object);
         }
 
         [Test]
@@ -37,7 +35,6 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
 
             //Assert
             _validator.Verify(x=>x.Validate(It.IsAny<UserData>()), Times.Once);
-            _userService.Verify(x=>x.RegisterUser(It.IsAny<UserData>()), Times.Never);
             _marketoService.Verify(x => x.PushLead(It.IsAny<UserData>()),Times.Never);
         }
 
@@ -59,7 +56,7 @@ namespace SFA.DAS.Campaign.Functions.Application.UnitTests.DataCollection.Handle
             await _handler.Handle(expectedUserData);
 
             //Assert
-            _userService.Verify(x => x.RegisterUser(It.Is<UserData>(c=>c.Equals(expectedUserData))), Times.Once);
+            _marketoService.Verify(x => x.PushLead(It.Is<UserData>(c => c.Equals(expectedUserData))), Times.Once);
         }
 
         [Test]
