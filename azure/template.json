@@ -27,12 +27,6 @@
             "type": "string",
             "defaultValue": ""
         },
-        "apiBaseUrl": {
-            "type": "string"
-        },
-        "apiXFunctionsKey": {
-            "type": "securestring"
-        },
         "appServicePlanSize": {
             "type": "string",
             "allowedValues": [
@@ -191,16 +185,8 @@
                                 "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
                             },
                             {
-                                "name": "Values:ApiBaseUrl",
-                                "value": "[parameters('apiBaseUrl')]"
-                            },
-                            {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
-                            },
-                            {
-                                "name": "Values:ApiXFunctionsKey",
-                                "value": "[parameters('apiXFunctionsKey')]"
                             },
                             {
                                 "name": "ConfigNames",
@@ -228,11 +214,11 @@
         }
     ],
     "outputs": {
-        "stubFunctionAppName": {
+        "StubFunctionAppName": {
             "type": "string",
             "value": "[variables('stubFunctionAppName')]"
         },
-        "functionAppName": {
+        "FunctionAppName": {
             "type": "string",
             "value": "[variables('functionAppName')]"
         }
