@@ -1,12 +1,9 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourceEnvironmentName": {
-            "type": "string",
-            "metadata": {
-                "description": "Short name of the environment. Used for the name of resources created"
-            }
+            "type": "string"
         },
         "environmentName": {
             "type": "string"
@@ -19,24 +16,11 @@
             "type": "bool",
             "defaultValue": false
         },
-        "aseResourceGroup": {
+        "aspSize": {
             "type": "string",
-            "defaultValue": ""
-        },
-        "aseHostingEnvironmentName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "appServicePlanSize": {
-            "type": "string",
-            "allowedValues": [
-                "1",
-                "2",
-                "3"
-            ],
             "defaultValue": "1"
         },
-        "appServicePlanInstances": {
+        "aspInstances": {
             "type": "int",
             "defaultValue": 2
         },
@@ -55,7 +39,7 @@
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "WorkerAppServicePlan",
+            "name": "function-app-service-plan",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -67,24 +51,18 @@
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
                     },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
-                    },
                     "aspSize": {
-                        "value": "[parameters('appServicePlanSize')]"
+                        "value": "[parameters('aspSize')]"
                     },
                     "aspInstances": {
-                        "value": "[parameters('appServicePlanInstances')]"
+                        "value": "[parameters('aspInstances')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionAppInsights",
+            "name": "function-app-insights",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -104,7 +82,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "Storage",
+            "name": "storage-account",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -121,7 +99,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "StubFunctionApp",
+            "name": "stub-function-app",
             "type": "Microsoft.Resources/deployments",
             "condition": "[parameters('deployStubFunctions')]",
             "properties": {
@@ -151,12 +129,12 @@
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan"
+                "function-app-service-plan"
             ]
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "FunctionApp",
+            "name": "function-app",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -182,7 +160,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('FunctionAppInsights').outputs.InstrumentationKey.value]"
+                                "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -209,7 +187,7 @@
                 }
             },
             "dependsOn": [
-                "WorkerAppServicePlan"
+                "function-app-service-plan"
             ]
         }
     ],
