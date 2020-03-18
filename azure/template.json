@@ -19,14 +19,6 @@
             "type": "bool",
             "defaultValue": false
         },
-        "aseResourceGroup": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "aseHostingEnvironmentName": {
-            "type": "string",
-            "defaultValue": ""
-        },
         "appServicePlanSize": {
             "type": "string",
             "allowedValues": [
@@ -47,7 +39,7 @@
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourcePrefix": "[concat('das-',toLower(parameters('resourceEnvironmentName')),'-cpgwkr')]",
-        "appServicePlanName": "[concat(variables('resourcePrefix'),'-asp')]",
+        "appServicePlanName": "[concat(variables('resourcePrefix'),'wkr-asp')]",
         "stubFunctionAppName": "[concat(variables('resourcePrefix'),'-stub-fa')]",
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),'cpgwkrstr')]"
@@ -66,12 +58,6 @@
                 "parameters": {
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
                     },
                     "aspSize": {
                         "value": "[parameters('appServicePlanSize')]"
