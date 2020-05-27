@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "SFA.DAS.Campaign.Functions.DataCollectionUnsubscribe": {
-      "commandName": "Project",
-      "commandLineArgs": "%localAppData%\\AzureFunctionsTools\\Releases\\2.10.1\\cli\\func.dll host start"
-    }
-  }
-}
