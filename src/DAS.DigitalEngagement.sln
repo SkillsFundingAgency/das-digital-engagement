@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAS.DigitalEngagement.Model
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAS.DigitalEngagement.Functions.DataCollection", "DAS.DigitalEngagement.DataCollectionSubscribe.Function\DAS.DigitalEngagement.Functions.DataCollection.csproj", "{D7402DF5-6BBA-4B40-B9A0-87086210B199}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAS.DigitalEngagement.Functions.DataCollectionStub", "DAS.DigitalEngagement.DataCollectionStub.Function\DAS.DigitalEngagement.Functions.DataCollectionStub.csproj", "{44BFFFD8-F1CC-4916-BD3A-A395462E8BAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{D7402DF5-6BBA-4B40-B9A0-87086210B199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7402DF5-6BBA-4B40-B9A0-87086210B199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7402DF5-6BBA-4B40-B9A0-87086210B199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44BFFFD8-F1CC-4916-BD3A-A395462E8BAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44BFFFD8-F1CC-4916-BD3A-A395462E8BAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44BFFFD8-F1CC-4916-BD3A-A395462E8BAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44BFFFD8-F1CC-4916-BD3A-A395462E8BAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{092D35E7-823A-4BF7-897B-DF2D432E8B0F} = {72F709FF-0BDA-4DEA-B6DB-8C94CBD1DC88}
 		{FD64D907-F2E2-43C1-A8BE-D24C35FFB0BC} = {72F709FF-0BDA-4DEA-B6DB-8C94CBD1DC88}
 		{D7402DF5-6BBA-4B40-B9A0-87086210B199} = {C9219B77-0B15-43CB-9CE3-333ED5B435CD}
+		{44BFFFD8-F1CC-4916-BD3A-A395462E8BAD} = {C9219B77-0B15-43CB-9CE3-333ED5B435CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02D56998-F120-4094-A39E-269A7812C2BF}
