@@ -25,11 +25,10 @@ resources:
     endpoint: "GitHub (SFA)"
 
 steps:
-- task: UseGitVersion@5
+- task: gittools.gitversion-preview.gitversion-task.GitVersion@5
   displayName: GitVersion
   inputs:
-    versionSpec : 5.x
-    mode: Mainline
+    configFilePath: GitVersion.yml    
     updateAssemblyInfo: true
 
 - task: DotNetCoreCLI@2
