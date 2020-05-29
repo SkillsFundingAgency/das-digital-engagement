@@ -8,9 +8,6 @@ workspace:
     clean: all
 
 variables:
-  - group: "ESFA - SonarCloud"
-  - name: sonarCloudProjectKey
-    value: "SkillsFundingAgency_das-reservations"
   - name: buildConfiguration
     value: 'release'
   - name: buildPlatform
@@ -31,7 +28,8 @@ steps:
 - task: UseGitVersion@5
   displayName: GitVersion
   inputs:
-    configFilePath: GitVersion.yml
+    versionSpec : 5.x
+    mode: Mainline
     updateAssemblyInfo: true
 
 - task: DotNetCoreCLI@2
