@@ -43,8 +43,8 @@ steps:
   displayName: Test
   inputs:
     command: test
-    projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build'
+    projects: '**/*.UnitTests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks    
 
