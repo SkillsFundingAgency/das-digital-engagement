@@ -60,7 +60,7 @@ steps:
     command: publish
     publishWebProjects: false
     projects: 'src/DAS.DigitalEngagement.DataCollectionSubscribe.Function/DAS.DigitalEngagement.Functions.DataCollection.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish Stub Function'
@@ -68,7 +68,7 @@ steps:
     command: publish
     publishWebProjects: false
     projects: 'src/DAS.DigitalEngagement.DataCollectionStub.Function/DAS.DigitalEngagement.Functions.DataCollectionStub.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build'    
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'  
     
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
