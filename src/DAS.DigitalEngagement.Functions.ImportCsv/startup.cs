@@ -94,7 +94,6 @@ namespace DAS.DigitalEngagement.Functions.Import
                     CaptureMessageTemplates = true,
                     CaptureMessageProperties = true
                 });
-                options.AddConsole();
 
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
