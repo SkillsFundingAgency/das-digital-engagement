@@ -11,6 +11,11 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
 {
     public class NLogConfiguration
     {
+        private string _currentDirectory;
+        public NLogConfiguration(string currentDirectory)
+        {
+            _currentDirectory = currentDirectory;
+        }
         public void ConfigureNLog(IConfiguration configuration)
         {
             var appName = configuration.GetAppName();
@@ -19,7 +24,7 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
 
             if (string.IsNullOrEmpty(env) || env.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
             {
-                AddLocalTarget(config, appName);
+                AddLocalTarget(config, appName, _currentDirectory);
             }
             else
             {
@@ -29,9 +34,10 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
             LogManager.Configuration = config;
         }
 
-        private static void AddLocalTarget(LoggingConfiguration config, string appName)
+        private static void AddLocalTarget(LoggingConfiguration config, string appName, string currentDirectory)
         {
-            InternalLogger.LogFile = Path.Combine(Directory.GetCurrentDirectory(), $"{appName}\\nlog-internal.{appName}.log");
+            currentDirectory = currentDirectory == null ? Directory.GetCurrentDirectory() : currentDirectory;
+            InternalLogger.LogFile = Path.Combine(currentDirectory, $"{appName}\\nlog-internal.{appName}.log");
             var fileTarget = new FileTarget("Disk")
             {
                 FileName = Path.Combine(Directory.GetCurrentDirectory(), $"{appName}\\{appName}.${{shortdate}}.log"),

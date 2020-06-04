@@ -11,7 +11,7 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
 
         public static string GetAppName(this IConfiguration configuration)
         {
-            return configuration.GetConnectionStringOrSetting("AppName");
+            return configuration.GetConnectionStringOrSetting("APPSETTING_AppName");
         }
     }
 }

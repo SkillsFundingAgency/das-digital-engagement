@@ -11,6 +11,9 @@ namespace DAS.DigitalEngagement.Models.Infrastructure
         public virtual string ApiClientSecret { get; set; }
         public virtual RegisterInterestProgramConfiguration RegisterInterestProgramConfiguration { get; set; }
         public virtual string ApiIdentityBaseUrl { get; set; }
+
+        public virtual string ApiRestPrefix => "/rest/v1";
+        public virtual string ApiBulkImportPrefix => "/bulk/v1";
     }
 
     public class RegisterInterestProgramConfiguration

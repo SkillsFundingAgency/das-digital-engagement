@@ -81,7 +81,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
             var marketoConfig = Configuration.GetSection("Marketo").Get<MarketoConfiguration>();
 
             var builder = services.AddRefitClient<IMarketoLeadClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiRestPrefix));
 
             builder.AddHttpMessageHandler<OAuthHttpClientHandler>();
 

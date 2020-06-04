@@ -1,34 +1,91 @@
 ﻿using System;
 using System.IO;
+using DAS.DigitalEngagement.Application.Import.Handlers;
+using DAS.DigitalEngagement.Application.Infrastructure.Interfaces.Marketo;
+using DAS.DigitalEngagement.Application.Services;
+using DAS.DigitalEngagement.Application.Services.Marketo;
+using DAS.DigitalEngagement.Domain.DataCollection;
+using DAS.DigitalEngagement.Domain.Import;
+using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
+using DAS.DigitalEngagement.Functions.Import.Extensions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
+using Refit;
+using DAS.DigitalEngagement.Models.Infrastructure;
+using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
 {
     public class Startup : FunctionsStartup
     {
-         
+        public IConfiguration Configuration { get; private set; }
+
+        public Startup() { }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            var sp = builder.Services.BuildServiceProvider();
+            
+            builder.AddConfiguration((configBuilder) =>
+            {
+                var tempConfig = configBuilder
+                    .Build();
 
-            var configuration = sp.GetService<IConfiguration>();
+                var configuration = configBuilder
+                     //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                     .AddAzureTableStorage(options =>
+                     {
+                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("APPSETTING_AppName") };
+                         options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
+                         options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
+                         options.PreFixConfigurationKeys = false;
+                     })
+                    .Build();
 
-            var nLogConfiguration = new NLogConfiguration();
+                return configuration;
+            });
 
-            var tempConfig = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables()
-                .AddJsonFile("local.settings.json", true).Build();
+            Configuration = builder.GetCurrentConfiguration();
 
-            builder.Services.AddLogging((options) =>
+            ConfigureServices(builder.Services);
+
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
+            var marketoConfig = Configuration.GetSection("Marketo").Get<MarketoConfiguration>();
+            services.AddOptions();
+            services.Configure<MarketoConfiguration>(Configuration.GetSection("Marketo"));
+
+            services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
+            services.AddTransient<IChunkingService, ChunkingService>();
+            services.AddTransient<ICsvService, CsvService>();
+            services.AddTransient<IMarketoBulkImportService, BulkImportService>();
+            services.AddTransient<OAuthHttpClientHandler>();
+
+            var httpBuilder = services.AddRefitClient<IMarketoBulkImportClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiBulkImportPrefix));
+            httpBuilder.AddHttpMessageHandler<OAuthHttpClientHandler>();
+
+            var executioncontextoptions = services.BuildServiceProvider()
+                .GetService<IOptions<ExecutionContextOptions>>().Value;
+            var currentDirectory = executioncontextoptions.AppDirectory;
+
+            var nLogConfiguration = new NLogConfiguration(currentDirectory);
+
+            services.AddLogging((options) =>
             {
                 options.SetMinimumLevel(LogLevel.Trace);
                 options.SetMinimumLevel(LogLevel.Trace);
@@ -39,24 +96,11 @@ namespace DAS.DigitalEngagement.Functions.Import
                 });
                 options.AddConsole();
 
-                nLogConfiguration.ConfigureNLog(tempConfig);
+                nLogConfiguration.ConfigureNLog(Configuration);
             });
 
-            var config = new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .AddEnvironmentVariables()
-                .AddAzureTableStorage(options =>
-                {
-                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("AppName") };
-                    options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
-                    options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
-                })
-                .Build();
-            
-            builder.Services.AddOptions();
-            builder.Services.Configure<ConnectionStrings>(config.GetSection("ConnectionStrings"));
-
-
+            services.RemoveAll<IConfigureOptions<LoggerFilterOptions>>();
+            services.ConfigureOptions<LoggerFilterConfigureOptions>();
         }
     }
 }

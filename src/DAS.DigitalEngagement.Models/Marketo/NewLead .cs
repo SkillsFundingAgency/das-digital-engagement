@@ -34,6 +34,12 @@ namespace DAS.DigitalEngagement.Models.Marketo
         public string LastName { get; set; }
 
         /// <summary>
+        /// Gets or Sets Membership
+        /// </summary>
+        [DataMember(Name = "company", EmitDefaultValue = false)]
+        public string Company { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
