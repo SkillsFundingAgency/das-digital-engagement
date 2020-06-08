@@ -21,7 +21,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             _importPersonHandler = importPersonHandler;
         }
         [FunctionName("ImportPerson")]
-        public async Task Run([BlobTrigger("samples-workitems/{name}")]Stream myBlob, string name, ILogger log)
+        public async Task Run([BlobTrigger("ImportPerson/{name}")]Stream myBlob, string name, ILogger log)
         {
             log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
 
