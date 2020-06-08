@@ -61,6 +61,9 @@ namespace DAS.DigitalEngagement.Functions.Import
 
             ConfigureServices(builder.Services);
 
+            
+
+
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -100,6 +103,8 @@ namespace DAS.DigitalEngagement.Functions.Import
 
             services.RemoveAll<IConfigureOptions<LoggerFilterOptions>>();
             services.ConfigureOptions<LoggerFilterConfigureOptions>();
+
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }
 }
