@@ -29,7 +29,7 @@ steps:
 - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
   displayName: GitVersion
   inputs:
-    configFilePath: GitVersion.yml    
+    configFilePath: GitVersion.yml
     updateAssemblyInfo: true
 
 - task: DotNetCoreCLI@2
@@ -46,13 +46,13 @@ steps:
     projects: '**/*.UnitTests/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks    
+- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     projects: 'src/**/*.sln'
-    arguments: '--configuration $(buildConfiguration) --no-restore'    
+    arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish DataCollection Function'
@@ -68,8 +68,16 @@ steps:
     command: publish
     publishWebProjects: false
     projects: 'src/DAS.DigitalEngagement.DataCollectionStub.Function/DAS.DigitalEngagement.Functions.DataCollectionStub.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'  
-    
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Csv Import'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/DAS.DigitalEngagement.Functions.ImportCsv/DAS.DigitalEngagement.Functions.Import.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
+
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
