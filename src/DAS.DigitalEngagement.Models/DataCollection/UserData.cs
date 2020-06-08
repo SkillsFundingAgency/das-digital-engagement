@@ -12,6 +12,7 @@ namespace DAS.DigitalEngagement.Models.DataCollection
         public string Email { get; set; }
         public string EncodedEmail { get; set; }
         public bool Consent { get; set; }
+        public bool IncludeInUR { get; set; }
         public string CookieId { get; set; }
         public string RouteId { get; set; }
         /*

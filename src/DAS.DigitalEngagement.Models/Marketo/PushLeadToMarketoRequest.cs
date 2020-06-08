@@ -205,7 +205,6 @@ namespace DAS.DigitalEngagement.Models.Marketo
 
         public PushLeadToMarketoRequest MapFromUserData(UserData user, RegisterInterestProgramConfiguration programConfiguration)
         {
-
             var newLeadRequest = new PushLeadToMarketoRequest();
 
             newLeadRequest.ProgramName = programConfiguration.ProgramName;
@@ -219,7 +218,8 @@ namespace DAS.DigitalEngagement.Models.Marketo
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Email = user.Email
+                Email = user.Email,
+                IncludeInUR = user.IncludeInUR
             };
 
             newLeadRequest.Input.Add(newLead);

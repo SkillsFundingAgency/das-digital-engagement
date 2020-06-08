@@ -27,7 +27,8 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
                 Consent = true,
                 RouteId = "1",
                 CookieId = "1",
-                EncodedEmail = "123ADC"
+                EncodedEmail = "123ADC",
+                IncludeInUR = true
             };
 
             _regInfoConfig = new RegisterInterestProgramConfiguration()
@@ -109,6 +110,18 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             var item = actual.Input.First();
 
             Assert.AreEqual(_userData.Email, item.Email);
+        }
+        
+        [Test]
+        public void Then_First_Input_IncludeInUR_Is_Set()
+        {
+            //Act
+            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.IncludeInUR, item.IncludeInUR);
         }
     }
 }
