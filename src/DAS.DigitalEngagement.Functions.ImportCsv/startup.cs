@@ -47,7 +47,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                      //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                      .AddAzureTableStorage(options =>
                      {
-                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("APPSETTING_AppName") };
+                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
                          options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
                          options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
                          options.PreFixConfigurationKeys = false;
@@ -58,7 +58,6 @@ namespace DAS.DigitalEngagement.Functions.Import
             });
 
             Configuration = builder.GetCurrentConfiguration();
-
             ConfigureServices(builder.Services);
 
             
