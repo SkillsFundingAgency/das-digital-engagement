@@ -101,6 +101,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                 nLogConfiguration.ConfigureNLog(Configuration);
             });
 
+
             services.RemoveAll<IConfigureOptions<LoggerFilterOptions>>();
             services.ConfigureOptions<LoggerFilterConfigureOptions>();
 
