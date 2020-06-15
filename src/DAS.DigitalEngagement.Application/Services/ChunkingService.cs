@@ -11,6 +11,10 @@ namespace DAS.DigitalEngagement.Application.Services
     {
         public readonly ChunkingOptions _chunkingOptions;
 
+        public ChunkingService()
+        {
+            _chunkingOptions = new ChunkingOptions();
+        }
         public ChunkingService(IOptions<ChunkingOptions> chunkingOptions)
         {
             _chunkingOptions = chunkingOptions.Value;
