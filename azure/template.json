@@ -261,6 +261,10 @@
                                 "value": "[parameters('configurationStorageConnectionString')]"
                             },
                             {
+                                "name": "AppName",
+                                "value": "das-digital-engagement-import-csv"
+                            },
+                            {
                                 "name": "FUNCTIONS_WORKER_RUNTIME",
                                 "value": "dotnet"
                             }

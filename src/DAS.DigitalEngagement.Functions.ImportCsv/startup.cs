@@ -37,7 +37,7 @@ namespace DAS.DigitalEngagement.Functions.Import
         }
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            
+
             builder.AddConfiguration((configBuilder) =>
             {
                 var tempConfig = configBuilder
@@ -47,7 +47,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                      //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                      .AddAzureTableStorage(options =>
                      {
-                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
+                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configNames") };
                          options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
                          options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
                          options.PreFixConfigurationKeys = false;
@@ -60,7 +60,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             Configuration = builder.GetCurrentConfiguration();
             ConfigureServices(builder.Services);
 
-            
+
 
 
         }
