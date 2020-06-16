@@ -47,7 +47,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                      //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                      .AddAzureTableStorage(options =>
                      {
-                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configNames") };
+                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
                          options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
                          options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
                          options.PreFixConfigurationKeys = false;
@@ -76,6 +76,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<IChunkingService, ChunkingService>();
             services.AddTransient<ICsvService, CsvService>();
             services.AddTransient<IMarketoBulkImportService, BulkImportService>();
+            services.AddTransient<IReportService, ReportService>();
             services.AddTransient<OAuthHttpClientHandler>();
 
             var httpBuilder = services.AddRefitClient<IMarketoBulkImportClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiBulkImportPrefix));
