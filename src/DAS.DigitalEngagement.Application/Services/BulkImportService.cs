@@ -9,7 +9,7 @@ using Das.Marketo.RestApiClient.Interfaces;
 using Das.Marketo.RestApiClient.Models;
 using Refit;
 
-namespace DAS.DigitalEngagement.Application.Services.Marketo
+namespace DAS.DigitalEngagement.Application.Services
 {
     public class BulkImportService : IBulkImportService
     {
