@@ -19,4 +19,12 @@ namespace DAS.DigitalEngagement.Models.Marketo
             return sb.ToString();
         }
     }
+
+    public enum ImportStatus
+    {
+        Queued = 0,
+        Processing = 1,
+        Completed = 2,
+        Failed = 3
+    }
 }

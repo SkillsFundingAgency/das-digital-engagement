@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,28 +29,27 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
             _reportService = reportService;
         }
 
-        public async Task<IList<BulkImportJob>> Handle(Stream personCsv)
+        public async Task<BulkImportFileStatus> Handle(Stream personCsv)
         {
             _logger.LogInformation($"about to handle person import");
 
+            var fileStatus = new BulkImportFileStatus();
             var contacts = await _csvService.ConvertToList<NewLead>(personCsv);
-
             var contactsChunks = _chunkingService.GetChunks(personCsv.Length, contacts).ToList();
 
             var index = 1;
-            var importJobs = new List<BulkImportJob>();
 
             foreach (var contactsList in contactsChunks)
             {
                 var importResult = await _bulkImportService.ImportLeads(contactsList);
-                importJobs.Add(importResult);
+                fileStatus.BulkImportJobs.Add(importResult);
 
                 _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} has been queued. \n Job details: {importResult} ");
 
                 index++;
             }
 
-            return importJobs;
+            return fileStatus;
         }
 
 

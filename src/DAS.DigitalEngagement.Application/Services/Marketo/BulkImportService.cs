@@ -43,5 +43,10 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
                 return bulkImportResponse.Result.FirstOrDefault();
             }
         }
+
+        public Task<BulkImportStatus> GetJobStatus(int jobId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

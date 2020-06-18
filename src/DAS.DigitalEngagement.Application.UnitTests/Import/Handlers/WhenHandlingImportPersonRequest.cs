@@ -26,6 +26,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private Mock<ICsvService> _csvService;
         private Mock<IMarketoBulkImportService> _bulkImportService;
         private Mock<ILogger<ImportPersonHandler>> _logger;
+        private Mock<IReportService> _reportService;
 
         private IChunkingService _chunkingService = new ChunkingService();
 
@@ -48,7 +49,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
                 {batchId = 1, ImportId = "Imported", Status = "Queued"});
 
 
-            _handler = new ImportPersonHandler(_chunkingServiceMock.Object,_csvService.Object,_bulkImportService.Object,_logger.Object);
+            _handler = new ImportPersonHandler(_chunkingServiceMock.Object,_csvService.Object,_bulkImportService.Object,_logger.Object,_reportService.Object);
         }
 
         [Test]

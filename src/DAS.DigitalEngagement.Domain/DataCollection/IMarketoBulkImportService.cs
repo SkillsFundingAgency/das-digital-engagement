@@ -8,5 +8,6 @@ namespace DAS.DigitalEngagement.Domain.DataCollection
     public interface IMarketoBulkImportService
     {
         Task<BulkImportJob> ImportLeads(IList<NewLead> leads);
+        Task<BulkImportStatus> GetJobStatus(int jobId);
     }
 }
