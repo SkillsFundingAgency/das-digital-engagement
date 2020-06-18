@@ -4,6 +4,8 @@ trigger:
     include:
       - "*"
 
+pr: none
+
 workspace:
     clean: all
 
@@ -16,6 +18,7 @@ variables:
 
 pool:
   name: 'DAS - Continuous Integration'
+  demands: Agent.OS -equals Windows_NT
 
 resources:
   repositories:
@@ -36,23 +39,23 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: 'src/**/*.sln'
+    projects: 'src/**/*.csproj'
     noCache: true
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: 'src/**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
     command: test
-    projects: '**/*.UnitTests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    projects: '**/*.UnitTests.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
 
 - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
-
-- task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    projects: 'src/**/*.sln'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish DataCollection Function'
