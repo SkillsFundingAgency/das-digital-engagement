@@ -38,20 +38,20 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: 'src/**/*.sln'
+    projects: 'src/**/*.csproj'
     noCache: true
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: 'src/**/*.sln'
+    projects: 'src/**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
     command: test
-    projects: '**/*.UnitTests/*.csproj'
+    projects: '**/*.UnitTests.csproj'
     arguments: '--configuration $(buildConfiguration) --no-build'
 
 - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
