@@ -4,9 +4,9 @@ using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Domain.DataCollection
 {
-    public interface IMarketoBulkImportService
+    public interface IBulkImportService
     {
-        Task<BulkImportJob> ImportLeads(IList<NewLead> leads);
+        Task<BulkImportJob> ImportPeople(IList<NewLead> leads);
         Task<BulkImportStatus> GetJobStatus(int jobId);
     }
 }

@@ -1,24 +1,20 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
-using IdentityModel.Client;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Azure.WebJobs.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Refit;
 using DAS.DigitalEngagement.Application.DataCollection.Handlers;
 using DAS.DigitalEngagement.Application.DataCollection.Services;
 using DAS.DigitalEngagement.Application.DataCollection.Validators;
-using DAS.DigitalEngagement.Application.Infrastructure.Interfaces.Marketo;
 using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Functions.DataCollection;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Infrastructure;
 using DAS.DigitalEngagement.Framework.Infrastructure;
-using DAS.DigitalEngagement.Models.Infrastructure;
+using Das.Marketo.RestApiClient.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
 
 [assembly: WebJobsStartup(typeof(Startup))]
@@ -66,7 +62,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
             var services = new ServiceCollection();
 
             services.Configure<global::DAS.DigitalEngagement.Models.Infrastructure.Configuration>(Configuration.GetSection("Values"));
-            services.Configure<MarketoConfiguration>(Configuration.GetSection("Marketo"));
+      
             services.AddOptions();
 
             // Important: We need to call CreateFunctionUserCategory, otherwise our log entries might be filtered out.
@@ -76,14 +72,8 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
             services.AddTransient<IUserDataValidator, UserDataValidator>();
             services.AddTransient(typeof(IHttpClient<>), typeof(HttpClient<>));
             services.AddTransient<IMarketoService, MarketoLeadService>();
-            services.AddTransient<OAuthHttpClientHandler>();
 
-            var marketoConfig = Configuration.GetSection("Marketo").Get<MarketoConfiguration>();
-
-            var builder = services.AddRefitClient<IMarketoLeadClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiRestPrefix));
-
-            builder.AddHttpMessageHandler<OAuthHttpClientHandler>();
+            services.AddMarketoClient(Configuration);
 
         return services.BuildServiceProvider();
         }

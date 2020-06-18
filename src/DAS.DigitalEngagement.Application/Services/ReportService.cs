@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using DAS.DigitalEngagement.Domain.Services;
-using DAS.DigitalEngagement.Models.Marketo;
-using LINQtoCSV;
+using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Application.Services
 {

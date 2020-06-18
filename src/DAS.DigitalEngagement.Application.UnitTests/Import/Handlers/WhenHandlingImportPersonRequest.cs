@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DAS.DigitalEngagement.Application.DataCollection.Handlers;
 using DAS.DigitalEngagement.Application.Import.Handlers;
 using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Application.UnitTests.Helpers;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
-using DAS.DigitalEngagement.Models.DataCollection;
-using DAS.DigitalEngagement.Models.Infrastructure;
-using DAS.DigitalEngagement.Models.Marketo;
+using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -24,7 +20,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private ImportPersonHandler _handler;
         private Mock<IChunkingService> _chunkingServiceMock;
         private Mock<ICsvService> _csvService;
-        private Mock<IMarketoBulkImportService> _bulkImportService;
+        private Mock<IBulkImportService> _bulkImportService;
         private Mock<ILogger<ImportPersonHandler>> _logger;
         private Mock<IReportService> _reportService;
 
@@ -38,14 +34,14 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         {
             _chunkingServiceMock = new Mock<IChunkingService>();
             _csvService = new Mock<ICsvService>();
-            _bulkImportService = new Mock<IMarketoBulkImportService>();
+            _bulkImportService = new Mock<IBulkImportService>();
             _logger = new Mock<ILogger<ImportPersonHandler>>();
 
 
             _csvService.Setup(s => s.ConvertToList<NewLead>(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
             _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(),_testLeadList))
                 .Returns(new List<IList<NewLead>>());
-            _bulkImportService.Setup(s => s.ImportLeads(It.IsAny<IList<NewLead>>())).ReturnsAsync(new BulkImportJob()
+            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<NewLead>>())).ReturnsAsync(new BulkImportJob()
                 {batchId = 1, ImportId = "Imported", Status = "Queued"});
 
 
@@ -100,7 +96,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _bulkImportService.Verify(s => s.ImportLeads(It.IsAny<List<NewLead>>()), Times.AtLeast(2));
+            _bulkImportService.Verify(s => s.ImportPeople(It.IsAny<List<NewLead>>()), Times.AtLeast(2));
         }
 
         private static List<NewLead> GenerateNewLeads(int leadCount)

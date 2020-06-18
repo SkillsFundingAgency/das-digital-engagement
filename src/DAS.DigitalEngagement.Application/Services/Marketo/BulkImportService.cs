@@ -11,7 +11,7 @@ using Refit;
 
 namespace DAS.DigitalEngagement.Application.Services.Marketo
 {
-    public class BulkImportService : IMarketoBulkImportService
+    public class BulkImportService : IBulkImportService
     {
         private readonly IMarketoBulkImportClient _marketoBulkImportClient;
         private readonly ICsvService _csvService;
@@ -23,7 +23,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
             _csvService = csvService;
         }
 
-        public async Task<BulkImportJob> ImportLeads(IList<NewLead> leads)
+        public async Task<BulkImportJob> ImportPeople(IList<NewLead> leads)
         {
             var streamBytes = _csvService.ToCsv(leads);
             using (var stream = new MemoryStream(streamBytes))
@@ -36,7 +36,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
                 if (bulkImportResponse.Success == false)
                 {
                     throw new Exception(
-                        $"Unable to push lead to Marketo due to errors: {bulkImportResponse.ToString()}");
+                        $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
                 }
 
                 return bulkImportResponse.Result.FirstOrDefault();
