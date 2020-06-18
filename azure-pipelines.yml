@@ -4,6 +4,8 @@ trigger:
     include:
       - "*"
 
+pr: none
+
 workspace:
     clean: all
 
@@ -40,19 +42,19 @@ steps:
     noCache: true
 
 - task: DotNetCoreCLI@2
-  displayName: Test
-  inputs:
-    command: test
-    projects: '**/*.UnitTests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-
-- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
-
-- task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     projects: 'src/**/*.sln'
     arguments: '--configuration $(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: test
+    projects: '**/*.UnitTests/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
+
+- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish DataCollection Function'
