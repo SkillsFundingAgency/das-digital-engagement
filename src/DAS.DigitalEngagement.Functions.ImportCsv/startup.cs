@@ -2,7 +2,6 @@
 using System.IO;
 using DAS.DigitalEngagement.Application.Import.Handlers;
 using DAS.DigitalEngagement.Application.Services;
-using DAS.DigitalEngagement.Application.Services.Marketo;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Import;
 using DAS.DigitalEngagement.Domain.Services;

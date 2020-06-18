@@ -10,7 +10,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
     public class LeadWhenMappingUserData
     {
         private RegisterInterestProgramConfiguration _regInfoConfig;
-        private UserDataMapping _userDataMapping;
+        private UserDataMapping _userDataMapping = new UserDataMapping();
         private UserData _userData;
 
 
