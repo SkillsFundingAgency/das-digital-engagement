@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;

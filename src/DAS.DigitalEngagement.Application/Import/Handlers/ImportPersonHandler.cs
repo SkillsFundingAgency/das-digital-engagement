@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Import;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 

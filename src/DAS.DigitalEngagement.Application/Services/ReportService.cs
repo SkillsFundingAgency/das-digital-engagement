@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Application.Services

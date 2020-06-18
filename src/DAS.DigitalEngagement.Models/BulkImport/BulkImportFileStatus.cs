@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Das.Marketo.RestApiClient.Models;
 
-namespace Das.Marketo.RestApiClient.Models
+namespace DAS.DigitalEngagement.Models.BulkImport
 {
     public class BulkImportFileStatus
     {
