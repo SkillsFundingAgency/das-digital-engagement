@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAS.DigitalEngagement.Models.DataCollection;
-using DAS.DigitalEngagement.Models.Marketo;
+using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Domain.DataCollection
 {

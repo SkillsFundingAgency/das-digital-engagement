@@ -5,9 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
-using DAS.DigitalEngagement.Models.Infrastructure;
-using DAS.DigitalEngagement.Models.Marketo;
-using Microsoft.Extensions.Options;
+using Das.Marketo.RestApiClient.Interfaces;
+using Das.Marketo.RestApiClient.Models;
 using Refit;
 
 namespace DAS.DigitalEngagement.Application.Services.Marketo

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using DAS.DigitalEngagement.Application.Import.Handlers;
-using DAS.DigitalEngagement.Application.Infrastructure.Interfaces.Marketo;
 using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Application.Services.Marketo;
 using DAS.DigitalEngagement.Domain.DataCollection;
@@ -18,6 +17,7 @@ using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using Refit;
 using DAS.DigitalEngagement.Models.Infrastructure;
+using Das.Marketo.RestApiClient.Configuration;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -68,19 +68,15 @@ namespace DAS.DigitalEngagement.Functions.Import
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
-            var marketoConfig = Configuration.GetSection("Marketo").Get<MarketoConfiguration>();
             services.AddOptions();
-            services.Configure<MarketoConfiguration>(Configuration.GetSection("Marketo"));
+     
 
             services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
             services.AddTransient<IChunkingService, ChunkingService>();
             services.AddTransient<ICsvService, CsvService>();
             services.AddTransient<IMarketoBulkImportService, BulkImportService>();
             services.AddTransient<IReportService, ReportService>();
-            services.AddTransient<OAuthHttpClientHandler>();
-
-            var httpBuilder = services.AddRefitClient<IMarketoBulkImportClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiBulkImportPrefix));
-            httpBuilder.AddHttpMessageHandler<OAuthHttpClientHandler>();
+          
 
             var executioncontextoptions = services.BuildServiceProvider()
                 .GetService<IOptions<ExecutionContextOptions>>().Value;
@@ -105,6 +101,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.RemoveAll<IConfigureOptions<LoggerFilterOptions>>();
             services.ConfigureOptions<LoggerFilterConfigureOptions>();
 
+            services.AddMarketoClient(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }

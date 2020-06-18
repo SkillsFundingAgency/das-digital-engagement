@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Das.Marketo.RestApiClient.Models;
 using Refit;
-using DAS.DigitalEngagement.Models.Marketo;
 
-namespace DAS.DigitalEngagement.Application.Services
+namespace Das.Marketo.RestApiClient.Interfaces
 {
     [Headers("Authorization: Bearer","Content-Type: application/json")]
     public interface IMarketoBulkImportClient
@@ -16,5 +13,6 @@ namespace DAS.DigitalEngagement.Application.Services
         [Headers("Content-Type: multipart/form-data; boundary=-------Boundary")]
         [Post("/leads.json?format=csv")]
         Task<Response<BulkImportJob>> PushLeads([AliasAs("file")]StreamPart pushLeadsPart);
+
     }
 }
