@@ -40,6 +40,6 @@ namespace DAS.DigitalEngagement.Models.BulkImport
             }
         }
 
-        
+        public List<BulkImportStatus> BulkImportStatus { get; set; }
     }
 }

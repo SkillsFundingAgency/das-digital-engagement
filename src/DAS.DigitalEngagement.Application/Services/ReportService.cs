@@ -20,15 +20,42 @@ namespace DAS.DigitalEngagement.Application.Services
                     $"{importFileStatus.BulkImportJobs.Count} jobs have been queued for import into marketo. Please see the status of each import job below:")
                 .AppendLine().AppendLine();
 
+            if (importFileStatus?.BulkImportStatus?.Count > 0)
+            {
+                ReportStatus(importFileStatus, sb);
+            }
+            else
+            {
+                ReportJobs(importFileStatus, sb);
+            }
+            sb.Append($"################################################################################");
+            return sb.ToString();
+        }
+
+        private static void ReportJobs(BulkImportFileStatus importFileStatus, StringBuilder sb)
+        {
             for (int i = 0; i < importFileStatus.BulkImportJobs.Count; i++)
             {
                 var job = importFileStatus.BulkImportJobs[i];
                 sb.Append($"################################################################################").AppendLine();
-                sb.Append($"Bulk import job {i+1} of {importFileStatus.BulkImportJobs.Count} details:").AppendLine();
+                sb.Append($"Bulk import job {i + 1} of {importFileStatus.BulkImportJobs.Count} details:").AppendLine();
                 sb.Append(job.ToString());
+
+                sb.Append($"################################################################################").AppendLine();
             }
-            sb.Append($"################################################################################");
-            return sb.ToString();
+        }
+
+        private static void ReportStatus(BulkImportFileStatus importFileStatus, StringBuilder sb)
+        {
+            for (int i = 0; i < importFileStatus.BulkImportStatus.Count; i++)
+            {
+                var status = importFileStatus.BulkImportStatus[i];
+                sb.Append($"################################################################################").AppendLine();
+                sb.Append($"Bulk import job {i + 1} of {importFileStatus.BulkImportStatus.Count} details:").AppendLine();
+                sb.Append(status.ToString());
+
+                sb.Append($"################################################################################").AppendLine();
+            }
         }
     }
 }

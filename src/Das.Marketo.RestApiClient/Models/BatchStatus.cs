@@ -1,6 +1,6 @@
 namespace Das.Marketo.RestApiClient.Models
 {
-    public class BulkImportStatus 
+    public class BatchStatus 
     {
 
         public int batchId { get; set; }

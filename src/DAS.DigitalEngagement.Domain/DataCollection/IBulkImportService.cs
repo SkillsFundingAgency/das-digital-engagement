@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Domain.DataCollection
@@ -8,5 +9,7 @@ namespace DAS.DigitalEngagement.Domain.DataCollection
     {
         Task<BulkImportJob> ImportPeople(IList<NewLead> leads);
         Task<BulkImportStatus> GetJobStatus(int jobId);
+        Task<string> GetWarnings(int jobId);
+        Task<string> GetFailures(int jobId);
     }
 }

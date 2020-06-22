@@ -4,6 +4,7 @@ using DAS.DigitalEngagement.Application.Import.Handlers;
 using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Import;
+using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
@@ -55,7 +56,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
                 return configuration;
             });
-
+             
             Configuration = builder.GetCurrentConfiguration();
             ConfigureServices(builder.Services);
 
@@ -75,6 +76,8 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<ICsvService, CsvService>();
             services.AddTransient<IBulkImportService, BulkImportService>();
             services.AddTransient<IReportService, ReportService>();
+            services.AddTransient<IBulkImportStatusMapper, BulkImportStatusMapper>();
+            services.AddTransient<IBulkImportJobMapper, BulkImportJobMapper>();
           
 
             var executioncontextoptions = services.BuildServiceProvider()

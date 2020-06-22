@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
@@ -18,17 +19,19 @@ namespace DAS.DigitalEngagement.Functions.Import
     public class MonitorBulkImport
     {
         private readonly IReportService _reportService;
+        private readonly IBulkImportService _bulkImportService;
 
-        public MonitorBulkImport(IReportService reportService)
+        public MonitorBulkImport(IReportService reportService, IBulkImportService bulkImportService)
         {
             _reportService = reportService;
+            _bulkImportService = bulkImportService;
         }
 
         [FunctionName("MonitorBulkImport")]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
-            var outputs = new List<BulkImportJob>();
+            var outputs = new List<BulkImportStatus>();
             var input = context.GetInput<BulkImportFileStatus>();
 
             int pollingInterval = 5;
@@ -39,15 +42,15 @@ namespace DAS.DigitalEngagement.Functions.Import
                 
                 foreach (var bulkImportJob in input.BulkImportJobs.ToList())
                 {
-                    outputs.Add(await context.CallActivityAsync<BulkImportJob>("MonitorBulkImport_Job", bulkImportJob));
+                    outputs.Add(await context.CallActivityAsync<BulkImportStatus>("MonitorBulkImport_Job", bulkImportJob));
                 }
 
-                input.BulkImportJobs = outputs;
+                input.BulkImportStatus = outputs;
 
                 await context.CallActivityAsync<BulkImportJob>("MonitorBulkImport_Report", input);
 
 
-                if (input.BulkImportJobs.All(s => s.Status == "Complete"))
+                if (input.BulkImportStatus.All(s => s.Status == "Complete"))
                 {
                     break;
                 }
@@ -60,9 +63,14 @@ namespace DAS.DigitalEngagement.Functions.Import
 
 
         [FunctionName("MonitorBulkImport_Job")]
-        public BulkImportJob MoitorJob([ActivityTrigger] BulkImportJob job, ILogger log)
+        public async Task<BulkImportStatus> MoitorJob([ActivityTrigger] BulkImportJob job, ILogger log)
         {
-            return job;
+
+            var jobStatus = await _bulkImportService.GetJobStatus(job.batchId);
+
+
+           
+            return jobStatus;
         }
 
         [FunctionName("MonitorBulkImport_HttpStart")]

@@ -40,6 +40,12 @@ namespace Das.Marketo.RestApiClient.Models
         public string Company { get; set; }
 
         /// <summary>
+        /// Gets or Sets Membership
+        /// </summary>
+        [DataMember(Name = "citizen", EmitDefaultValue = false)]
+        public string Citizen { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>

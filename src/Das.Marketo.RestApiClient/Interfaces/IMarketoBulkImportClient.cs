@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Das.Marketo.RestApiClient.Models;
 using Refit;
 
@@ -8,11 +9,16 @@ namespace Das.Marketo.RestApiClient.Interfaces
     public interface IMarketoBulkImportClient
     {
         [Get("/leads/batch/{id}.json")]
-        Task<Response<BulkImportStatus>> GetStatus([AliasAs("id")] int batchId);
+        Task<Response<BatchStatus>> GetStatus([AliasAs("id")] int batchId);
         [Multipart("-------Boundary")]
         [Headers("Content-Type: multipart/form-data; boundary=-------Boundary")]
         [Post("/leads.json?format=csv")]
-        Task<Response<BulkImportJob>> PushLeads([AliasAs("file")]StreamPart pushLeadsPart);
+        Task<Response<BatchJob>> PushLeads([AliasAs("file")]StreamPart pushLeadsPart);
+
+        [Get("/leads/batch/{id}/warnings.json")]
+        Task<HttpContent> GetWarnings([AliasAs("id")] int batchId);
+        [Get("/leads/batch/{id}/failures.json")]
+        Task<HttpContent> GetFailures([AliasAs("id")] int batchId);
 
     }
 }
