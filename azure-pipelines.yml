@@ -4,6 +4,8 @@ trigger:
     include:
       - "*"
 
+pr: none
+
 workspace:
     clean: all
 
@@ -16,6 +18,7 @@ variables:
 
 pool:
   name: 'DAS - Continuous Integration'
+  demands: Agent.OS -equals Windows_NT
 
 resources:
   repositories:
@@ -29,30 +32,30 @@ steps:
 - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
   displayName: GitVersion
   inputs:
-    configFilePath: GitVersion.yml    
+    configFilePath: GitVersion.yml
     updateAssemblyInfo: true
 
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
     command: restore
-    projects: 'src/**/*.sln'
+    projects: 'src/**/*.csproj'
     noCache: true
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: 'src/**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
     command: test
-    projects: '**/*.UnitTests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    projects: '**/*.UnitTests.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
 
-- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks    
-
-- task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    projects: 'src/**/*.sln'
-    arguments: '--configuration $(buildConfiguration) --no-restore'    
+- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish DataCollection Function'
@@ -68,8 +71,16 @@ steps:
     command: publish
     publishWebProjects: false
     projects: 'src/DAS.DigitalEngagement.DataCollectionStub.Function/DAS.DigitalEngagement.Functions.DataCollectionStub.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'  
-    
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Csv Import'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/DAS.DigitalEngagement.Functions.ImportCsv/DAS.DigitalEngagement.Functions.Import.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
+
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:

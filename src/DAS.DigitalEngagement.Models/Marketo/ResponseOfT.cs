@@ -13,47 +13,8 @@ namespace DAS.DigitalEngagement.Models.Marketo
     /// ResponseWithoutResult
     /// </summary>
     [DataContract]
-    public partial class ResponseWithoutResult :  IEquatable<ResponseWithoutResult>, IValidatableObject
+    public partial class Response<T> :  IEquatable<ResponseWithoutResult>, IValidatableObject where T : class
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseWithoutResult" /> class.
-        /// </summary>
-        [JsonConstructor]
-        protected ResponseWithoutResult() { }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResponseWithoutResult" /> class.
-        /// </summary>
-        /// <param name="errors">Array of errors that occurred if the request was unsuccessful.</param>
-        /// <param name="nextPageToken">Paging token returned from a previous response.</param>
-        /// <param name="requestId">Id of the request made (required).</param>
-        /// <param name="success">Whether the request succeeded (required).</param>
-        /// <param name="warnings">Array of warnings given for the operation.</param>
-        public ResponseWithoutResult(List<Error> errors = default(List<Error>), string nextPageToken = default(string), string requestId = default(string), bool success = default(bool), List<Warning> warnings = default(List<Warning>))
-        {
-            // to ensure "requestId" is required (not null)
-            if (requestId == null)
-            {
-                throw new InvalidDataException("requestId is a required property for ResponseWithoutResult and cannot be null");
-            }
-            else
-            {
-                this.RequestId = requestId;
-            }
-
-            // to ensure "success" is required (not null)
-            if (success == null)
-            {
-                throw new InvalidDataException("success is a required property for ResponseWithoutResult and cannot be null");
-            }
-            else
-            {
-                this.Success = success;
-            }
-
-            this.Errors = errors;
-            this.NextPageToken = nextPageToken;
-            this.Warnings = warnings;
-        }
         
         /// <summary>
         /// Array of errors that occurred if the request was unsuccessful
@@ -63,18 +24,14 @@ namespace DAS.DigitalEngagement.Models.Marketo
         public List<Error> Errors { get; set; }
 
         /// <summary>
-        /// Paging token returned from a previous response
-        /// </summary>
-        /// <value>Paging token returned from a previous response</value>
-        [DataMember(Name="nextPageToken", EmitDefaultValue=false)]
-        public string NextPageToken { get; set; }
-
-        /// <summary>
         /// Id of the request made
         /// </summary>
         /// <value>Id of the request made</value>
         [DataMember(Name="requestId", EmitDefaultValue=false)]
         public string RequestId { get; set; }
+
+        [DataMember(Name = "result", EmitDefaultValue = false)]
+        public IList<T> Result { get; set; }
 
         /// <summary>
         /// Whether the request succeeded
@@ -98,8 +55,7 @@ namespace DAS.DigitalEngagement.Models.Marketo
         {
             var sb = new StringBuilder();
             sb.Append("class ResponseWithoutResult {\n");
-            sb.Append("  Errors: ").Append(Errors.Select(s => $"Code:{s.Code} - Message: {s.Message}, \n")).Append("\n");
-            sb.Append("  NextPageToken: ").Append(NextPageToken).Append("\n");
+            sb.Append("  Errors: ").Append(Errors).Append("\n");
             sb.Append("  RequestId: ").Append(RequestId).Append("\n");
             sb.Append("  Success: ").Append(Success).Append("\n");
             sb.Append("  Warnings: ").Append(Warnings).Append("\n");
@@ -142,12 +98,7 @@ namespace DAS.DigitalEngagement.Models.Marketo
                     this.Errors != null &&
                     input.Errors != null &&
                     this.Errors.SequenceEqual(input.Errors)
-                ) && 
-                (
-                    this.NextPageToken == input.NextPageToken ||
-                    (this.NextPageToken != null &&
-                    this.NextPageToken.Equals(input.NextPageToken))
-                ) && 
+                ) &&  
                 (
                     this.RequestId == input.RequestId ||
                     (this.RequestId != null &&
@@ -176,8 +127,6 @@ namespace DAS.DigitalEngagement.Models.Marketo
                 int hashCode = 41;
                 if (this.Errors != null)
                     hashCode = hashCode * 59 + this.Errors.GetHashCode();
-                if (this.NextPageToken != null)
-                    hashCode = hashCode * 59 + this.NextPageToken.GetHashCode();
                 if (this.RequestId != null)
                     hashCode = hashCode * 59 + this.RequestId.GetHashCode();
                 hashCode = hashCode * 59 + this.Success.GetHashCode();
