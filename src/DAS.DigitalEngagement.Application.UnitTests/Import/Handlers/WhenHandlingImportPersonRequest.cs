@@ -36,6 +36,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _csvService = new Mock<ICsvService>();
             _bulkImportService = new Mock<IBulkImportService>();
             _logger = new Mock<ILogger<ImportPersonHandler>>();
+            _reportService = new Mock<IReportService>();
 
 
             _csvService.Setup(s => s.ConvertToList<NewLead>(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
