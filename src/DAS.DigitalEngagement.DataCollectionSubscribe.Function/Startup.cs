@@ -52,9 +52,9 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
                 .AddEnvironmentVariables()
                 .AddAzureTableStorage(options =>
                 {
-                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("APPSETTING_configNames") };
-                    options.EnvironmentNameEnvironmentVariableName = "APPSETTING_EnvironmentName";
-                    options.StorageConnectionStringEnvironmentVariableName = "APPSETTING_ConfigurationStorageConnectionString";
+                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configNames") };
+                    options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
+                    options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
                     options.PreFixConfigurationKeys = false;
                 })
                 .AddJsonFile("local.settings.json",true).Build();
@@ -81,7 +81,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
             var marketoConfig = Configuration.GetSection("Marketo").Get<MarketoConfiguration>();
 
             var builder = services.AddRefitClient<IMarketoLeadClient>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiRestPrefix));
 
             builder.AddHttpMessageHandler<OAuthHttpClientHandler>();
 
