@@ -11,7 +11,7 @@
         "serviceName": {
             "type": "string"
         },
-        "configNames": {
+        "configName": {
             "type": "string",
             "defaultValue": "SFA.DAS.DigitalEngagement"
         },
