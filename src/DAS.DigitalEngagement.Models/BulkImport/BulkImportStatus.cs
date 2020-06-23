@@ -28,10 +28,10 @@ namespace DAS.DigitalEngagement.Models.BulkImport
             sb.Append("  NumOfRowsWithWarning: ").Append(NumOfRowsWithWarning).Append("\n");
             sb.Append("  Message: ").Append(Message).Append("\n");
             sb.Append("  Failures: \n");
-            sb.Append("  {").Append(Failures).AppendLine();
+            sb.Append("  {").AppendLine().Append(Failures).AppendLine();
             sb.Append("  }\n");
             sb.Append("  Warnings: \n");
-            sb.Append("  {").Append(Warnings).AppendLine();
+            sb.Append("  {").AppendLine().Append(Warnings).AppendLine();
             sb.Append("  }\n");
 
             return sb.ToString();
