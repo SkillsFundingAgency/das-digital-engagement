@@ -48,7 +48,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
                 .AddEnvironmentVariables()
                 .AddAzureTableStorage(options =>
                 {
-                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configNames") };
+                    options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
                     options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
                     options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
                     options.PreFixConfigurationKeys = false;
