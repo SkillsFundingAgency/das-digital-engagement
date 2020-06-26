@@ -73,7 +73,7 @@ namespace DAS.DigitalEngagement.Application.Services
 
             if (status.NumOfRowsWithWarning > 0)
             {
-                status.Warnings = await GetFailures(status.Id);
+                status.Warnings = await GetWarnings(status.Id);
             }
 
             return status;
