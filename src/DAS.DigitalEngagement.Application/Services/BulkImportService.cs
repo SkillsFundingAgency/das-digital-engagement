@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
+using DAS.DigitalEngagement.Domain.Mapping.Marketo;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models;
 using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Interfaces;
 using Das.Marketo.RestApiClient.Models;
@@ -21,20 +23,24 @@ namespace DAS.DigitalEngagement.Application.Services
         private readonly ILogger<BulkImportService> _logger;
         private readonly IBulkImportStatusMapper _bulkImportStatusMapper;
         private readonly IBulkImportJobMapper _bulkImportJobMapper;
+        private readonly INewLeadMapper _newLeadMapper;
 
         public BulkImportService(IMarketoLeadClient marketoLeadClient,
-            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<BulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper)
+            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<BulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, INewLeadMapper newLeadMapper)
         {
             _marketoBulkImportClient = marketoBulkImportClient;
             _csvService = csvService;
             _logger = logger;
             _bulkImportStatusMapper = bulkImportStatusMapper;
             _bulkImportJobMapper = bulkImportJobMapper;
+            _newLeadMapper = newLeadMapper;
         }
 
-        public async Task<BulkImportJob> ImportPeople(IList<NewLead> leads)
+        public async Task<BulkImportJob> ImportPeople(IList<Person> people)
         {
-            var streamBytes = _csvService.ToCsv(leads);
+            var leads = people.Select(_newLeadMapper.Map);
+
+            var streamBytes = _csvService.ToCsv(people);
             using (var stream = new MemoryStream(streamBytes))
             {
 
@@ -73,7 +79,7 @@ namespace DAS.DigitalEngagement.Application.Services
 
             if (status.NumOfRowsWithWarning > 0)
             {
-                status.Warnings = await GetFailures(status.Id);
+                status.Warnings = await GetWarnings(status.Id);
             }
 
             return status;

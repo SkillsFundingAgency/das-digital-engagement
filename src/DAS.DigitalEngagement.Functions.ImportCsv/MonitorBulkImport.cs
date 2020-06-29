@@ -39,7 +39,8 @@ namespace DAS.DigitalEngagement.Functions.Import
 
             while (input.BulkImportJobs.Any(s => s.Status != "Complete"))
             {
-                
+                outputs.Clear();
+
                 foreach (var bulkImportJob in input.BulkImportJobs.ToList())
                 {
                     outputs.Add(await context.CallActivityAsync<BulkImportStatus>("MonitorBulkImport_Job", bulkImportJob));

@@ -5,6 +5,7 @@ using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Import;
 using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
+using DAS.DigitalEngagement.Domain.Mapping.Marketo;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
@@ -78,7 +79,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<IReportService, ReportService>();
             services.AddTransient<IBulkImportStatusMapper, BulkImportStatusMapper>();
             services.AddTransient<IBulkImportJobMapper, BulkImportJobMapper>();
-          
+            services.AddTransient<INewLeadMapper, NewLeadMapper>();
 
             var executioncontextoptions = services.BuildServiceProvider()
                 .GetService<IOptions<ExecutionContextOptions>>().Value;
