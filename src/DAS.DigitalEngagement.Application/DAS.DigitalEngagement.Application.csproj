@@ -5,16 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityModel" Version="4.1.1" />
-    <PackageReference Include="LINQtoCSV" Version="1.5.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="refit" Version="4.8.14" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="4.7.51" />
+    <PackageReference Include="Threenine.LinqToCsv" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DAS.DigitalEngagement.Domain\DAS.DigitalEngagement.Domain.csproj" />
+    <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />
   </ItemGroup>
 
 </Project>

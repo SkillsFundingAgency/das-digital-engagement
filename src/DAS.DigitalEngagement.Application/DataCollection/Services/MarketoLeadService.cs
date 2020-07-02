@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using DAS.DigitalEngagement.Application.Services;
+using DAS.DigitalEngagement.Application.DataCollection.Mapping;
 using Microsoft.Extensions.Options;
-using Refit;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Models.DataCollection;
-using DAS.DigitalEngagement.Models.Infrastructure;
-using DAS.DigitalEngagement.Models.Marketo;
+using Das.Marketo.RestApiClient.Configuration;
+using Das.Marketo.RestApiClient.Interfaces;
 
 namespace DAS.DigitalEngagement.Application.DataCollection.Services
 {
@@ -18,17 +14,18 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Services
     {
         private readonly IMarketoLeadClient _marketoLeadClient;
         private readonly IOptions<MarketoConfiguration> _marketoOptions;
+        private readonly UserDataMapping _userDataMapping;
 
         public MarketoLeadService(IMarketoLeadClient marketoLeadClient, IOptions<MarketoConfiguration> marketoOptions)
         {
             _marketoLeadClient = marketoLeadClient;
             _marketoOptions = marketoOptions;
+            _userDataMapping = new UserDataMapping();
         }
 
         public async Task PushLead(UserData user)
         {
-            var pushedLead = await _marketoLeadClient.PushLead(
-                new PushLeadToMarketoRequest().MapFromUserData(user,
+            var pushedLead = await _marketoLeadClient.PushLead(_userDataMapping.MapFromUserData(user,
                     _marketoOptions.Value.RegisterInterestProgramConfiguration));
 
             if (pushedLead.Success == false)

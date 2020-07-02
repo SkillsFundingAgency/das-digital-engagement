@@ -1,23 +1,22 @@
-using System;
 using System.Linq;
+using DAS.DigitalEngagement.Application.DataCollection.Mapping;
 using DAS.DigitalEngagement.Models.DataCollection;
-using DAS.DigitalEngagement.Models.Infrastructure;
-using DAS.DigitalEngagement.Models.Marketo;
+using Das.Marketo.RestApiClient.Configuration;
+using Das.Marketo.RestApiClient.Models;
 using NUnit.Framework;
 
 namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
 {
     public class LeadWhenMappingUserData
     {
-        private PushLeadToMarketoRequest _newLead;
         private RegisterInterestProgramConfiguration _regInfoConfig;
+        private UserDataMapping _userDataMapping = new UserDataMapping();
         private UserData _userData;
 
 
         [SetUp]
         public void Arrange()
         {
-            _newLead = new PushLeadToMarketoRequest();
 
             _userData = new UserData
             {
@@ -45,7 +44,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_Program_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             Assert.AreEqual(_regInfoConfig.ProgramName, actual.ProgramName);
@@ -54,7 +53,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_Source_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             Assert.AreEqual(_regInfoConfig.Source, actual.Source);
@@ -63,7 +62,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_LookupField_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             Assert.AreEqual(_regInfoConfig.LookupField, actual.LookupField);
@@ -72,7 +71,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_Input_has_one_item()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             Assert.AreEqual(1,actual.Input.Count);
@@ -82,7 +81,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_First_Input_Firstname_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             var item = actual.Input.First();
@@ -93,7 +92,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_First_Input_Lastname_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             var item = actual.Input.First();
@@ -104,7 +103,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_First_Input_Email_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             var item = actual.Input.First();

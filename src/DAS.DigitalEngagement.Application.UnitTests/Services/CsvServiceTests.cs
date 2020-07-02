@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DAS.DigitalEngagement.Application.DataCollection.Handlers;
-using DAS.DigitalEngagement.Application.Import.Handlers;
 using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Application.UnitTests.Helpers;
-using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
-using DAS.DigitalEngagement.Models.DataCollection;
-using DAS.DigitalEngagement.Models.Infrastructure;
-using DAS.DigitalEngagement.Models.Marketo;
+using Das.Marketo.RestApiClient.Models;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
 using NUnit.Framework;
 
 namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers

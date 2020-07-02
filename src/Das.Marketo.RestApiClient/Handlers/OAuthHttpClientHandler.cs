@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Das.Marketo.RestApiClient.Configuration;
 using IdentityModel.Client;
 using Microsoft.Extensions.Options;
-using DAS.DigitalEngagement.Models.Infrastructure;
 
-namespace DAS.DigitalEngagement.Application.Infrastructure.Interfaces.Marketo
+namespace Das.Marketo.RestApiClient.Handlers
 {
     public class OAuthHttpClientHandler : DelegatingHandler
     {

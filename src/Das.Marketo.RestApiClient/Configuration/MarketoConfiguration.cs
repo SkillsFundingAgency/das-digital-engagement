@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DAS.DigitalEngagement.Models.Infrastructure
+﻿namespace Das.Marketo.RestApiClient.Configuration
 {
     public class MarketoConfiguration
     {

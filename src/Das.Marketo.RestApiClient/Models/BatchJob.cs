@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace DAS.DigitalEngagement.Models.Marketo
+namespace Das.Marketo.RestApiClient.Models
 {
-    public class BulkImportJob
+    public class BatchJob
     {
         public int batchId { get; set; }
         public string ImportId { get; set; }

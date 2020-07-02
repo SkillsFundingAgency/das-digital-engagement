@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using DAS.DigitalEngagement.Application.Services;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using DAS.DigitalEngagement.Models.DataCollection;
-using DAS.DigitalEngagement.Models.Infrastructure;
-using DAS.DigitalEngagement.Models.Marketo;
+using Das.Marketo.RestApiClient.Configuration;
+using Das.Marketo.RestApiClient.Interfaces;
+using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.MarketoLeadService
 {
     public class WhenStoringUserData
     {
         private Application.DataCollection.Services.MarketoLeadService _marketoLeadService;
-        private Mock<IMarketoLeadClient> _MarketoLeadClient;
+        private Mock<IMarketoLeadClient> _marketoLeadClient;
         private Mock<IOptions<MarketoConfiguration>> _configuration;
         private UserData _employerUserData;
         private UserData _citizenUserData;
@@ -45,7 +43,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
                 Email = "test@tester.com",
                 MarketoCookieId = _marketoCookieID
             };
-            _MarketoLeadClient = new Mock<IMarketoLeadClient>();
+            _marketoLeadClient = new Mock<IMarketoLeadClient>();
             _configuration = new Mock<IOptions<MarketoConfiguration>>();
             _configuration.Setup(x => x.Value.RegisterInterestProgramConfiguration.ProgramName).Returns("ProgrammeName");
             _configuration.Setup(x => x.Value.RegisterInterestProgramConfiguration.Source).Returns("Source");
@@ -54,7 +52,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
             _configuration.Setup(x => x.Value.RegisterInterestProgramConfiguration.EmployerReason).Returns("EmployerReason");
 
             //Arrange
-            _MarketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
+            _marketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
                 .ReturnsAsync(new ResponseOfPushLeadToMarketo(success: true)
                 {
                     Result = new List<Lead>()
@@ -66,10 +64,10 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
                             }
                 });
 
-            _MarketoLeadClient.Setup(s => s.AssociateLead(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new ResponseWithoutResult(success: true, requestId: "") { Errors = new List<Error>() });
+            _marketoLeadClient.Setup(s => s.AssociateLead(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new ResponseWithoutResult(success: true, requestId: "") { Errors = new List<Error>() });
 
 
-            _marketoLeadService = new Application.DataCollection.Services.MarketoLeadService(_MarketoLeadClient.Object, _configuration.Object);
+            _marketoLeadService = new Application.DataCollection.Services.MarketoLeadService(_marketoLeadClient.Object, _configuration.Object);
         }
 
         [Test]
@@ -132,7 +130,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
         public async Task Then_The_Marketo_lead_Service_Is_Called()
         {
             //Arrange
-            _MarketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
+            _marketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
                 .ReturnsAsync(new ResponseOfPushLeadToMarketo()
                 {
                     Success = true,
@@ -151,8 +149,8 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
             await _marketoLeadService.PushLead(_employerUserData);
 
             //Assert
-            _MarketoLeadClient.Verify(x => x.PushLead(It.IsAny<PushLeadToMarketoRequest>()), Times.Once);
-            _MarketoLeadClient.Verify(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+            _marketoLeadClient.Verify(x => x.PushLead(It.IsAny<PushLeadToMarketoRequest>()), Times.Once);
+            _marketoLeadClient.Verify(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>()), Times.Once);
 
         }
 
@@ -163,7 +161,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
         {
             _employerUserData.MarketoCookieId = cookieId;
             //Arrange
-            _MarketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
+            _marketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
                 .ReturnsAsync(new ResponseOfPushLeadToMarketo()
                 {
                     Success = true,
@@ -182,8 +180,8 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
             await _marketoLeadService.PushLead(_employerUserData);
 
             //Assert
-            _MarketoLeadClient.Verify(x => x.PushLead(It.IsAny<PushLeadToMarketoRequest>()), Times.Once);
-            _MarketoLeadClient.Verify(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+            _marketoLeadClient.Verify(x => x.PushLead(It.IsAny<PushLeadToMarketoRequest>()), Times.Once);
+            _marketoLeadClient.Verify(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
 
             _employerUserData.MarketoCookieId = _marketoCookieID;
         }
@@ -192,7 +190,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
         public void Then_If_The_PushLead_Request_Is_Rejected_A_Exception_Is_Thrown()
         {
             //Arrange
-            _MarketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
+            _marketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
                 .ReturnsAsync(new ResponseOfPushLeadToMarketo(errors: new List<Error>(), requestId: "") { Success = false });
 
             //Act Assert
@@ -203,7 +201,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
         public void Then_If_The_AssociateLead_Request_Is_Rejected_A_Exception_Is_Thrown()
         {
             //Arrange
-            _MarketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
+            _marketoLeadClient.Setup(s => s.PushLead(It.IsAny<PushLeadToMarketoRequest>()))
                 .ReturnsAsync(new ResponseOfPushLeadToMarketo(errors: new List<Error>(), requestId: "")
                 {
                     Success = true,
@@ -216,7 +214,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
 
                 }
                 });
-            _MarketoLeadClient.Setup(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new ResponseWithoutResult(errors: new List<Error>(), requestId: "") { Success = false, Errors = new List<Error>() });
+            _marketoLeadClient.Setup(v => v.AssociateLead(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new ResponseWithoutResult(errors: new List<Error>(), requestId: "") { Success = false, Errors = new List<Error>() });
             //Act Assert
             Assert.ThrowsAsync<Exception>(async () => await _marketoLeadService.PushLead(_employerUserData));
         }

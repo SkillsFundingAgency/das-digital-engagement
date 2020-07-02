@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Das.Marketo.RestApiClient.Models;
 using Refit;
-using DAS.DigitalEngagement.Models.Marketo;
 
-namespace DAS.DigitalEngagement.Application.Services
+namespace Das.Marketo.RestApiClient.Interfaces
 {
     [Headers("Authorization: Bearer","Content-Type: application/json")]
     public interface IMarketoLeadClient

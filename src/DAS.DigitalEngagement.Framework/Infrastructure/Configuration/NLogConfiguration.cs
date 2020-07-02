@@ -40,7 +40,7 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
             InternalLogger.LogFile = Path.Combine(currentDirectory, $"{appName}\\nlog-internal.{appName}.log");
             var fileTarget = new FileTarget("Disk")
             {
-                FileName = Path.Combine(Directory.GetCurrentDirectory(), $"{appName}\\{appName}.${{shortdate}}.log"),
+                FileName = Path.Combine(currentDirectory, $"{appName}\\{appName}.${{shortdate}}.log"),
                 Layout = "${longdate} [${uppercase:${level}}] [${logger}] - ${message} ${onexception:${exception:format=tostring}}"
             };
             config.AddTarget(fileTarget);
