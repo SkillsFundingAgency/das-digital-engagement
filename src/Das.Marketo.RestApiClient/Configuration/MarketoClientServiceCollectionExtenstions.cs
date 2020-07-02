@@ -23,12 +23,11 @@ namespace Das.Marketo.RestApiClient.Configuration
 
             var httpBuilder = services.AddRefitClient<IMarketoBulkImportClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiBulkImportPrefix));
             httpBuilder.AddHttpMessageHandler<OAuthHttpClientHandler>();
-
+            
+            var builder = services.AddRefitClient<IMarketoLeadClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiRestPrefix));
+            builder.AddHttpMessageHandler<OAuthHttpClientHandler>();
 
             return services;
         }
-
-
-       
     }
 }
