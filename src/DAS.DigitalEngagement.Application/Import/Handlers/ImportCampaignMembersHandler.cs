@@ -16,9 +16,9 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
         private readonly ICsvService _csvService;
         private readonly IBulkImportService _bulkImportService;
         private readonly IReportService _reportService;
-        private readonly ILogger<ImportPersonHandler> _logger;
+        private readonly ILogger<ImportCampaignMembersHandler> _logger;
 
-        public ImportCampaignMembersHandler(IChunkingService chunkingService, ICsvService csvService, IBulkImportService bulkImportService, ILogger<ImportPersonHandler> logger, IReportService reportService)
+        public ImportCampaignMembersHandler(IChunkingService chunkingService, ICsvService csvService, IBulkImportService bulkImportService, ILogger<ImportCampaignMembersHandler> logger, IReportService reportService)
         {
             _chunkingService = chunkingService;
             _csvService = csvService;
