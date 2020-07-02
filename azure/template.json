@@ -11,7 +11,7 @@
         "serviceName": {
             "type": "string"
         },
-        "configNames": {
+        "configName": {
             "type": "string",
             "defaultValue": "SFA.DAS.DigitalEngagement"
         },
@@ -191,8 +191,8 @@
                                 "value": "~2"
                             },
                             {
-                                "name": "ConfigNames",
-                                "value": "[parameters('configNames')]"
+                                "name": "ConfigName",
+                                "value": "[parameters('configName')]"
                             },
                             {
                               "name": "EnvironmentName",
@@ -249,8 +249,8 @@
                                 "value": "~2"
                             },
                             {
-                                "name": "ConfigNames",
-                                "value": "[parameters('configNames')]"
+                                "name": "ConfigName",
+                                "value": "[parameters('configName')]"
                             },
                             {
                                 "name": "EnvironmentName",
