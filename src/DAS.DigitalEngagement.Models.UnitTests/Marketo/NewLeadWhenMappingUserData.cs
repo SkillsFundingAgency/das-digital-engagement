@@ -115,7 +115,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
         public void Then_First_Input_IncludeInUR_Is_Set()
         {
             //Act
-            var actual = _newLead.MapFromUserData(_userData, _regInfoConfig);
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
             var item = actual.Input.First();
