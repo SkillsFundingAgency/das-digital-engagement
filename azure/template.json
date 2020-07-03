@@ -124,7 +124,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "storage-account-containers",
+            "name": "[concat('storage-account-container-',variables('storageContainerNames')[copyIndex()])]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
