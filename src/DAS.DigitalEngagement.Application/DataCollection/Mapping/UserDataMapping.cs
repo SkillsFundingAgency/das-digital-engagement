@@ -30,7 +30,8 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Mapping
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Email = user.Email
+                Email = user.Email,
+                IncludeInUR = user.IncludeInUR
             };
 
             newLeadRequest.Input.Add(newLead);

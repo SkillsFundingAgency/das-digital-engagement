@@ -38,7 +38,8 @@
         "stubFunctionAppName": "[concat(variables('resourcePrefix'),'-stub-fa')]",
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
         "importFunctionAppName": "[concat(variables('resourcePrefix'),'-import-fa')]",
-        "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]"
+        "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
+        "storageContainerNames": [ "import-person", "import-campaign-members" ]
     },
     "resources": [
         {
@@ -120,6 +121,33 @@
                     }
                 }
             }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('storage-account-container-',variables('storageContainerNames')[copyIndex()])]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'storage-container.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "containerName": {
+                        "value": "[variables('storageContainerNames')[copyIndex()]]"
+                    }
+                }
+            },
+            "copy": {
+                "count": "[length(variables('storageContainerNames'))]",
+                "name": "storageContainerCopy"
+            },
+            "dependsOn": [
+                "storage-account"
+            ]
         },
         {
             "apiVersion": "2017-05-10",
