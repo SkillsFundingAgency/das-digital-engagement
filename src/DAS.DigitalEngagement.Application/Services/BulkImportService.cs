@@ -53,6 +53,31 @@ namespace DAS.DigitalEngagement.Application.Services
             }
         }
 
+        public async Task<BulkImportJob> ImportToCampaign(IList<NewLead> leads, string campaignId)
+        {
+            
+
+            var streamBytes = _csvService.ToCsv(leads);
+            using (var stream = new MemoryStream(streamBytes))
+            {
+
+                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
+
+                var bulkImportResponse = await _marketoBulkImportClient.PushToProgram(streamPart,campaignId);
+
+                if (bulkImportResponse.Success == false)
+                {
+                    throw new Exception(
+                        $"Unable to push person to campaign {campaignId} due to errors: {bulkImportResponse.ToString()}");
+                }
+
+
+
+
+                return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
+            }
+        }
+
         public async Task<BulkImportStatus> GetJobStatus(int jobId)
         {
             var response = await _marketoBulkImportClient.GetStatus(jobId);
