@@ -53,7 +53,7 @@ namespace DAS.DigitalEngagement.Application.Services
             }
         }
 
-        public async Task<BulkImportJob> ImportToCampaign(IList<NewLead> leads, string campaignId)
+        public async Task<BulkImportJob> ImportToCampaign(IList<dynamic> leads, string campaignId)
         {
             
 

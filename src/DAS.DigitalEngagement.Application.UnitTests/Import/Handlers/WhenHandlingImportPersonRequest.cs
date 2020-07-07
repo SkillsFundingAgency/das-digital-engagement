@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,28 +41,28 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
 
             _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
-            _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(),_testLeadList))
+            _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(), _testLeadList))
                 .Returns(new List<IList<dynamic>>());
             _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportJob()
-                {batchId = 1, ImportId = "Imported", Status = "Queued"});
+            { batchId = 1, ImportId = "Imported", Status = "Queued" });
 
 
-            _handler = new ImportPersonHandler(_chunkingServiceMock.Object,_csvService.Object,_bulkImportService.Object,_logger.Object,_reportService.Object);
+            _handler = new ImportPersonHandler(_chunkingServiceMock.Object, _csvService.Object, _bulkImportService.Object, _logger.Object, _reportService.Object);
         }
 
         [Test]
         public async Task Then_The_Blob_Is_Converted_To_List()
         {
             //Arrange
-   
+
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
             {
                 await _handler.Handle(test_Stream);
             }
-           
+
             //Assert
-            _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()),Times.Once);
+            _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()), Times.Once);
         }
 
         [Test]
@@ -102,15 +103,18 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
         private static List<dynamic> GenerateNewLeads(int leadCount)
         {
-            //List<dynamic> Leads = Enumerable
-            //    .Range(0, leadCount)
-            //    .Select(i => new NewLead
-            //    {
-            //        FirstName = $"Firstname{i}", LastName = "Surname ", Email = $"Firstname{i}.lastname@Email.com",
-            //        Company = $"MyNewCompany{i}"
-            //    })
-            //    .ToList();
-            return new List<dynamic>();
+            var Leads = Enumerable
+                .Range(0, leadCount)
+                .Select(i =>
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.FirstName = $"Firstname{i}";
+                    expando.LastName = "Surname ";
+                    expando.Email = $"Firstname{i}.lastname@Email.com";
+                    expando.Company = $"MyNewCompany{i}";
+                    return (dynamic)expando;
+                })
+                .ToList();
         }
     }
 }
