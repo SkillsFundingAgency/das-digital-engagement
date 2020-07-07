@@ -115,6 +115,8 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
                     return (dynamic)expando;
                 })
                 .ToList();
+
+            return Leads;
         }
     }
 }
