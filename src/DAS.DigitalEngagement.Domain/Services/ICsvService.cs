@@ -6,7 +6,8 @@ namespace DAS.DigitalEngagement.Domain.Services
 {
     public interface ICsvService
     {
-        Task<List<T>> ConvertToList<T>(Stream personCsv) where T : class, new();
+        Task<IList<dynamic>> ConvertToList(Stream personCsv);
         byte[] ToCsv<T>(IList<T> leads);
+        string ToCsvString(IList<dynamic> leads);
     }
 }

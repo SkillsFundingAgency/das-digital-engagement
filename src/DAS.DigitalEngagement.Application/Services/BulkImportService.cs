@@ -32,13 +32,13 @@ namespace DAS.DigitalEngagement.Application.Services
             _bulkImportJobMapper = bulkImportJobMapper;
         }
 
-        public async Task<BulkImportJob> ImportPeople(IList<NewLead> leads)
+        public async Task<BulkImportJob> ImportPeople(IList<dynamic> leads)
         {
-            var streamBytes = _csvService.ToCsv(leads);
-            using (var stream = new MemoryStream(streamBytes))
-            {
+            var csvStrings = _csvService.ToCsvString(leads);    
 
-                var streamPart = new StreamPart(stream,String.Empty, "text/csv");
+            using (var stream = GenerateStreamFromString(csvStrings))
+            {
+                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
 
                 var bulkImportResponse = await _marketoBulkImportClient.PushLeads(streamPart);
 
@@ -47,8 +47,6 @@ namespace DAS.DigitalEngagement.Application.Services
                     throw new Exception(
                         $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
                 }
-
-
 
 
                 return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
@@ -91,6 +89,16 @@ namespace DAS.DigitalEngagement.Application.Services
             var failureResponse = await _marketoBulkImportClient.GetFailures(jobId);
 
             return await failureResponse.ReadAsStringAsync();
+        }
+
+        private static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }

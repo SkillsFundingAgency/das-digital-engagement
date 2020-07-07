@@ -7,7 +7,7 @@ namespace DAS.DigitalEngagement.Domain.DataCollection
 {
     public interface IBulkImportService
     {
-        Task<BulkImportJob> ImportPeople(IList<NewLead> leads);
+        Task<BulkImportJob> ImportPeople(IList<dynamic> leads);
         Task<BulkImportStatus> GetJobStatus(int jobId);
         Task<string> GetWarnings(int jobId);
         Task<string> GetFailures(int jobId);
