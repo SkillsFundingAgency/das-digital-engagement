@@ -72,6 +72,7 @@ namespace DAS.DigitalEngagement.Functions.Import
      
 
             services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
+            services.AddTransient<IImportCampaignMembersHandler, ImportCampaignMembersHandler>();
             services.AddTransient<IChunkingService, ChunkingService>();
             services.AddTransient<ICsvService, CsvService>();
             services.AddTransient<IBulkImportService, BulkImportService>();
