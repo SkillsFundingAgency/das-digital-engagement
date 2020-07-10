@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Models.Infrastructure;
@@ -32,7 +33,7 @@ namespace DAS.DigitalEngagement.Application.Services
             return chunkSize;
         }
 
-        private IEnumerable<List<T>> SplitList<T>(List<T> locations, int nSize)
+        private IEnumerable<IList<T>> SplitList<T>(List<T> locations, int nSize)
         {
             for (int i = 0; i < locations.Count; i += nSize)
             {
@@ -40,11 +41,11 @@ namespace DAS.DigitalEngagement.Application.Services
             }
         }
 
-        public IEnumerable<IList<T>> GetChunks<T>(long totalSize, List<T> items)
+        public IEnumerable<IList<T>> GetChunks<T>(long totalSize, IList<T> items)
         {
             var chunkSize = CalculateChunkSize(items.Count, totalSize);
 
-            return SplitList(items, chunkSize);
+            return SplitList(items.ToList(), chunkSize);
         }
     }
 }

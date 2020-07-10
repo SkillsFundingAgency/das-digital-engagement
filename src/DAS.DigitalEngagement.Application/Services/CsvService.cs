@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
 using DAS.DigitalEngagement.Domain.Services;
 using LINQtoCSV;
 
@@ -9,23 +11,17 @@ namespace DAS.DigitalEngagement.Application.Services
 {
     public class CsvService : ICsvService
     {
-        public async Task<List<T>> ConvertToList<T>(Stream personCsv) where T : class, new()
+        public async Task<IList<dynamic>> ConvertToList(Stream personCsv)
         {
-            CsvFileDescription inputFileDescription = new CsvFileDescription
+
+
+            TextReader tr = new StreamReader(personCsv);
+            using (var csv = new CsvReader(tr, CultureInfo.InvariantCulture))
             {
-                SeparatorChar = ',',
-                FirstLineHasColumnNames = true,
-                FileCultureName = "en-gb",
-                IgnoreUnknownColumns = true
-            };
-
-            CsvContext cc = new CsvContext();
-
-
-            using (StreamReader sr = new StreamReader(personCsv))
-            {
-                return cc.Read<T>(sr, inputFileDescription).ToList();
+                var records = csv.GetRecords<dynamic>();
+                return records.ToList<dynamic>();
             }
+
 
         }
 
@@ -47,7 +43,23 @@ namespace DAS.DigitalEngagement.Application.Services
                 sw.Flush();
                 return memStream.ToArray();
             }
+
            
+        }
+
+        public string ToCsvString(IList<dynamic> leads)
+        {
+
+            using (var writer = new StringWriter())
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(leads);
+                
+                writer.Flush();
+                return writer.ToString();
+            }
+
+
         }
     }
 }

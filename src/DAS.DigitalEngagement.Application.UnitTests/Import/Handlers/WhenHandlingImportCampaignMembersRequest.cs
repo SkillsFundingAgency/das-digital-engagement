@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private IChunkingService _chunkingService = new ChunkingService();
 
         private string _testCsv = CsvTestHelper.GetValidCsv_SingleChunk();
-        private List<NewLead> _testLeadList = GenerateNewLeads(10);
+        private IList<dynamic> _testLeadList = GenerateNewLeads(10);
 
         [SetUp]
         public void Arrange()
@@ -39,10 +40,10 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _reportService = new Mock<IReportService>();
 
 
-            _csvService.Setup(s => s.ConvertToList<NewLead>(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
+            _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
             _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(),_testLeadList))
-                .Returns(new List<IList<NewLead>>());
-            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<NewLead>>())).ReturnsAsync(new BulkImportJob()
+                .Returns(new List<IList<dynamic>>());
+            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportJob()
                 {batchId = 1, ImportId = "Imported", Status = "Queued"});
 
 
@@ -61,7 +62,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
            
             //Assert
-            _csvService.Verify(s => s.ConvertToList<NewLead>(It.IsAny<Stream>()),Times.Once);
+            _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()),Times.Once);
         }
 
         [Test]
@@ -87,7 +88,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             var Leads = GenerateNewLeads(noOfLeads);
             var campaignId = "campaignId";
 
-            _csvService.Setup(s => s.ConvertToList<NewLead>(It.IsAny<Stream>())).ReturnsAsync(Leads);
+            _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(Leads);
 
             _chunkingServiceMock.Setup(s => s.GetChunks(172, Leads))
                 .Returns(_chunkingService.GetChunks(28000000, Leads));
@@ -99,17 +100,21 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _bulkImportService.Verify(s => s.ImportToCampaign(It.IsAny<List<NewLead>>(), "campaignId"), Times.AtLeast(2));
+            _bulkImportService.Verify(s => s.ImportToCampaign(It.IsAny<IList<dynamic>>(), "campaignId"), Times.AtLeast(2));
         }
 
-        private static List<NewLead> GenerateNewLeads(int leadCount)
+        private static List<dynamic> GenerateNewLeads(int leadCount)
         {
-            List<NewLead> Leads = Enumerable
+            var Leads = Enumerable
                 .Range(0, leadCount)
-                .Select(i => new NewLead
+                .Select(i => 
                 {
-                    FirstName = $"Firstname{i}", LastName = "Surname ", Email = $"Firstname{i}.lastname@Email.com",
-                    Company = $"MyNewCompany{i}"
+                    dynamic expando = new ExpandoObject();
+                    expando.FirstName = $"Firstname{i}";
+                    expando.LastName = "Surname ";
+                    expando.Email = $"Firstname{i}.lastname@Email.com";
+                    expando.Company = $"MyNewCompany{i}";
+                    return (dynamic)expando;
                 })
                 .ToList();
             return Leads;

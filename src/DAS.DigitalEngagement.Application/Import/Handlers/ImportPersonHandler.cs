@@ -32,7 +32,7 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
             _logger.LogInformation($"about to handle person import");
 
             var fileStatus = new BulkImportFileStatus();
-            var contacts = await _csvService.ConvertToList<NewLead>(personCsv);
+            var contacts = await _csvService.ConvertToList(personCsv);
             var contactsChunks = _chunkingService.GetChunks(personCsv.Length, contacts).ToList();
 
             var index = 1;
