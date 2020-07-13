@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Domain.Import;
 using DAS.DigitalEngagement.Domain.Services;
 using Microsoft.Azure.WebJobs;
@@ -13,14 +14,19 @@ namespace DAS.DigitalEngagement.Functions.Import
     {
         private readonly IImportPersonHandler _importPersonHandler;
         private readonly IReportService _reportService;
-        public ImportPerson(IImportPersonHandler importPersonHandler, IReportService reportService)
+        private readonly IBlobService _blobService;
+        private readonly string _container = "import-person";
+
+        public ImportPerson(IImportPersonHandler importPersonHandler, IReportService reportService, IBlobService blobService)
         {
             _importPersonHandler = importPersonHandler;
             _reportService = reportService;
+            _blobService = blobService;
         }
         [FunctionName("ImportPerson")]
         public async Task Run([BlobTrigger("import-person/{name}")]Stream myBlob, [DurableClient] IDurableOrchestrationClient starter, Binder binder, string name, ILogger log)
         {
+
             if (name.Contains(".report.txt") == false)
             {
 
@@ -33,10 +39,15 @@ namespace DAS.DigitalEngagement.Functions.Import
                     var importJobs = await _importPersonHandler.Handle(myBlob);
 
                     importJobs.Id = name;
-                    importJobs.Container = "import-person";
+                    importJobs.Container = _container;
 
                     report = _reportService.CreateImportReport(importJobs);
                     string instanceId = await starter.StartNewAsync("MonitorBulkImport", importJobs.Id, importJobs);
+
+                    myBlob.Close();
+
+                    await _blobService.DeleteFile(name, _container);
+
                 }
                 catch (Exception ex)
                 {
@@ -48,7 +59,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
                 var attributes = new Attribute[]
                 {
-                new BlobAttribute($"import-person/{name}.report.txt", FileAccess.Write),
+                new BlobAttribute($"{_container}/Report/{name}.report.txt", FileAccess.Write),
                 new StorageAccountAttribute("Storage")
                 };
                 using (var writer = await binder.BindAsync<TextWriter>(attributes))

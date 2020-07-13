@@ -13,5 +13,10 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
         {
             return configuration.GetConnectionStringOrSetting("APPSETTING_AppName");
         }
+
+        public static string GetAzureStorageConnectionString(this IConfiguration configuration)
+        {
+            return configuration.GetConnectionStringOrSetting("AzureWebJobsStorage");
+        }
     }
 }

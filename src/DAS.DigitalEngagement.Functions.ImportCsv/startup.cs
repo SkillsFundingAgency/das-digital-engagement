@@ -79,6 +79,9 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<IReportService, ReportService>();
             services.AddTransient<IBulkImportStatusMapper, BulkImportStatusMapper>();
             services.AddTransient<IBulkImportJobMapper, BulkImportJobMapper>();
+            services.AddTransient<IBlobService, BlobService>();
+            services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
+                new BlobContainerClientWrapper(Configuration.GetValue<string>("AzureWebJobsStorage")));
           
 
             var executioncontextoptions = services.BuildServiceProvider()
