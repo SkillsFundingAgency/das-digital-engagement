@@ -55,10 +55,11 @@ namespace DAS.DigitalEngagement.Application.Services
 
         public async Task<BulkImportJob> ImportToCampaign(IList<dynamic> leads, string campaignId)
         {
-            
 
-            var streamBytes = _csvService.ToCsv(leads);
-            using (var stream = new MemoryStream(streamBytes))
+
+            var csvStrings = _csvService.ToCsvString(leads);
+
+            using (var stream = GenerateStreamFromString(csvStrings))
             {
 
                 var streamPart = new StreamPart(stream, String.Empty, "text/csv");
