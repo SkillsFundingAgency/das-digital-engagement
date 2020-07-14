@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Domain.Import;
 using DAS.DigitalEngagement.Domain.Services;
 using Microsoft.Azure.WebJobs;
@@ -13,10 +14,13 @@ namespace DAS.DigitalEngagement.Functions.Import
     {
         private readonly IImportCampaignMembersHandler _importCampaignMembersHandler;
         private readonly IReportService _reportService;
-        public ImportCampaignMembers(IImportCampaignMembersHandler importCampaignMembersHandler, IReportService reportService)
+        private readonly IBlobService _blobService;
+        private readonly string _container = "import-campaign-members";
+        public ImportCampaignMembers(IImportCampaignMembersHandler importCampaignMembersHandler, IReportService reportService, IBlobService blobService)
         {
             _importCampaignMembersHandler = importCampaignMembersHandler;
             _reportService = reportService;
+            _blobService = blobService;
         }
         [FunctionName("ImportCampaignMembers")]
         public async Task Run([BlobTrigger("import-campaign-members/{name}")]Stream myBlob, [DurableClient] IDurableOrchestrationClient starter, Binder binder, string name, ILogger log)
@@ -33,10 +37,14 @@ namespace DAS.DigitalEngagement.Functions.Import
                     var importJobs = await _importCampaignMembersHandler.Handle(myBlob,name.Replace(".csv",""));
 
                     importJobs.Id = name;
-                    importJobs.Container = "import-campaign-members";
+                    importJobs.Container = _container;
 
                     report = _reportService.CreateImportReport(importJobs);
                     string instanceId = await starter.StartNewAsync("MonitorBulkImport", importJobs.Id, importJobs);
+
+                    myBlob.Close();
+
+                    await _blobService.DeleteFile(name, _container);
                 }
                 catch (Exception ex)
                 {
@@ -48,7 +56,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
                 var attributes = new Attribute[]
                 {
-                new BlobAttribute($"import-person/{name}.report.txt", FileAccess.Write),
+                new BlobAttribute($"{_container}/Report/{name}.report.txt", FileAccess.Write),
                 new StorageAccountAttribute("Storage")
                 };
                 using (var writer = await binder.BindAsync<TextWriter>(attributes))
