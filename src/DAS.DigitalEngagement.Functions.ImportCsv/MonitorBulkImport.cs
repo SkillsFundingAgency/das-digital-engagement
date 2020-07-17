@@ -99,7 +99,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
             var attributes = new Attribute[]
             {
-                new BlobAttribute($"import-person/{myJobs.Id}.report.txt", FileAccess.Write),
+                new BlobAttribute($"{myJobs.Container}/Report/{myJobs.Id}.report.txt", FileAccess.Write),
                 new StorageAccountAttribute("Storage")
             };
             using (var writer = await binder.BindAsync<TextWriter>(attributes))

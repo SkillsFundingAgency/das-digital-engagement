@@ -32,11 +32,11 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         {
             //Arrange
 
-            List<NewLead> result;
+            IList<dynamic> result;
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvSmall)))
             {
-             result = await _service.ConvertToList<NewLead>(test_Stream);
+             result = await _service.ConvertToList(test_Stream);
             }
            
             //Assert
@@ -49,11 +49,11 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         {
             //Arrange
 
-            List<NewLead> result;
+            IList<dynamic> result;
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvLarge)))
             {
-                result = await _service.ConvertToList<NewLead>(test_Stream);
+                result = await _service.ConvertToList(test_Stream);
             }
 
             //Assert
@@ -66,22 +66,22 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         {
             //Arrange
 
-            List<NewLead> result;
+            IList<dynamic> result;
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvSmall)))
             {
-                result = await _service.ConvertToList<NewLead>(test_Stream);
+                result = await _service.ConvertToList(test_Stream);
             }
 
             //Assert
             result.Should().NotBeNullOrEmpty();
 
             var singleResult = result.FirstOrDefault();
-            singleResult.Should().NotBeNull();
-            singleResult.FirstName.Should().Be("Mickey1");
-            singleResult.LastName.Should().Be("Mouse");
-            singleResult.Company.Should().Be("Disney1");
-            singleResult.Email.Should().Be("Mickey.Mouse.1@email.com");
+            ((object)singleResult).Should().NotBeNull();
+            ((string)singleResult.FirstName).Should().Be("Mickey1");
+            ((string)singleResult.LastName).Should().Be("Mouse");
+            ((string)singleResult.Company).Should().Be("Disney1");
+            ((string)singleResult.Email).Should().Be("Mickey.Mouse.1@email.com");
         }
 
         [Test]
@@ -90,22 +90,22 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             //Arrange
             var _testCsvMissing = CsvTestHelper.GetValidCsv(10, "Mickey", null, "Disney");
 
-            List<NewLead> result;
+            IList<dynamic> result;
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvMissing)))
             {
-                result = await _service.ConvertToList<NewLead>(test_Stream);
+                result = await _service.ConvertToList(test_Stream);
             }
 
             //Assert
             result.Should().NotBeNullOrEmpty();
 
             var singleResult = result.FirstOrDefault();
-            singleResult.Should().NotBeNull();
-            singleResult.FirstName.Should().Be("Mickey1");
-            singleResult.LastName.Should().BeNull();
-            singleResult.Company.Should().Be("Disney1");
-            singleResult.Email.Should().Be("Mickey..1@email.com");
+            ((object)singleResult).Should().NotBeNull();
+            ((string)singleResult.FirstName).Should().Be("Mickey1");
+            ((string)singleResult.LastName).Should().BeEmpty();
+            ((string)singleResult.Company).Should().Be("Disney1");
+            ((string)singleResult.Email).Should().Be("Mickey..1@email.com");
         }
 
         [Test]
@@ -114,22 +114,24 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             //Arrange
             var _testCsvAdditional = CsvTestHelper.GetValidCsv_AdditionalProperties();
 
-            List<NewLead> result;
+            IList<dynamic> result;
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvAdditional)))
             {
-                result = await _service.ConvertToList<NewLead>(test_Stream);
+                result = await _service.ConvertToList(test_Stream);
             }
 
             //Assert
             result.Should().NotBeNullOrEmpty();
 
             var singleResult = result.FirstOrDefault();
-            singleResult.Should().NotBeNull();
-            singleResult.FirstName.Should().Be("Person");
-            singleResult.LastName.Should().Be("One");
-            singleResult.Company.Should().Be("CompanyOne");
-            singleResult.Email.Should().Be("Person.one@email.com");
+            ((object)singleResult).Should().NotBeNull();
+            ((string)singleResult.FirstName).Should().Be("Person");
+            ((string)singleResult.LastName).Should().Be("One");
+            ((string)singleResult.Company).Should().Be("CompanyOne");
+            ((string)singleResult.Email).Should().Be("Person.one@email.com");
         }
+
+      
     }
 }

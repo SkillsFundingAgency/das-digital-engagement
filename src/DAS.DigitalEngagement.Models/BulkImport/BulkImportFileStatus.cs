@@ -12,6 +12,7 @@ namespace DAS.DigitalEngagement.Models.BulkImport
             StartTime = DateTime.Now;
             BulkImportJobs = new List<BulkImportJob>();
         }
+        public string Container { get; set; }
         public string Id { get; set; }
         public DateTime StartTime { get; set; }
         public IList<BulkImportJob> BulkImportJobs { get; set; }

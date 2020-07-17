@@ -36,15 +36,13 @@ namespace DAS.DigitalEngagement.Application.Services
             _newLeadMapper = newLeadMapper;
         }
 
-        public async Task<BulkImportJob> ImportPeople(IList<Person> people)
+        public async Task<BulkImportJob> ImportPeople(IList<dynamic> leads)
         {
-            var leads = people.Select(_newLeadMapper.Map);
+            var csvStrings = _csvService.ToCsvString(leads);    
 
-            var streamBytes = _csvService.ToCsv(people);
-            using (var stream = new MemoryStream(streamBytes))
+            using (var stream = GenerateStreamFromString(csvStrings))
             {
-
-                var streamPart = new StreamPart(stream,String.Empty, "text/csv");
+                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
 
                 var bulkImportResponse = await _marketoBulkImportClient.PushLeads(streamPart);
 
@@ -52,6 +50,30 @@ namespace DAS.DigitalEngagement.Application.Services
                 {
                     throw new Exception(
                         $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
+                }
+
+
+                return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
+            }
+        }
+
+        public async Task<BulkImportJob> ImportToCampaign(IList<dynamic> leads, string campaignId)
+        {
+
+
+            var csvStrings = _csvService.ToCsvString(leads);
+
+            using (var stream = GenerateStreamFromString(csvStrings))
+            {
+
+                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
+
+                var bulkImportResponse = await _marketoBulkImportClient.PushToProgram(streamPart,campaignId);
+
+                if (bulkImportResponse.Success == false)
+                {
+                    throw new Exception(
+                        $"Unable to push person to campaign {campaignId} due to errors: {bulkImportResponse.ToString()}");
                 }
 
 
@@ -97,6 +119,16 @@ namespace DAS.DigitalEngagement.Application.Services
             var failureResponse = await _marketoBulkImportClient.GetFailures(jobId);
 
             return await failureResponse.ReadAsStringAsync();
+        }
+
+        private static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }

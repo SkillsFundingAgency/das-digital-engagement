@@ -6,6 +6,6 @@ namespace DAS.DigitalEngagement.Domain.Services
 {
     public interface IChunkingService
     {
-        IEnumerable<IList<T>> GetChunks<T>(long totalSize, List<T> items);
+        IEnumerable<IList<T>> GetChunks<T>(long totalSize, IList<T> items);
     }
 }

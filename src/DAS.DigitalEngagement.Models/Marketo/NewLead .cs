@@ -32,6 +32,12 @@ namespace DAS.DigitalEngagement.Models.Marketo
         /// </summary>
         [DataMember(Name = "lastName", EmitDefaultValue = false)]
         public string LastName { get; set; }
+        
+        /// <summary>
+        /// Gets or Sets IncludeInUR
+        /// </summary>
+        [DataMember(Name = "includeInUr", EmitDefaultValue = false)]
+        public bool IncludeInUR { get; set; }
 
         /// <summary>
         /// Gets or Sets Membership
@@ -50,6 +56,7 @@ namespace DAS.DigitalEngagement.Models.Marketo
             sb.Append("  Email: ").Append(Email).Append("\n");
             sb.Append("  FirstName: ").Append(FirstName).Append("\n");
             sb.Append("  LastName: ").Append(LastName).Append("\n");
+            sb.Append("  IncludeInUR: ").Append(IncludeInUR).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -97,6 +104,10 @@ namespace DAS.DigitalEngagement.Models.Marketo
                     this.LastName == input.LastName ||
                     (this.LastName != null &&
                     this.LastName.Equals(input.LastName))
+                ) && 
+                (
+                    this.IncludeInUR == input.IncludeInUR ||
+                    this.IncludeInUR.Equals(input.IncludeInUR)
                 );
         }
 
@@ -114,6 +125,8 @@ namespace DAS.DigitalEngagement.Models.Marketo
                     hashCode = hashCode * 59 + this.FirstName.GetHashCode();
                 if (this.LastName != null)
                     hashCode = hashCode * 59 + this.LastName.GetHashCode();
+                if (this.IncludeInUR != null)
+                    hashCode = hashCode * 59 + this.IncludeInUR.GetHashCode();
                 return hashCode;
             }
         }

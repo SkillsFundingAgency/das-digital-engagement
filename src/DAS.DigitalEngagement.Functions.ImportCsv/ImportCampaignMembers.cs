@@ -10,23 +10,21 @@ using Microsoft.Extensions.Logging;
 
 namespace DAS.DigitalEngagement.Functions.Import
 {
-    public class ImportPerson
+    public class ImportCampaignMembers
     {
-        private readonly IImportPersonHandler _importPersonHandler;
+        private readonly IImportCampaignMembersHandler _importCampaignMembersHandler;
         private readonly IReportService _reportService;
         private readonly IBlobService _blobService;
-        private readonly string _container = "import-person";
-
-        public ImportPerson(IImportPersonHandler importPersonHandler, IReportService reportService, IBlobService blobService)
+        private readonly string _container = "import-campaign-members";
+        public ImportCampaignMembers(IImportCampaignMembersHandler importCampaignMembersHandler, IReportService reportService, IBlobService blobService)
         {
-            _importPersonHandler = importPersonHandler;
+            _importCampaignMembersHandler = importCampaignMembersHandler;
             _reportService = reportService;
             _blobService = blobService;
         }
-        [FunctionName("ImportPerson")]
-        public async Task Run([BlobTrigger("import-person/{name}")]Stream myBlob, [DurableClient] IDurableOrchestrationClient starter, Binder binder, string name, ILogger log)
+        [FunctionName("ImportCampaignMembers")]
+        public async Task Run([BlobTrigger("import-campaign-members/{name}")]Stream myBlob, [DurableClient] IDurableOrchestrationClient starter, Binder binder, string name, ILogger log)
         {
-
             if (name.Contains(".report.txt") == false)
             {
 
@@ -36,7 +34,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                 string report;
                 try
                 {
-                    var importJobs = await _importPersonHandler.Handle(myBlob);
+                    var importJobs = await _importCampaignMembersHandler.Handle(myBlob,name.Replace(".csv",""));
 
                     importJobs.Id = name;
                     importJobs.Container = _container;
@@ -47,7 +45,6 @@ namespace DAS.DigitalEngagement.Functions.Import
                     myBlob.Close();
 
                     await _blobService.DeleteFile(name, _container);
-
                 }
                 catch (Exception ex)
                 {

@@ -73,12 +73,17 @@ namespace DAS.DigitalEngagement.Functions.Import
      
 
             services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
+            services.AddTransient<IImportCampaignMembersHandler, ImportCampaignMembersHandler>();
             services.AddTransient<IChunkingService, ChunkingService>();
             services.AddTransient<ICsvService, CsvService>();
             services.AddTransient<IBulkImportService, BulkImportService>();
             services.AddTransient<IReportService, ReportService>();
             services.AddTransient<IBulkImportStatusMapper, BulkImportStatusMapper>();
             services.AddTransient<IBulkImportJobMapper, BulkImportJobMapper>();
+            services.AddTransient<IBlobService, BlobService>();
+            services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
+                new BlobContainerClientWrapper(Configuration.GetValue<string>("AzureWebJobsStorage")));
+          
             services.AddTransient<INewLeadMapper, NewLeadMapper>();
 
             var executioncontextoptions = services.BuildServiceProvider()
