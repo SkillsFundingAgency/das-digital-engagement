@@ -5,9 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
-using DAS.DigitalEngagement.Domain.Mapping.Marketo;
 using DAS.DigitalEngagement.Domain.Services;
-using DAS.DigitalEngagement.Models;
 using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Interfaces;
 using Das.Marketo.RestApiClient.Models;
@@ -18,27 +16,51 @@ namespace DAS.DigitalEngagement.Application.Services
 {
     public class BulkImportService : IBulkImportService
     {
+        private readonly IChunkingService _chunkingService;
         private readonly IMarketoBulkImportClient _marketoBulkImportClient;
         private readonly ICsvService _csvService;
         private readonly ILogger<BulkImportService> _logger;
         private readonly IBulkImportStatusMapper _bulkImportStatusMapper;
         private readonly IBulkImportJobMapper _bulkImportJobMapper;
-        private readonly INewLeadMapper _newLeadMapper;
 
         public BulkImportService(IMarketoLeadClient marketoLeadClient,
-            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<BulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, INewLeadMapper newLeadMapper)
+            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<BulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, IChunkingService chunkingService)
         {
             _marketoBulkImportClient = marketoBulkImportClient;
             _csvService = csvService;
             _logger = logger;
             _bulkImportStatusMapper = bulkImportStatusMapper;
             _bulkImportJobMapper = bulkImportJobMapper;
-            _newLeadMapper = newLeadMapper;
+            _chunkingService = chunkingService;
         }
 
-        public async Task<BulkImportJob> ImportPeople(IList<dynamic> leads)
+
+        public async Task<BulkImportStatus> ImportPeople<T>(IList<T> leads)
         {
-            var csvStrings = _csvService.ToCsvString(leads);    
+            var fileStatus = new BulkImportStatus();
+
+            var contactsChunks = _chunkingService.GetChunks(_csvService.GetByteCount(leads), leads).ToList();
+
+            var index = 1;
+
+            foreach (var contactsList in contactsChunks)
+            {
+                var importResult =
+                    await ImportChunkedPeople(contactsList);
+                fileStatus.BulkImportJobs.Add(importResult);
+
+                _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} has been queued. \n Job details: {importResult} ");
+
+                index++;
+            }
+
+            return fileStatus;
+        }
+
+
+        private async Task<BulkImportJob> ImportChunkedPeople<T>(IList<T> leads)
+        {
+            var csvStrings = _csvService.ToCsv(leads);    
 
             using (var stream = GenerateStreamFromString(csvStrings))
             {
@@ -52,16 +74,13 @@ namespace DAS.DigitalEngagement.Application.Services
                         $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
                 }
 
-
                 return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
             }
         }
 
-        public async Task<BulkImportJob> ImportToCampaign(IList<dynamic> leads, string campaignId)
+        public async Task<BulkImportJob> ImportToCampaign<T>(IList<T> leads, string campaignId)
         {
-
-
-            var csvStrings = _csvService.ToCsvString(leads);
+            var csvStrings = _csvService.ToCsv(leads);
 
             using (var stream = GenerateStreamFromString(csvStrings))
             {
@@ -75,15 +94,12 @@ namespace DAS.DigitalEngagement.Application.Services
                     throw new Exception(
                         $"Unable to push person to campaign {campaignId} due to errors: {bulkImportResponse.ToString()}");
                 }
-
-
-
-
+                
                 return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
             }
         }
 
-        public async Task<BulkImportStatus> GetJobStatus(int jobId)
+        public async Task<BulkImportJobStatus> GetJobStatus(int jobId)
         {
             var response = await _marketoBulkImportClient.GetStatus(jobId);
 

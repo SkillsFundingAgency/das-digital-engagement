@@ -13,11 +13,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="SFA.DAS.EmployerUsers.Api.Client" Version="1.0.0.52781" />
     <PackageReference Include="SFA.DAS.EmployerUsers.Api.Types" Version="1.0.0.52781" />
+    <PackageReference Include="System.Net.Requests" Version="4.0.11" />
     <PackageReference Include="Threenine.LinqToCsv" Version="1.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DAS.DigitalEngagement.Domain\DAS.DigitalEngagement.Domain.csproj" />
+    <ProjectReference Include="..\DAS.DigitalEngagement.Infrasctucture\DAS.DigitalEngagement.Infrastructure.csproj" />
     <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />
   </ItemGroup>
 

@@ -15,23 +15,21 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
         private readonly IChunkingService _chunkingService;
         private readonly ICsvService _csvService;
         private readonly IBulkImportService _bulkImportService;
-        private readonly IReportService _reportService;
         private readonly ILogger<ImportCampaignMembersHandler> _logger;
 
-        public ImportCampaignMembersHandler(IChunkingService chunkingService, ICsvService csvService, IBulkImportService bulkImportService, ILogger<ImportCampaignMembersHandler> logger, IReportService reportService)
+        public ImportCampaignMembersHandler(IChunkingService chunkingService, ICsvService csvService, IBulkImportService bulkImportService, ILogger<ImportCampaignMembersHandler> logger)
         {
             _chunkingService = chunkingService;
             _csvService = csvService;
             _bulkImportService = bulkImportService;
             _logger = logger;
-            _reportService = reportService;
         }
 
-        public async Task<BulkImportFileStatus> Handle(Stream personCsv, string campaignId)
+        public async Task<BulkImportStatus> Handle(Stream personCsv, string campaignId)
         {
             _logger.LogInformation($"about to handle campaign members import");
 
-            var fileStatus = new BulkImportFileStatus();
+            var fileStatus = new BulkImportStatus();
             var contacts = await _csvService.ConvertToList(personCsv);
             var contactsChunks = _chunkingService.GetChunks(personCsv.Length, contacts).ToList();
 

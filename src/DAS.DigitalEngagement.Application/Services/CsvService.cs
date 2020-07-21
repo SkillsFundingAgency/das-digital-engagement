@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models;
 using LINQtoCSV;
 
 namespace DAS.DigitalEngagement.Application.Services
@@ -13,53 +16,43 @@ namespace DAS.DigitalEngagement.Application.Services
     {
         public async Task<IList<dynamic>> ConvertToList(Stream personCsv)
         {
-
-
             TextReader tr = new StreamReader(personCsv);
             using (var csv = new CsvReader(tr, CultureInfo.InvariantCulture))
             {
                 var records = csv.GetRecords<dynamic>();
                 return records.ToList<dynamic>();
             }
-
-
         }
 
-        public byte[] ToCsv<T>(IList<T> leads)
+        public int GetByteCount<T>(IList<T> leads)
         {
-            CsvFileDescription inputFileDescription = new CsvFileDescription
-            {
-                SeparatorChar = ',',
-                FirstLineHasColumnNames = true,
-                FileCultureName = "en-gb"
-            };
+            var csvString = ToCsv(leads);
 
-            CsvContext cc = new CsvContext();
-
-            var memStream = new MemoryStream();
-            using (StreamWriter sw = new StreamWriter(memStream))
-            {
-                cc.Write(leads,sw);
-                sw.Flush();
-                return memStream.ToArray();
-            }
-
-           
+            return System.Text.Encoding.Unicode.GetByteCount(csvString);
         }
 
-        public string ToCsvString(IList<dynamic> leads)
+        public string ToCsv<T>(IList<T> leads)
         {
 
             using (var writer = new StringWriter())
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
+                csv.Configuration.RegisterClassMap<PersonMap>();
+
                 csv.WriteRecords(leads);
-                
+
                 writer.Flush();
                 return writer.ToString();
             }
-
-
+        }
+        
+        private sealed class PersonMap : ClassMap<Person>
+        {
+            public PersonMap()
+            {
+                AutoMap(CultureInfo.InvariantCulture);
+                Map(m => m.EmployerUserId).Name("esfaEmployerUserId");
+            }
         }
     }
 }

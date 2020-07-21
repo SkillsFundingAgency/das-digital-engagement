@@ -5,6 +5,6 @@ namespace DAS.DigitalEngagement.Domain.Services
 {
     public interface IReportService
     {
-        string CreateImportReport(BulkImportFileStatus importJobs);
+        string CreateImportReport(BulkImportStatus importJobs);
     }
 }

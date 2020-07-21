@@ -9,6 +9,7 @@ using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Application.UnitTests.Helpers;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -43,11 +44,10 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
             _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(),_testLeadList))
                 .Returns(new List<IList<dynamic>>());
-            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportJob()
-                {batchId = 1, ImportId = "Imported", Status = "Queued"});
+            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportStatus());
 
 
-            _handler = new ImportCampaignMembersHandler(_chunkingServiceMock.Object,_csvService.Object,_bulkImportService.Object,_logger.Object,_reportService.Object);
+            _handler = new ImportCampaignMembersHandler(_chunkingServiceMock.Object,_csvService.Object,_bulkImportService.Object,_logger.Object);
         }
 
         [Test]

@@ -1,42 +1,47 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Models.BulkImport
 {
     public class BulkImportStatus
     {
-        public int Id { get; set; }
-        public string ImportId { get; set; }
-        public string Status { get; set; }
-        public int NumOfLeadsProcessed { get; set; }
-        public int NumOfRowsFailed { get; set; }
-        public int NumOfRowsWithWarning { get; set; }
-        public string Message { get; set; }
-        public string Failures { get; set; }
-        public string Warnings { get; set; }
-
-        public override string ToString()
+        public BulkImportStatus()
         {
-            var sb = new StringBuilder();
-            sb.Append("BulkImportStatus {\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  ImportId: ").Append(ImportId).Append("\n");
-            sb.Append("  Status: ").Append(Status).Append("\n");
-            sb.Append("  NumOfLeadsProcessed: ").Append(NumOfLeadsProcessed).Append("\n");
-            sb.Append("  NumOfRowsFailed: ").Append(NumOfRowsFailed).Append("\n");
-            sb.Append("  NumOfRowsWithWarning: ").Append(NumOfRowsWithWarning).Append("\n");
-            sb.Append("  Message: ").Append(Message).Append("\n");
-            sb.Append("  Failures: \n");
-            sb.Append("  {").AppendLine().Append(Failures).AppendLine();
-            sb.Append("  }\n");
-            sb.Append("  Warnings: \n");
-            sb.Append("  {").AppendLine().Append(Warnings).AppendLine();
-            sb.Append("  }\n");
-
-            return sb.ToString();
+            StartTime = DateTime.Now;
+            BulkImportJobs = new List<BulkImportJob>();
         }
+        public string Container { get; set; }
+        public string Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public IList<BulkImportJob> BulkImportJobs { get; set; }
+        public double Duration => (DateTime.Now - StartTime).TotalMilliseconds;
+        public ImportStatus Status
+        {
+            get
+            {
+                var status = ImportStatus.Queued;
+
+
+                if (BulkImportJobs.Any(s => s.Status == "Failed"))
+                {
+                    status = ImportStatus.Failed;
+                }
+                else if (BulkImportJobs.Any(s => s.Status == "Importing"))
+                {
+                    status = ImportStatus.Processing;
+                }
+                else if (BulkImportJobs.All(s => s.Status == "Complete"))
+                {
+                    status = ImportStatus.Completed;
+                }
+                
+                return status;
+            }
+        }
+
+        public List<BulkImportJobStatus> BulkImportJobStatus { get; set; }
+        public string Name { get; set; }
     }
 }
-
-

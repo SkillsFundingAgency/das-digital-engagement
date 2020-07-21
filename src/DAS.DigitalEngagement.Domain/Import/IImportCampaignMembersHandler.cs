@@ -7,6 +7,6 @@ namespace DAS.DigitalEngagement.Domain.Import
 {
     public interface IImportCampaignMembersHandler
     {
-        Task<BulkImportFileStatus> Handle(Stream personCsv, string campaignId);
+        Task<BulkImportStatus> Handle(Stream personCsv, string campaignId);
     }
 }

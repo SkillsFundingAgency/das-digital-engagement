@@ -38,7 +38,8 @@ namespace DAS.DigitalEngagement.Functions.Import
                 {
                     var importJobs = await _importPersonHandler.Handle(myBlob);
 
-                    importJobs.Id = name;
+                    importJobs.Id = Guid.NewGuid().ToString();
+                    importJobs.Name = name;
                     importJobs.Container = _container;
 
                     report = _reportService.CreateImportReport(importJobs);

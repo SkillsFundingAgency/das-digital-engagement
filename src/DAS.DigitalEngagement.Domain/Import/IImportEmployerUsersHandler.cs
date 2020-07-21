@@ -7,6 +7,6 @@ namespace DAS.DigitalEngagement.Domain.Import
 {
     public interface IImportEmployerUsersHandler
     {
-        Task<BulkImportFileStatus> Handle();
+        Task<BulkImportStatus> Handle();
     }
 }

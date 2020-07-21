@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DAS.DigitalEngagement.Infrastructure.Models;
 using DAS.DigitalEngagement.Models;
-using Das.Marketo.RestApiClient.Models;
 
-namespace DAS.DigitalEngagement.Domain.Mapping.Marketo
+namespace DAS.DigitalEngagement.Domain.Mapping
 {
     public interface IPersonMapper
     {
-        Person Map(Person person);
+        Person Map(EmployerUser person);
     }
 
     public class PersonMapper : IPersonMapper
     {
-        public Person Map(Person person)
+        public Person Map(EmployerUser user)
         {
             var lead = new Person();
 
-            lead.Email = person.Email;
-            lead.FirstName = person.FirstName;
-            lead.LastName = person.LastName;
+            lead.Email = user.Email;
+            lead.FirstName = user.FirstName;
+            lead.LastName = user.LastName;
+            lead.EmployerUserId = user.Id;
 
             return lead;
         }
