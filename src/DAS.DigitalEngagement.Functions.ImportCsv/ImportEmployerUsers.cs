@@ -23,7 +23,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             _importEmployerUsersHandler = importEmployerUsersHandler;
         }
         [FunctionName("ImportEmployerUsers")]
-        public async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient starter, Binder binder, ILogger log)
+        public async Task Run([TimerTrigger("%Functions:EmployerUsersImportSchedule%")]TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient starter, Binder binder, ILogger log)
         {
 
             log.LogInformation($"Import Employer Users Timer function triggered, Schedule: {myTimer.Schedule.ToString()}");
