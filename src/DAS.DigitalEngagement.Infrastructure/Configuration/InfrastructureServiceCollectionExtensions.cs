@@ -11,7 +11,7 @@ using Refit;
 
 namespace DAS.DigitalEngagement.Infrastructure.Configuration
 {
-    public static class InfrastructureServiceCollectionExtenstions
+    public static class InfrastructureServiceCollectionExtensions
     {
         private static ConfidentialClientApplicationOptions _applicationOptions;
         public static IServiceCollection AddEmployerUsersClient(this IServiceCollection services, IConfiguration configuration)

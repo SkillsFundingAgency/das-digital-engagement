@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAS.DigitalEngagement.Framework\DAS.DigitalEngagement.Framework.csproj" />
-    <ProjectReference Include="..\DAS.DigitalEngagement.Infrasctucture\DAS.DigitalEngagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\DAS.DigitalEngagement.Infrastructure\DAS.DigitalEngagement.Infrastructure.csproj" />
     <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />
   </ItemGroup>
   <ItemGroup>
