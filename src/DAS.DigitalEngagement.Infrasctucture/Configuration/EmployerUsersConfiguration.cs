@@ -2,7 +2,8 @@
 {
     public class EmployerUsersConfiguration
     {
-        public virtual string ResourceId { get; set; }
+        public string Tenant { get; set; }
+        public string Identifier { get; set; }
         public virtual string ApiBaseUrl { get; set; }
 
     }
