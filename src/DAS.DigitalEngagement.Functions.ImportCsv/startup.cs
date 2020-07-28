@@ -17,6 +17,8 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using Das.Marketo.RestApiClient.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -28,12 +30,14 @@ namespace DAS.DigitalEngagement.Functions.Import
     public class Startup : FunctionsStartup
     {
         public IConfiguration Configuration { get; private set; }
+        public IHostingEnvironment Environment { get; private set; }
 
         public Startup() { }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Environment = new HostingEnvironment();
         }
         public override void Configure(IFunctionsHostBuilder builder)
         {

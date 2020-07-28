@@ -35,7 +35,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                 importJobsStatus = await _importEmployerUsersHandler.Handle();
 
                 importJobsStatus.Id = Guid.NewGuid().ToString();
-                importJobsStatus.Name =  $"Employer-Users-Import-{DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}";
+                importJobsStatus.Name =  $"Employer-Users/Import-{DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}";
                 importJobsStatus.Container = _container;
 
                 report = _reportService.CreateImportReport(importJobsStatus);
