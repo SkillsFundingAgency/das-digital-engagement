@@ -2,6 +2,7 @@
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Models.BulkImport;
 using Das.Marketo.RestApiClient.Models;
+using ImportStatus = DAS.DigitalEngagement.Models.BulkImport.ImportStatus;
 
 namespace DAS.DigitalEngagement.Application.Services
 {
@@ -16,6 +17,12 @@ namespace DAS.DigitalEngagement.Application.Services
             sb.Append($"Import time: {importStatus.StartTime}").AppendLine();
             sb.Append($"Import duration: {importStatus.Duration}ms").AppendLine().AppendLine();
 
+
+            if (importStatus.Status == ImportStatus.ValidationFailed)
+            {
+                ReportValidationErrors(importStatus,sb);
+                return sb.ToString();
+            }
             sb.Append(
                     $"{importStatus.BulkImportJobs.Count} jobs have been queued for import into marketo. Please see the status of each import job below:")
                 .AppendLine().AppendLine();
@@ -30,6 +37,24 @@ namespace DAS.DigitalEngagement.Application.Services
             }
             sb.Append($"################################################################################");
             return sb.ToString();
+        }
+
+        private void ReportValidationErrors(BulkImportStatus importStatus, StringBuilder sb)
+        {
+            sb.Append($"################################################################################").AppendLine();
+            if (importStatus.ImportFileIsValid == false)
+            {
+                sb.Append($"The provided csv file is not a valid csv, please check the format of the file and try import again").AppendLine();
+            }
+            else
+            {
+                sb.Append($"Some headers provided in the CSV file are not valid in Marketo,").AppendLine().AppendLine();
+                sb.Append($"Headers failing validation:").AppendLine();
+                foreach (var importStatusHeaderError in importStatus.HeaderErrors)
+                {
+                    sb.Append(importStatusHeaderError).AppendLine();
+                }
+            }
         }
 
         private static void ReportJobs(BulkImportStatus importStatus, StringBuilder sb)

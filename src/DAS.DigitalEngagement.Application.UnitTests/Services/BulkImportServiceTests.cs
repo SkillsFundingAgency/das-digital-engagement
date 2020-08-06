@@ -60,12 +60,48 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
             _csvServiceMock.Setup(s => s.GetByteCount(_testLeadList)).Returns(172);
             _marketoBulkImportClientMock.Setup(s => s.PushLeads(It.IsAny<StreamPart>())).ReturnsAsync(jobResponse);
 
+            _marketoLeadClientMock.Setup(s => s.Describe()).ReturnsAsync(GenerateDescribeReturn());
+
+
             _service = new BulkImportService(_marketoLeadClientMock.Object,
                                             _marketoBulkImportClientMock.Object,
                                             _csvServiceMock.Object,
                                             _logger.Object,
                                             _bulkImportStatusMapperMock.Object,
                                             _bulkImportJobMapperMock.Object, _chunkingServiceMock.Object);
+        }
+
+
+        [Test]
+        public async Task When_Valid_Headers_Validated_Then_Return_Validtion_Passed()
+        {
+            var fields = new List<string>()
+            {
+                "attribute-1",
+                "Attribute-2",
+                "Attribute-3"
+            };
+
+            var validationResult = await _service.ValidateFields(fields);
+
+            validationResult.IsValid.Should().BeTrue();
+            validationResult.Errors.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task When_Invalid_Headers_Validated_Then_Return_Validtion_failed()
+        {
+            var fields = new List<string>()
+            {
+                "attribute-1",
+                "Attribute-2",
+                "Attribute-failed"
+            };
+
+            var validationResult = await _service.ValidateFields(fields);
+
+            validationResult.IsValid.Should().BeFalse();
+            validationResult.Errors.Should().HaveCount(1);
         }
 
         [Test]
@@ -82,7 +118,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
         [Test]
         public async Task Then_The_Each_Chunk_Is_Sent_To_Marketo()
         {
-           //Act
+            //Act
             var status = await _service.ImportPeople(_testLeadList);
 
 
@@ -90,7 +126,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
             status.Should().NotBeNull();
             status.BulkImportJobs.Should().HaveCount(1);
 
-            _marketoBulkImportClientMock.Verify(v => v.PushLeads(It.IsAny<StreamPart>()),Times.Once());
+            _marketoBulkImportClientMock.Verify(v => v.PushLeads(It.IsAny<StreamPart>()), Times.Once());
         }
 
 
@@ -110,6 +146,36 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
                 .ToList();
 
             return Leads;
+        }
+
+        private static Response<LeadAttribute> GenerateDescribeReturn()
+        {
+            var result = new Response<LeadAttribute>();
+
+            result.Success = true;
+            result.Result = new List<LeadAttribute>();
+
+            var attributes = Enumerable.Range(0, 20)
+                .Select(i =>
+                {
+                    var attribute = new LeadAttribute();
+                    attribute.DisplayName = "Attribute";
+                    attribute.Soap = new LeadMapAttribute()
+                    {
+                        Name = $"attribute-soap-{i}"
+                    };
+
+                    attribute.Rest = new LeadMapAttribute()
+                    {
+                        Name = $"Attribute-{i}"
+                    };
+                    return attribute;
+                })
+                .ToList();
+
+            result.Result = attributes;
+
+            return result;
         }
     }
 }

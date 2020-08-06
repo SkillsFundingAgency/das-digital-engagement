@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DAS.DigitalEngagement.Models.Validation;
 using Das.Marketo.RestApiClient.Models;
+using FormatValidator;
+
 
 namespace DAS.DigitalEngagement.Models.BulkImport
 {
@@ -17,6 +20,8 @@ namespace DAS.DigitalEngagement.Models.BulkImport
         public DateTime StartTime { get; set; }
         public IList<BulkImportJob> BulkImportJobs { get; set; }
         public double Duration => (DateTime.Now - StartTime).TotalMilliseconds;
+        public bool ImportFileIsValid { get; set; }
+
         public ImportStatus Status
         {
             get
@@ -24,7 +29,11 @@ namespace DAS.DigitalEngagement.Models.BulkImport
                 var status = ImportStatus.Queued;
 
 
-                if (BulkImportJobs.Any(s => s.Status == "Failed"))
+                if (ImportFileIsValid == false || HeaderErrors.Any())
+                {
+                    status = ImportStatus.ValidationFailed;
+                }
+                else if (BulkImportJobs.Any(s => s.Status == "Failed"))
                 {
                     status = ImportStatus.Failed;
                 }
@@ -42,6 +51,9 @@ namespace DAS.DigitalEngagement.Models.BulkImport
         }
 
         public List<BulkImportJobStatus> BulkImportJobStatus { get; set; }
+
+        public string ValidationError { get; set; }
         public string Name { get; set; }
+        public IEnumerable<string> HeaderErrors { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Das.Marketo.RestApiClient.Models
+namespace DAS.DigitalEngagement.Models.BulkImport
 {
     public class BulkImportJob
     {
@@ -18,13 +18,5 @@ namespace Das.Marketo.RestApiClient.Models
             sb.Append("}\n");
             return sb.ToString();
         }
-    }
-
-    public enum ImportStatus
-    {
-        Queued = 0,
-        Processing = 1,
-        Completed = 2,
-        Failed = 3
     }
 }

@@ -7,8 +7,8 @@ using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Models.BulkImport;
+using DAS.DigitalEngagement.Models.Validation;
 using Das.Marketo.RestApiClient.Interfaces;
-using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 using Refit;
 
@@ -18,6 +18,7 @@ namespace DAS.DigitalEngagement.Application.Services
     {
         private readonly IChunkingService _chunkingService;
         private readonly IMarketoBulkImportClient _marketoBulkImportClient;
+        private readonly IMarketoLeadClient _marketoLeadClient;
         private readonly ICsvService _csvService;
         private readonly ILogger<BulkImportService> _logger;
         private readonly IBulkImportStatusMapper _bulkImportStatusMapper;
@@ -26,6 +27,7 @@ namespace DAS.DigitalEngagement.Application.Services
         public BulkImportService(IMarketoLeadClient marketoLeadClient,
             IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<BulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, IChunkingService chunkingService)
         {
+            _marketoLeadClient = marketoLeadClient;
             _marketoBulkImportClient = marketoBulkImportClient;
             _csvService = csvService;
             _logger = logger;
@@ -34,6 +36,22 @@ namespace DAS.DigitalEngagement.Application.Services
             _chunkingService = chunkingService;
         }
 
+
+        public async Task<FieldValidationResult> ValidateFields(IList<string> fields)
+        {
+            var leadFields = await _marketoLeadClient.Describe();
+            fields = fields.Select(s => s.ToLower()).ToList();
+
+            var marketotFields = leadFields.Result.Where(w => w.Rest.ReadOnly == false).Select(s => s.Rest.Name.ToLower()).ToList();
+            marketotFields.Concat(leadFields.Result.Where(w => w.Soap.ReadOnly == false).Select(s => s.Soap.Name.ToLower()));
+                
+            var fieldvalidationresult = new FieldValidationResult()
+            {
+                Errors = fields.Except(marketotFields).ToList()
+            };
+
+            return fieldvalidationresult;
+        }
 
         public async Task<BulkImportStatus> ImportPeople<T>(IList<T> leads)
         {
