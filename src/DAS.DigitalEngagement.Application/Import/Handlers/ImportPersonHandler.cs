@@ -36,10 +36,10 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
             IList<string> csvFields = null;
             using (var sr = new StreamReader(personCsv))
             {
-                 csvFields = sr.ReadLine().Split(',').ToList();
-            }
+                csvFields = sr.ReadLine().Split(',').ToList();
 
-      
+
+
                 var fieldValidation = await _bulkImportService.ValidateFields(csvFields);
 
                 if (fieldValidation.IsValid == false)
@@ -55,7 +55,7 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
                 IList<dynamic> contacts = null;
                 try
                 {
-                    contacts = await _csvService.ConvertToList(personCsv);
+                    contacts = await _csvService.ConvertToList(sr.BaseStream);
 
 
                 }
@@ -65,10 +65,10 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
                     status.ImportFileIsValid = false;
                     status.ValidationError = "Unable to parse CSV file, the format of the file is invalid";
                     return status;
-            }
+                }
 
                 return await _bulkImportService.ImportPeople(contacts);
-
+            }
         }
 
 

@@ -49,6 +49,7 @@ namespace DAS.DigitalEngagement.Application.Services
 
         public async Task<IList<dynamic>> ConvertToList(Stream personCsv)
         {
+            personCsv.Seek(0, SeekOrigin.Begin);
             TextReader tr = new StreamReader(personCsv);
             using (var csv = new CsvReader(tr, CultureInfo.InvariantCulture))
             {
