@@ -20,7 +20,7 @@ namespace DAS.DigitalEngagement.Models.BulkImport
         public DateTime StartTime { get; set; }
         public IList<BulkImportJob> BulkImportJobs { get; set; }
         public double Duration => (DateTime.Now - StartTime).TotalMilliseconds;
-        public bool ImportFileIsValid { get; set; }
+        public bool ImportFileIsValid { get; set; } = true;
 
         public ImportStatus Status
         {
@@ -54,6 +54,6 @@ namespace DAS.DigitalEngagement.Models.BulkImport
 
         public string ValidationError { get; set; }
         public string Name { get; set; }
-        public IEnumerable<string> HeaderErrors { get; set; }
+        public IEnumerable<string> HeaderErrors { get; set; } = new List<string>();
     }
 }
