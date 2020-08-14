@@ -61,6 +61,8 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
                 }
                 catch (Exception e)
                 {
+                    _logger.LogError(e,"Unable to process csv file");
+
                     var status = new BulkImportStatus();
                     status.ImportFileIsValid = false;
                     status.ValidationError = "Unable to parse CSV file, the format of the file is invalid";
