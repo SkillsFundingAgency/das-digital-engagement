@@ -9,10 +9,14 @@ using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Application.UnitTests.Helpers;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
+using DAS.DigitalEngagement.Models.BulkImport;
+using DAS.DigitalEngagement.Models.Validation;
 using Das.Marketo.RestApiClient.Models;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using ImportStatus = DAS.DigitalEngagement.Models.BulkImport.ImportStatus;
 
 namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 {
@@ -23,7 +27,6 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private Mock<ICsvService> _csvService;
         private Mock<IBulkImportService> _bulkImportService;
         private Mock<ILogger<ImportPersonHandler>> _logger;
-        private Mock<IReportService> _reportService;
 
         private IChunkingService _chunkingService = new ChunkingService();
 
@@ -37,21 +40,20 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _csvService = new Mock<ICsvService>();
             _bulkImportService = new Mock<IBulkImportService>();
             _logger = new Mock<ILogger<ImportPersonHandler>>();
-            _reportService = new Mock<IReportService>();
 
 
             _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
             _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(), _testLeadList))
                 .Returns(new List<IList<dynamic>>());
-            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportJob()
-            { batchId = 1, ImportId = "Imported", Status = "Queued" });
+            _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportStatus());
+            _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>()))
+                .ReturnsAsync(new FieldValidationResult());
 
-
-            _handler = new ImportPersonHandler(_chunkingServiceMock.Object, _csvService.Object, _bulkImportService.Object, _logger.Object, _reportService.Object);
+            _handler = new ImportPersonHandler(_csvService.Object, _bulkImportService.Object, _logger.Object);
         }
 
         [Test]
-        public async Task Then_The_Blob_Is_Converted_To_List()
+        public async Task When_Fields_Valid_Then_The_Blob_Is_Converted_To_List()
         {
             //Arrange
 
@@ -65,23 +67,9 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()), Times.Once);
         }
 
-        [Test]
-        public async Task Then_The_List_is_Chunked_Into_Valid_Sizes()
-        {
-            //Arrange
-
-            //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
-            {
-                await _handler.Handle(test_Stream);
-            }
-
-            //Assert
-            _chunkingServiceMock.Verify(s => s.GetChunks(172, _testLeadList), Times.Once);
-        }
 
         [Test]
-        public async Task Then_The_Each_Chunk_Is_Sent_To_Marketo()
+        public async Task When_Fields_Valid_Then_The_List_Is_Sent_To_Marketo()
         {
             var noOfLeads = 700000;
             var Leads = GenerateNewLeads(noOfLeads);
@@ -98,25 +86,87 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _bulkImportService.Verify(s => s.ImportPeople(It.IsAny<List<dynamic>>()), Times.AtLeast(2));
+            _bulkImportService.Verify(s => s.ImportPeople(It.IsAny<List<dynamic>>()), Times.Once);
+        }
+
+        [Test]
+        public async Task When_Fields_Invalid_Then_The_Blob_Is_not_Converted_To_List()
+        {
+            //Arrange
+            _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>())).ReturnsAsync(new FieldValidationResult()
+            {
+                Errors = new List<string>() { "FirstName", "LastName" }
+            });
+
+            BulkImportStatus result;
+            //Act
+            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
+            {
+                result = await _handler.Handle(test_Stream);
+            }
+
+            //Assert
+            _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()), Times.Never);
+        }
+
+        [Test]
+        public async Task When_Fields_Invalid_Then_The_List_Is_Not_Sent_To_Marketo()
+        {
+            //Arrange
+            _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>())).ReturnsAsync(new FieldValidationResult()
+            {
+                Errors = new List<string>() { "FirstName", "LastName" }
+            });
+
+            BulkImportStatus result;
+            //Act
+            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
+            {
+                result = await _handler.Handle(test_Stream);
+            }
+
+            //Assert
+            _bulkImportService.Verify(s => s.ImportPeople(It.IsAny<List<dynamic>>()), Times.Never);
+        }
+
+        [Test]
+        public async Task When_Fields_Invalid_Then_Response_Has_Invalid_status()
+        {
+            //Arrange
+            _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>())).ReturnsAsync(
+                new FieldValidationResult()
+                {
+                    Errors = new List<string>() {"FirstName", "LastName"}
+                });
+
+            BulkImportStatus result;
+            //Act
+            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
+            {
+                result = await _handler.Handle(test_Stream);
+            }
+
+            result.Should().NotBeNull();
+            result.Status.Should().Be(ImportStatus.ValidationFailed);
+            result.HeaderErrors.Should().NotBeEmpty();
         }
 
         private static List<dynamic> GenerateNewLeads(int leadCount)
-        {
-            var Leads = Enumerable
-                .Range(0, leadCount)
-                .Select(i =>
-                {
-                    dynamic expando = new ExpandoObject();
-                    expando.FirstName = $"Firstname{i}";
-                    expando.LastName = "Surname ";
-                    expando.Email = $"Firstname{i}.lastname@Email.com";
-                    expando.Company = $"MyNewCompany{i}";
-                    return (dynamic)expando;
-                })
-                .ToList();
+            {
+                var Leads = Enumerable
+                    .Range(0, leadCount)
+                    .Select(i =>
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.FirstName = $"Firstname{i}";
+                        expando.LastName = "Surname ";
+                        expando.Email = $"Firstname{i}.lastname@Email.com";
+                        expando.Company = $"MyNewCompany{i}";
+                        return (dynamic)expando;
+                    })
+                    .ToList();
 
-            return Leads;
+                return Leads;
+            }
         }
     }
-}

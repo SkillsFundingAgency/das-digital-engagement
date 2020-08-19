@@ -31,8 +31,8 @@ namespace DAS.DigitalEngagement.Functions.Import
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
-            var outputs = new List<BulkImportStatus>();
-            var input = context.GetInput<BulkImportFileStatus>();
+            var outputs = new List<BulkImportJobStatus>();
+            var input = context.GetInput<BulkImportStatus>();
 
             int pollingInterval = 5;
 
@@ -40,18 +40,18 @@ namespace DAS.DigitalEngagement.Functions.Import
             while (input.BulkImportJobs.Any(s => s.Status != "Complete"))
             {
                 outputs.Clear();
-                
+
                 foreach (var bulkImportJob in input.BulkImportJobs.ToList())
                 {
-                    outputs.Add(await context.CallActivityAsync<BulkImportStatus>("MonitorBulkImport_Job", bulkImportJob));
+                    outputs.Add(await context.CallActivityAsync<BulkImportJobStatus>("MonitorBulkImport_Job", bulkImportJob));
                 }
 
-                input.BulkImportStatus = outputs;
+                input.BulkImportJobStatus = outputs;
 
                 await context.CallActivityAsync<BulkImportJob>("MonitorBulkImport_Report", input);
 
 
-                if (input.BulkImportStatus.All(s => s.Status == "Complete"))
+                if (input.BulkImportJobStatus.All(s => s.Status == "Complete"))
                 {
                     break;
                 }
@@ -64,7 +64,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
 
         [FunctionName("MonitorBulkImport_Job")]
-        public async Task<BulkImportStatus> MoitorJob([ActivityTrigger] BulkImportJob job, ILogger log)
+        public async Task<BulkImportJobStatus> MoitorJob([ActivityTrigger] BulkImportJob job, ILogger log)
         {
 
             var jobStatus = await _bulkImportService.GetJobStatus(job.batchId);
@@ -91,7 +91,7 @@ namespace DAS.DigitalEngagement.Functions.Import
         }
 
         [FunctionName("MonitorBulkImport_Report")]
-        public async Task Run([ActivityTrigger]BulkImportFileStatus myJobs, Binder binder, ILogger log)
+        public async Task Run([ActivityTrigger]BulkImportStatus myJobs, Binder binder, ILogger log)
         {
 
 
@@ -99,7 +99,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
             var attributes = new Attribute[]
             {
-                new BlobAttribute($"{myJobs.Container}/Report/{myJobs.Id}.report.txt", FileAccess.Write),
+                new BlobAttribute($"{myJobs.Container}/Report/{myJobs.Name}.report.txt", FileAccess.Write),
                 new StorageAccountAttribute("Storage")
             };
             using (var writer = await binder.BindAsync<TextWriter>(attributes))

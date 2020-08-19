@@ -5,8 +5,8 @@ using Das.Marketo.RestApiClient.Models;
 
 namespace DAS.DigitalEngagement.Domain.Import
 {
-    public interface IImportPersonHandler
+    public interface IImportEmployerUsersHandler
     {
-        Task<BulkImportStatus> Handle(Stream personCsv);
+        Task<BulkImportStatus> Handle();
     }
 }

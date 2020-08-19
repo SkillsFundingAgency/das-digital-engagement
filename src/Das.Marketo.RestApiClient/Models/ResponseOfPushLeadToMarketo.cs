@@ -79,11 +79,10 @@ namespace Das.Marketo.RestApiClient.Models
         {
             var sb = new StringBuilder();
             sb.Append("class ResponseOfPushLeadToMarketo {\n");
-            sb.Append("  Errors: ").Append(Errors).Append("\n");
+            sb.Append("  Errors: ").Append(Errors.Select(s => $"{{Code:{s.Code} - Message: {s.Message}}}, \n")).Append("\n");
             sb.Append("  RequestId: ").Append(RequestId).Append("\n");
-            sb.Append("  Result: ").Append(Result).Append("\n");
             sb.Append("  Success: ").Append(Success).Append("\n");
-            sb.Append("  Warnings: ").Append(Warnings).Append("\n");
+            sb.Append("  Warnings: ").Append(Warnings.Select(s => $"{{Code:{s.Code} - Message: {s.Message}}}, \n")).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }

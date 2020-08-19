@@ -34,9 +34,10 @@ namespace DAS.DigitalEngagement.Functions.Import
                 string report;
                 try
                 {
-                    var importJobs = await _importCampaignMembersHandler.Handle(myBlob,name.Replace(".csv",""));
+                    var importJobs = await _importCampaignMembersHandler.Handle(myBlob, name.Replace(".csv", ""));
 
-                    importJobs.Id = name;
+                    importJobs.Id = Guid.NewGuid().ToString();
+                    importJobs.Name = name;
                     importJobs.Container = _container;
 
                     report = _reportService.CreateImportReport(importJobs);

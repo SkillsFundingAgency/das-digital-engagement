@@ -8,14 +8,14 @@ namespace DAS.DigitalEngagement.Domain.Mapping.BulkImport
 {
     public interface IBulkImportStatusMapper
     {
-        BulkImportStatus Map(BatchStatus batchStatus);
+        BulkImportJobStatus Map(BatchStatus batchStatus);
     }
 
     public class BulkImportStatusMapper : IBulkImportStatusMapper
     {
-       public BulkImportStatus Map(BatchStatus batchStatus)
+       public BulkImportJobStatus Map(BatchStatus batchStatus)
        {
-           var status = new BulkImportStatus();
+           var status = new BulkImportJobStatus();
 
            status.Id = batchStatus.batchId;
            status.ImportId = batchStatus.importId;

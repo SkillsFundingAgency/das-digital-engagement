@@ -1,26 +1,28 @@
-﻿using System;
-using System.IO;
-using DAS.DigitalEngagement.Application.Import.Handlers;
+﻿using DAS.DigitalEngagement.Application.Import.Handlers;
+using DAS.DigitalEngagement.Application.Repositories;
 using DAS.DigitalEngagement.Application.Services;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Import;
+using DAS.DigitalEngagement.Domain.Mapping;
 using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
 using DAS.DigitalEngagement.Functions.Import.Extensions;
+using DAS.DigitalEngagement.Infrastructure.Configuration;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
-using Refit;
-using DAS.DigitalEngagement.Models.Infrastructure;
 using Das.Marketo.RestApiClient.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using SFA.DAS.EmployerUsers.Api.Client;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
@@ -28,12 +30,14 @@ namespace DAS.DigitalEngagement.Functions.Import
     public class Startup : FunctionsStartup
     {
         public IConfiguration Configuration { get; private set; }
+        public IHostingEnvironment Environment { get; private set; }
 
         public Startup() { }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Environment = new HostingEnvironment();
         }
         public override void Configure(IFunctionsHostBuilder builder)
         {
@@ -56,7 +60,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
                 return configuration;
             });
-             
+
             Configuration = builder.GetCurrentConfiguration();
             ConfigureServices(builder.Services);
 
@@ -68,8 +72,9 @@ namespace DAS.DigitalEngagement.Functions.Import
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
+            services.Configure<IEmployerUsersApiConfiguration>(Configuration.GetSection("EmployerUsersApi"));
             services.AddOptions();
-     
+
 
             services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
             services.AddTransient<IImportCampaignMembersHandler, ImportCampaignMembersHandler>();
@@ -80,9 +85,14 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<IBulkImportStatusMapper, BulkImportStatusMapper>();
             services.AddTransient<IBulkImportJobMapper, BulkImportJobMapper>();
             services.AddTransient<IBlobService, BlobService>();
+            services.AddTransient<IImportEmployerUsersHandler, ImportEmployerUsersHandler>();
+            services.AddTransient<IEmployerUsersRepository, EmployerUsersRepository>();
+
+
             services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
                 new BlobContainerClientWrapper(Configuration.GetValue<string>("AzureWebJobsStorage")));
-          
+
+            services.AddTransient<IPersonMapper, PersonMapper>();
 
             var executioncontextoptions = services.BuildServiceProvider()
                 .GetService<IOptions<ExecutionContextOptions>>().Value;
@@ -108,6 +118,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.ConfigureOptions<LoggerFilterConfigureOptions>();
 
             services.AddMarketoClient(Configuration);
+            services.AddEmployerUsersClient(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }

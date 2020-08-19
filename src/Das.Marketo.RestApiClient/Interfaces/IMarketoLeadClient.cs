@@ -7,6 +7,8 @@ namespace Das.Marketo.RestApiClient.Interfaces
     [Headers("Authorization: Bearer","Content-Type: application/json")]
     public interface IMarketoLeadClient
     {
+        [Get("/leads/describe.json")]
+        Task<Response<LeadAttribute>> Describe();
         [Get("/lead/{id}.json")]
         Task<ResponseOfLead> Get(int id);
         [Post("/leads/push.json")]
