@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DAS.DigitalEngagement.Domain.DataCollection;
@@ -30,24 +31,76 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
             _logger.LogInformation($"about to handle campaign members import");
 
             var fileStatus = new BulkImportStatus();
-            var contacts = await _csvService.ConvertToList(personCsv);
-            var contactsChunks = _chunkingService.GetChunks(personCsv.Length, contacts).ToList();
 
-            var index = 1;
 
-            foreach (var contactsList in contactsChunks)
+            using (var sr = new StreamReader(personCsv))
             {
-                var importResult = await _bulkImportService.ImportToCampaign(contactsList, campaignId);
-                fileStatus.BulkImportJobs.Add(importResult);
+                fileStatus = await ValidateImportStream(sr);
 
-                _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} to campaign ID {campaignId} has been queued. \n Job details: {importResult} ");
+                if (fileStatus.ImportFileIsValid == false)
+                {
+                    return fileStatus;
+                }
 
-                index++;
+
+
+                var contacts = await _csvService.ConvertToList(sr);
+                var contactsChunks = _chunkingService.GetChunks(sr.BaseStream.Length, contacts).ToList();
+
+                var index = 1;
+
+                foreach (var contactsList in contactsChunks)
+                {
+                    var importResult = await _bulkImportService.ImportToCampaign(contactsList, campaignId);
+                    fileStatus.BulkImportJobs.Add(importResult);
+
+                    _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} to campaign ID {campaignId} has been queued. \n Job details: {importResult} ");
+
+                    index++;
+                }
             }
-
             return fileStatus;
         }
 
+        private async Task<BulkImportStatus> ValidateImportStream(StreamReader sr)
+        {
 
+            var status = new BulkImportStatus();
+
+            if (_csvService.IsEmpty(sr))
+            {
+                status.ValidationError = "No headers - File is empty so cannot be processed";
+            }
+
+            if (_csvService.HasData(sr))
+            {
+                status.ValidationError = "Missing data - there is no data to process";
+
+            }
+
+            IList<string> csvFields = CsvFields(sr);
+
+            var fieldValidation = await _bulkImportService.ValidateFields(csvFields);
+
+            if (fieldValidation.IsValid == false)
+            {
+                status.HeaderErrors = fieldValidation.Errors;
+
+            }
+
+            if (status.ValidationError != null || status.HeaderErrors.Any())
+            {
+                status.ImportFileIsValid = false;
+            }
+            return status;
+        }
+
+        private static List<string> CsvFields(StreamReader sr)
+        {
+            sr.BaseStream.Position = 0;
+            sr.DiscardBufferedData();
+
+            return sr.ReadLine().Split(',').ToList();
+        }
     }
 }
