@@ -79,6 +79,13 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
                
             }
 
+            if (status.ValidationError != null)
+            {
+                status.ImportFileIsValid = false;
+                return status;
+            }
+         
+
             IList<string> csvFields = CsvFields(sr);
             
             var fieldValidation = await _bulkImportService.ValidateFields(csvFields);
@@ -89,7 +96,7 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
                
             }
 
-            if (status.ValidationError != null || status.HeaderErrors.Any())
+            if (status.HeaderErrors.Any())
             {
                 status.ImportFileIsValid = false;
             }
