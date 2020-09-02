@@ -29,7 +29,18 @@
         },
         "configurationStorageConnectionString": {
             "type": "securestring"
+        },
+        "policyRules": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of management policy rules"
+            }
+        },
+        "storageKind": {
+            "type": "string"
         }
+
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
@@ -118,6 +129,9 @@
                 "parameters": {
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    },
+                    "storageKind": {
+                        "value": "[parameters('storageKind')]"
                     }
                 }
             }
@@ -144,6 +158,30 @@
             "copy": {
                 "count": "[length(variables('storageContainerNames'))]",
                 "name": "storageContainerCopy"
+            },
+            "dependsOn": [
+                "storage-account"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "storage-management-policy",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'storage-management-policy.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "policyRules": {
+                        "value": "[parameters('policyRules')]"
+
+                    }
+                }
             },
             "dependsOn": [
                 "storage-account"
@@ -223,12 +261,12 @@
                                 "value": "[parameters('configName')]"
                             },
                             {
-                              "name": "EnvironmentName",
-                              "value": "[parameters('environmentName')]"
+                                "name": "EnvironmentName",
+                                "value": "[parameters('environmentName')]"
                             },
                             {
-                              "name": "ConfigurationStorageConnectionString",
-                              "value": "[parameters('configurationStorageConnectionString')]"
+                                "name": "ConfigurationStorageConnectionString",
+                                "value": "[parameters('configurationStorageConnectionString')]"
                             },
                             {
                                 "name": "FUNCTIONS_WORKER_RUNTIME",
