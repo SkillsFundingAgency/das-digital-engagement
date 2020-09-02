@@ -73,7 +73,7 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
                 status.ValidationError = "No headers - File is empty so cannot be processed";
             }
 
-            if (_csvService.HasData(sr))
+            if (_csvService.HasData(sr) == false)
             {
                 status.ValidationError = "Missing data - there is no data to process";
                
