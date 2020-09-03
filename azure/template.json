@@ -39,8 +39,11 @@
         },
         "storageKind": {
             "type": "string"
+        },
+        "functionsExtensionVersion": {
+            "type": "string",
+            "defaultValue": "~2.0"
         }
-
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
@@ -212,7 +215,7 @@
                         "value": [
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~2"
+                                "value": "[parameters('functionsExtensionVersion')]"
                             }
                         ]
                     }
@@ -254,7 +257,7 @@
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~2"
+                                "value": "[parameters('functionsExtensionVersion')]"
                             },
                             {
                                 "name": "ConfigName",
@@ -312,7 +315,7 @@
                             },
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~2"
+                                "value": "[parameters('functionsExtensionVersion')]"
                             },
                             {
                                 "name": "ConfigName",
