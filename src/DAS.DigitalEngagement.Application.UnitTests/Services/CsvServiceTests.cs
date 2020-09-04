@@ -34,9 +34,9 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             IList<dynamic> result;
             //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvSmall)))
+            using (var test_Stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(_testCsvSmall))))
             {
-             result = await _service.ConvertToList(test_Stream);
+                result = await _service.ConvertToList(test_Stream);
             }
            
             //Assert
@@ -51,7 +51,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             IList<dynamic> result;
             //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvLarge)))
+            using (var test_Stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(_testCsvLarge))))
             {
                 result = await _service.ConvertToList(test_Stream);
             }
@@ -68,7 +68,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             IList<dynamic> result;
             //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvSmall)))
+            using (var test_Stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(_testCsvSmall))))
             {
                 result = await _service.ConvertToList(test_Stream);
             }
@@ -92,7 +92,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             IList<dynamic> result;
             //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvMissing)))
+            using (var test_Stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(_testCsvMissing)))) 
             {
                 result = await _service.ConvertToList(test_Stream);
             }
@@ -116,7 +116,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             IList<dynamic> result;
             //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsvAdditional)))
+            using (var test_Stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(_testCsvAdditional))))
             {
                 result = await _service.ConvertToList(test_Stream);
             }

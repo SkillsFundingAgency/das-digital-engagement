@@ -33,29 +33,19 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
 
             var fileStatus = new BulkImportStatus();
 
-            IList<string> csvFields = null;
             using (var sr = new StreamReader(personCsv))
             {
-                csvFields = sr.ReadLine().Split(',').ToList();
+                fileStatus = await ValidateImportStream(sr);
 
-
-
-                var fieldValidation = await _bulkImportService.ValidateFields(csvFields);
-
-                if (fieldValidation.IsValid == false)
+                if (fileStatus.ImportFileIsValid == false)
                 {
-                    var status = new BulkImportStatus();
-                    status.ImportFileIsValid = true;
-                    status.HeaderErrors = fieldValidation.Errors;
-                    return status;
+                    return fileStatus;
                 }
-
-
 
                 IList<dynamic> contacts = null;
                 try
                 {
-                    contacts = await _csvService.ConvertToList(sr.BaseStream);
+                    contacts = await _csvService.ConvertToList(sr);
 
 
                 }
@@ -73,6 +63,52 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
             }
         }
 
+        private async Task<BulkImportStatus> ValidateImportStream(StreamReader sr)
+        {
 
+            var status = new BulkImportStatus();
+            
+            if (_csvService.IsEmpty(sr))
+            {
+                status.ValidationError = "No headers - File is empty so cannot be processed";
+            }
+
+            if (_csvService.HasData(sr) == false)
+            {
+                status.ValidationError = "Missing data - there is no data to process";
+               
+            }
+
+            if (status.ValidationError != null)
+            {
+                status.ImportFileIsValid = false;
+                return status;
+            }
+         
+
+            IList<string> csvFields = CsvFields(sr);
+            
+            var fieldValidation = await _bulkImportService.ValidateFields(csvFields);
+
+            if (fieldValidation.IsValid == false)
+            {
+               status.HeaderErrors = fieldValidation.Errors;
+               
+            }
+
+            if (status.HeaderErrors.Any())
+            {
+                status.ImportFileIsValid = false;
+            }
+            return status;
+        }
+
+        private static List<string> CsvFields(StreamReader sr)
+        {
+            sr.BaseStream.Position = 0;
+            sr.DiscardBufferedData();
+            
+            return sr.ReadLine().Split(',').ToList();
+        }
     }
 }

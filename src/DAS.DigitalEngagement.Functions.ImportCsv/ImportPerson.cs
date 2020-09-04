@@ -43,7 +43,11 @@ namespace DAS.DigitalEngagement.Functions.Import
                     importJobs.Container = _container;
 
                     report = _reportService.CreateImportReport(importJobs);
-                    string instanceId = await starter.StartNewAsync("MonitorBulkImport", importJobs.Id, importJobs);
+
+                    if (importJobs.ImportFileIsValid)
+                    {
+                        string instanceId = await starter.StartNewAsync("MonitorBulkImport", importJobs.Id, importJobs);
+                    }
 
                     myBlob.Close();
 

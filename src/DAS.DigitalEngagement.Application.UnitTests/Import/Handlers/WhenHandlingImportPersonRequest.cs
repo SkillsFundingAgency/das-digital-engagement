@@ -42,7 +42,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _logger = new Mock<ILogger<ImportPersonHandler>>();
 
 
-            _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(_testLeadList);
+            _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(_testLeadList);
             _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(), _testLeadList))
                 .Returns(new List<IList<dynamic>>());
             _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportStatus());
@@ -56,6 +56,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         public async Task When_Fields_Valid_Then_The_Blob_Is_Converted_To_List()
         {
             //Arrange
+            _csvService.Setup(s => s.HasData(It.IsAny<StreamReader>())).Returns(true);
 
             //Act
             using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
@@ -64,7 +65,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()), Times.Once);
+            _csvService.Verify(s => s.ConvertToList(It.IsAny<StreamReader>()), Times.Once);
         }
 
 
@@ -73,8 +74,9 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         {
             var noOfLeads = 700000;
             var Leads = GenerateNewLeads(noOfLeads);
-
-            _csvService.Setup(s => s.ConvertToList(It.IsAny<Stream>())).ReturnsAsync(Leads);
+            
+            _csvService.Setup(s => s.HasData(It.IsAny<StreamReader>())).Returns(true);
+            _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(Leads);
 
             _chunkingServiceMock.Setup(s => s.GetChunks(172, Leads))
                 .Returns(_chunkingService.GetChunks(28000000, Leads));
@@ -106,7 +108,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _csvService.Verify(s => s.ConvertToList(It.IsAny<Stream>()), Times.Never);
+            _csvService.Verify(s => s.ConvertToList(It.IsAny<StreamReader>()), Times.Never);
         }
 
         [Test]
@@ -148,7 +150,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             result.Should().NotBeNull();
             result.Status.Should().Be(ImportStatus.ValidationFailed);
-            result.HeaderErrors.Should().NotBeEmpty();
+            result.HeaderErrors.Should().BeEmpty();
         }
 
         private static List<dynamic> GenerateNewLeads(int leadCount)

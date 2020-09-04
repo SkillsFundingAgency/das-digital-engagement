@@ -15,7 +15,7 @@ namespace DAS.DigitalEngagement.Application.Services
 {
     public class CsvService : ICsvService
     {
-        public CsvValidationeResult Validate(Stream csvStream, IList<string> fields)
+        public CsvValidationeResult Validate(StreamReader csvStream, IList<string> fields)
         {
             var config = new ValidatorConfiguration();
 
@@ -34,7 +34,7 @@ namespace DAS.DigitalEngagement.Application.Services
             }
 
             Validator validator = Validator.FromConfiguration(config);
-            var sourceReader = new StreamSourceReader(csvStream);
+            var sourceReader = new StreamSourceReader(csvStream.BaseStream);
 
             var validationResult = new CsvValidationeResult
             {
@@ -47,11 +47,12 @@ namespace DAS.DigitalEngagement.Application.Services
             return validationResult;
             }
 
-        public async Task<IList<dynamic>> ConvertToList(Stream personCsv)
+        public async Task<IList<dynamic>> ConvertToList(StreamReader personCsv)
         {
-            personCsv.Seek(0, SeekOrigin.Begin);
-            TextReader tr = new StreamReader(personCsv);
-            using (var csv = new CsvReader(tr, CultureInfo.InvariantCulture))
+            personCsv.DiscardBufferedData();
+            personCsv.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+            using (var csv = new CsvReader(personCsv, CultureInfo.InvariantCulture))
             {
                 var records = csv.GetRecords<dynamic>();
                 return records.ToList<dynamic>();
@@ -79,7 +80,33 @@ namespace DAS.DigitalEngagement.Application.Services
                 return writer.ToString();
             }
         }
-        
+
+        public bool IsEmpty(StreamReader stream)
+        {
+            
+            stream.DiscardBufferedData();
+            stream.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+            if (stream.BaseStream.Length < 2)
+            {
+                return true;
+            }
+
+            return String.IsNullOrWhiteSpace(stream.Peek().ToString());
+        }
+
+        public bool HasData(StreamReader stream)
+        {
+            stream.DiscardBufferedData();
+            stream.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+            stream.ReadLine();
+
+            //if there is data and not just headers, the second line should have data and shouldnt be whitespace
+
+            var secondLine = stream.ReadLine();
+
+            return String.IsNullOrWhiteSpace(secondLine) == false;
+        }
 
 
         private sealed class PersonMap : ClassMap<Person>

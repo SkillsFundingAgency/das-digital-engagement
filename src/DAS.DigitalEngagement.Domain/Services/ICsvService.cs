@@ -7,9 +7,11 @@ namespace DAS.DigitalEngagement.Domain.Services
 {
     public interface ICsvService
     {
-        CsvValidationeResult Validate(Stream csvStream, IList<string> fields);
-        Task<IList<dynamic>> ConvertToList(Stream csvStream);
+        CsvValidationeResult Validate(StreamReader csvStream, IList<string> fields);
+        Task<IList<dynamic>> ConvertToList(StreamReader csvStream);
         int GetByteCount<T>(IList<T> leads);
         string ToCsv<T>(IList<T> leads);
+        bool IsEmpty(StreamReader stream);
+        bool HasData(StreamReader stream);
     }
 }

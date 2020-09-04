@@ -42,9 +42,11 @@ namespace DAS.DigitalEngagement.Application.Services
         private void ReportValidationErrors(BulkImportStatus importStatus, StringBuilder sb)
         {
             sb.Append($"################################################################################").AppendLine();
-            if (importStatus.ImportFileIsValid == false)
+            if (importStatus.ValidationError != null)
             {
                 sb.Append($"The provided csv file is not a valid csv, please check the format of the file and try import again").AppendLine();
+                sb.Append($"Error description: {importStatus.ValidationError}").AppendLine();
+
             }
             else
             {
