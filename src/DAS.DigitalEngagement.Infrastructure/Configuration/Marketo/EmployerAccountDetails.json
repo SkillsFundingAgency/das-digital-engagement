@@ -1,0 +1,43 @@
+{
+  "action": "createOnly",
+  "displayName": "Employer Account Details",
+  "apiName": "employerAccountDetails",
+  "description": "Employer account and legal entity details for a lead",
+  "fields": [
+    {
+      "displayName": "Das Account Id",
+      "description": "Link field to Lead object",
+      "name": "leadID",
+      "dataType": "link",
+      "relatedTo": {
+        "field": "id",
+        "name": "lead"
+      }
+    },
+    {
+      "displayName": "VIN",
+      "description": "Vehicle ID number",
+      "name": "vin",
+      "dataType": "string",
+      "isDedupeField": true
+    },
+    {
+      "displayName": "Make",
+      "description": "Vehicle make",
+      "name": "make",
+      "dataType": "string"
+    },
+    {
+      "displayName": "Model",
+      "description": "Vehicle model",
+      "name": "model",
+      "dataType": "string"
+    },
+    {
+      "displayName": "Year",
+      "description": "Vehicle year",
+      "name": "year",
+      "dataType": "integer"
+    }
+  ]
+}
