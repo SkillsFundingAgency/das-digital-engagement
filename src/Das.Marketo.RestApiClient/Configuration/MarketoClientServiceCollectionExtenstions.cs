@@ -27,6 +27,9 @@ namespace Das.Marketo.RestApiClient.Configuration
             var builder = services.AddRefitClient<IMarketoLeadClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiRestPrefix));
             builder.AddHttpMessageHandler<OAuthHttpClientHandler>();
 
+            var customObjectClientbuilder = services.AddRefitClient<IMarketoCustomObjectSchemaClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(marketoConfig.ApiBaseUrl + marketoConfig.ApiRestPrefix));
+            customObjectClientbuilder.AddHttpMessageHandler<OAuthHttpClientHandler>();
+
             return services;
         }
     }

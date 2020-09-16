@@ -9,6 +9,7 @@ namespace DAS.DigitalEngagement.Domain.DataCollection
     {
         Task<FieldValidationResult> ValidateFields(IList<string> fields);
         Task<BulkImportStatus> ImportPeople<T>(IList<T> leads);
+        Task<BulkImportStatus> ImportCustomObject<T>(IList<T> data, string objectName);
         Task<BulkImportJob> ImportToCampaign<T>(IList<T> leads, string campaginId);
         Task<BulkImportJobStatus> GetJobStatus(int jobId);
         Task<string> GetWarnings(int jobId);

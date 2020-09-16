@@ -1,6 +1,7 @@
 ﻿using System;
 using DAS.DigitalEngagement.Infrastructure.Handlers;
 using DAS.DigitalEngagement.Infrastructure.Interfaces.Clients;
+using DAS.DigitalEngagement.Infrastructure.Repositories;
 using Das.Marketo.RestApiClient.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,9 @@ namespace DAS.DigitalEngagement.Infrastructure.Configuration
             services.AddTransient<AzureAppAuthenticationHttpClientHandler>(x => new AzureAppAuthenticationHttpClientHandler(employerUsersConfig.Identifier, x.GetRequiredService<ILogger<AzureAppAuthenticationHttpClientHandler>>()));
 
             var httpBuilder = services.AddRefitClient<IEmployerUsersApiClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri(employerUsersConfig.ApiBaseUrl));
+
+            var githubClientBuilder = services.AddRefitClient<IGithubRepository>().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://raw.githubusercontent.com/"));
+
 
             var environment = configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT");
 

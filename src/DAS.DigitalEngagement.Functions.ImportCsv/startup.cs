@@ -1,6 +1,12 @@
-﻿using DAS.DigitalEngagement.Application.Import.Handlers;
+﻿using System.Collections.Generic;
+using DAS.DigitalEngagement.Application.Handlers.Configure;
+using DAS.DigitalEngagement.Application.Import.Handlers;
+using DAS.DigitalEngagement.Application.Mapping;
+using DAS.DigitalEngagement.Application.Mapping.Interfaces;
 using DAS.DigitalEngagement.Application.Repositories;
 using DAS.DigitalEngagement.Application.Services;
+using DAS.DigitalEngagement.Application.Services.Marketo;
+using DAS.DigitalEngagement.Domain.Configure;
 using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Import;
 using DAS.DigitalEngagement.Domain.Mapping;
@@ -10,6 +16,7 @@ using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
 using DAS.DigitalEngagement.Functions.Import.Extensions;
 using DAS.DigitalEngagement.Infrastructure.Configuration;
+using DAS.DigitalEngagement.Infrastructure.Repositories;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,15 +71,14 @@ namespace DAS.DigitalEngagement.Functions.Import
             Configuration = builder.GetCurrentConfiguration();
             ConfigureServices(builder.Services);
 
-
-
-
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<IEmployerUsersApiConfiguration>(Configuration.GetSection("EmployerUsersApi"));
+            services.Configure<List<DataMartSettings>>(Configuration.GetSection("DataMart"));
+
             services.AddOptions();
 
 
@@ -80,13 +86,20 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<IImportCampaignMembersHandler, ImportCampaignMembersHandler>();
             services.AddTransient<IChunkingService, ChunkingService>();
             services.AddTransient<ICsvService, CsvService>();
-            services.AddTransient<IBulkImportService, BulkImportService>();
+            services.AddTransient<IBulkImportService, MarketoBulkImportService>();
             services.AddTransient<IReportService, ReportService>();
             services.AddTransient<IBulkImportStatusMapper, BulkImportStatusMapper>();
             services.AddTransient<IBulkImportJobMapper, BulkImportJobMapper>();
             services.AddTransient<IBlobService, BlobService>();
             services.AddTransient<IImportEmployerUsersHandler, ImportEmployerUsersHandler>();
             services.AddTransient<IEmployerUsersRepository, EmployerUsersRepository>();
+            services.AddTransient<IImportDataMartHandler, ImportDataMartHandler>();
+            services.AddTransient<IDataModelConfigurationService, MarketoDataModelConfigurationService>();
+            services.AddTransient<IConfigureDataModelHandler, ConfigureDataModelHandler>();
+            services.AddTransient<ICreateCustomObjectFieldsRequestMapping, CreateCustomObjectFieldsRequestMapping>();
+            services.AddTransient<ICreateCustomObjectSchemaRequestMapping, CreateCustomObjectSchemaRequestMapping>();
+
+            services.AddTransient<IDataMartRepository, DataMartRepository>();
 
 
             services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>

@@ -12,20 +12,20 @@ using Das.Marketo.RestApiClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Refit;
 
-namespace DAS.DigitalEngagement.Application.Services
+namespace DAS.DigitalEngagement.Application.Services.Marketo
 {
-    public class BulkImportService : IBulkImportService
+    public class MarketoBulkImportService : IBulkImportService
     {
         private readonly IChunkingService _chunkingService;
         private readonly IMarketoBulkImportClient _marketoBulkImportClient;
         private readonly IMarketoLeadClient _marketoLeadClient;
         private readonly ICsvService _csvService;
-        private readonly ILogger<BulkImportService> _logger;
+        private readonly ILogger<MarketoBulkImportService> _logger;
         private readonly IBulkImportStatusMapper _bulkImportStatusMapper;
         private readonly IBulkImportJobMapper _bulkImportJobMapper;
 
-        public BulkImportService(IMarketoLeadClient marketoLeadClient,
-            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<BulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, IChunkingService chunkingService)
+        public MarketoBulkImportService(IMarketoLeadClient marketoLeadClient,
+            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<MarketoBulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, IChunkingService chunkingService)
         {
             _marketoLeadClient = marketoLeadClient;
             _marketoBulkImportClient = marketoBulkImportClient;
@@ -75,6 +75,28 @@ namespace DAS.DigitalEngagement.Application.Services
             return fileStatus;
         }
 
+        public async Task<BulkImportStatus> ImportCustomObject<T>(IList<T> data, string objectName)
+        {
+            var fileStatus = new BulkImportStatus();
+
+            var contactsChunks = _chunkingService.GetChunks(_csvService.GetByteCount(data), data).ToList();
+
+            var index = 1;
+
+            foreach (var contactsList in contactsChunks)
+            {
+                var importResult =
+                    await ImportChunkedObject(contactsList,objectName);
+                fileStatus.BulkImportJobs.Add(importResult);
+
+                _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} for object: {objectName} has been queued. \n Job details: {importResult} ");
+
+                index++;
+            }
+
+            return fileStatus;
+        }
+
 
         private async Task<BulkImportJob> ImportChunkedPeople<T>(IList<T> leads)
         {
@@ -85,6 +107,26 @@ namespace DAS.DigitalEngagement.Application.Services
                 var streamPart = new StreamPart(stream, String.Empty, "text/csv");
 
                 var bulkImportResponse = await _marketoBulkImportClient.PushLeads(streamPart);
+
+                if (bulkImportResponse.Success == false)
+                {
+                    throw new Exception(
+                        $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
+                }
+
+                return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
+            }
+        }
+
+        private async Task<BulkImportJob> ImportChunkedObject<T>(IList<T> leads,string objectName)
+        {
+            var csvStrings = _csvService.ToCsv(leads);
+
+            using (var stream = GenerateStreamFromString(csvStrings))
+            {
+                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
+
+                var bulkImportResponse = await _marketoBulkImportClient.PushCustomObject(streamPart,objectName);
 
                 if (bulkImportResponse.Success == false)
                 {

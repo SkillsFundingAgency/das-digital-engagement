@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DAS.DigitalEngagement.Application.Services;
+using DAS.DigitalEngagement.Application.Services.Marketo;
 using DAS.DigitalEngagement.Application.UnitTests.Helpers;
 using DAS.DigitalEngagement.Domain.Mapping.BulkImport;
 using DAS.DigitalEngagement.Domain.Services;
@@ -21,7 +22,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
 {
     public class BulkImportServiceTests
     {
-        private BulkImportService _service;
+        private MarketoBulkImportService _service;
         private Mock<IMarketoLeadClient> _marketoLeadClientMock;
         private Mock<IMarketoBulkImportClient> _marketoBulkImportClientMock;
         private Mock<ICsvService> _csvServiceMock;
@@ -29,7 +30,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
         private Mock<IBulkImportStatusMapper> _bulkImportStatusMapperMock;
         private Mock<IChunkingService> _chunkingServiceMock;
 
-        private Mock<ILogger<BulkImportService>> _logger;
+        private Mock<ILogger<MarketoBulkImportService>> _logger;
 
         private IChunkingService _chunkingService = new ChunkingService();
 
@@ -45,7 +46,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
             _bulkImportStatusMapperMock = new Mock<IBulkImportStatusMapper>();
             _chunkingServiceMock = new Mock<IChunkingService>();
             _csvServiceMock = new Mock<ICsvService>();
-            _logger = new Mock<ILogger<BulkImportService>>();
+            _logger = new Mock<ILogger<MarketoBulkImportService>>();
 
 
             var jobResponse = new Response<BatchJob>()
@@ -63,7 +64,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
             _marketoLeadClientMock.Setup(s => s.Describe()).ReturnsAsync(GenerateDescribeReturn());
 
 
-            _service = new BulkImportService(_marketoLeadClientMock.Object,
+            _service = new MarketoBulkImportService(_marketoLeadClientMock.Object,
                                             _marketoBulkImportClientMock.Object,
                                             _csvServiceMock.Object,
                                             _logger.Object,

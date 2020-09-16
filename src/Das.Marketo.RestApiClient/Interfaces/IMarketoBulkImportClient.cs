@@ -21,6 +21,11 @@ namespace Das.Marketo.RestApiClient.Interfaces
         [Post("/program/{programId}/members/import.json?format=csv&programMemberStatus=Member")]
         Task<Response<BatchJob>> PushToProgram([AliasAs("file")]StreamPart pushLeadsPart, [AliasAs("programId")] string campaignId);
 
+        [Multipart("-------Boundary")]
+        [Headers("Content-Type: multipart/form-data; boundary=-------Boundary")]
+        [Post("/customobjects/{apiName}/import.json?format=csv")]
+        Task<Response<BatchJob>> PushCustomObject([AliasAs("file")]StreamPart pushLeadsPart, [AliasAs("apiName")] string objectName);
+
         [Get("/leads/batch/{id}/warnings.json")]
         Task<HttpContent> GetWarnings([AliasAs("id")] int batchId);
 
