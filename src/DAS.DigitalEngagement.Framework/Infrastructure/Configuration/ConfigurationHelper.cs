@@ -11,7 +11,13 @@ namespace DAS.DigitalEngagement.Framework.Infrastructure.Configuration
 
         public static string GetAppName(this IConfiguration configuration)
         {
-            return configuration.GetConnectionStringOrSetting("APPSETTING_AppName");
+            var appName = configuration.GetConnectionStringOrSetting("APPSETTING_AppName");
+
+            if (appName == null)
+            {
+                appName = configuration.GetConnectionStringOrSetting("AppName");
+            }
+            return appName;
         }
 
         public static string GetAzureStorageConnectionString(this IConfiguration configuration)
