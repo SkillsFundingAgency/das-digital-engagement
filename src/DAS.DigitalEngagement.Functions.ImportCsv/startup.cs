@@ -24,12 +24,13 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using Das.Marketo.RestApiClient.Configuration;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.EmployerUsers.Api.Client;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
@@ -37,14 +38,12 @@ namespace DAS.DigitalEngagement.Functions.Import
     public class Startup : FunctionsStartup
     {
         public IConfiguration Configuration { get; private set; }
-        public IHostingEnvironment Environment { get; private set; }
 
         public Startup() { }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Environment = new HostingEnvironment();
         }
         public override void Configure(IFunctionsHostBuilder builder)
         {
@@ -99,7 +98,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<ICreateCustomObjectFieldsRequestMapping, CreateCustomObjectFieldsRequestMapping>();
             services.AddTransient<ICreateCustomObjectSchemaRequestMapping, CreateCustomObjectSchemaRequestMapping>();
 
-            services.AddTransient<IDataMartRepository, DataMartRepository>();
+            
 
 
             services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
@@ -132,6 +131,7 @@ namespace DAS.DigitalEngagement.Functions.Import
 
             services.AddMarketoClient(Configuration);
             services.AddEmployerUsersClient(Configuration);
+            services.AddDatamartConfiguration(Configuration);
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }
