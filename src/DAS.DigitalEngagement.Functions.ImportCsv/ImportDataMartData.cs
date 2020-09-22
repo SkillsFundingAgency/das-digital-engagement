@@ -48,7 +48,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                     importJobsStatus = await _importDataMartHandler.Handle(dataMartConfig);
 
                     importJobsStatus.Id = Guid.NewGuid().ToString();
-                    importJobsStatus.Name = $"Employer-Users/Import-{DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}";
+                    importJobsStatus.Name = $"Data-Mart/{dataMartConfig.ObjectName}/Import-{DateTime.UtcNow.ToString("s", System.Globalization.CultureInfo.InvariantCulture)}";
                     importJobsStatus.Container = _container;
 
 
