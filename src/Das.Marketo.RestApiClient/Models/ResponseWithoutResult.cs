@@ -13,7 +13,7 @@ namespace Das.Marketo.RestApiClient.Models
     /// ResponseWithoutResult
     /// </summary>
     [DataContract]
-    public partial class ResponseWithoutResult :  IEquatable<ResponseWithoutResult>, IValidatableObject
+    public partial class ResponseWithoutResult : IEquatable<ResponseWithoutResult>, IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseWithoutResult" /> class.
@@ -54,40 +54,40 @@ namespace Das.Marketo.RestApiClient.Models
             this.NextPageToken = nextPageToken;
             this.Warnings = warnings;
         }
-        
+
         /// <summary>
         /// Array of errors that occurred if the request was unsuccessful
         /// </summary>
         /// <value>Array of errors that occurred if the request was unsuccessful</value>
-        [DataMember(Name="errors", EmitDefaultValue=false)]
+        [DataMember(Name = "errors", EmitDefaultValue = false)]
         public List<Error> Errors { get; set; }
 
         /// <summary>
         /// Paging token returned from a previous response
         /// </summary>
         /// <value>Paging token returned from a previous response</value>
-        [DataMember(Name="nextPageToken", EmitDefaultValue=false)]
+        [DataMember(Name = "nextPageToken", EmitDefaultValue = false)]
         public string NextPageToken { get; set; }
 
         /// <summary>
         /// Id of the request made
         /// </summary>
         /// <value>Id of the request made</value>
-        [DataMember(Name="requestId", EmitDefaultValue=false)]
+        [DataMember(Name = "requestId", EmitDefaultValue = false)]
         public string RequestId { get; set; }
 
         /// <summary>
         /// Whether the request succeeded
         /// </summary>
         /// <value>Whether the request succeeded</value>
-        [DataMember(Name="success", EmitDefaultValue=false)]
+        [DataMember(Name = "success", EmitDefaultValue = false)]
         public bool Success { get; set; }
 
         /// <summary>
         /// Array of warnings given for the operation
         /// </summary>
         /// <value>Array of warnings given for the operation</value>
-        [DataMember(Name="warnings", EmitDefaultValue=false)]
+        [DataMember(Name = "warnings", EmitDefaultValue = false)]
         public List<Warning> Warnings { get; set; }
 
         /// <summary>
@@ -98,15 +98,23 @@ namespace Das.Marketo.RestApiClient.Models
         {
             var sb = new StringBuilder();
             sb.Append("class ResponseWithoutResult {\n");
-            sb.Append("  Errors: ").Append(Errors.Select(s => $"{{Code:{s.Code} - Message: {s.Message}}}, \n")).Append("\n");
+            if (Errors != null)
+            {
+                sb.Append("  Errors: ").Append(Errors.Select(s => $"{{Code:{s.Code} - Message: {s.Message}}}, \n").Aggregate((i, j) => i + j)).Append("\n");
+
+            }
+
             sb.Append("  RequestId: ").Append(RequestId).Append("\n");
             sb.Append("  Success: ").Append(Success).Append("\n");
-            sb.Append("  Warnings: ").Append(Warnings.Select(s => $"{{Code:{s.Code} - Message: {s.Message}}}, \n")).Append("\n");
+            if (Warnings != null)
+            {
+                sb.Append("  Warnings: ").Append(Warnings.Select(s => $"{{Code:{s.Code} - Message: {s.Message}}}, \n").Aggregate((i, j) => i + j)).Append("\n");
+            }
 
             sb.Append("}\n");
             return sb.ToString();
         }
-  
+
         /// <summary>
         /// Returns the JSON string presentation of the object
         /// </summary>
@@ -136,27 +144,27 @@ namespace Das.Marketo.RestApiClient.Models
             if (input == null)
                 return false;
 
-            return 
+            return
                 (
                     this.Errors == input.Errors ||
                     this.Errors != null &&
                     input.Errors != null &&
                     this.Errors.SequenceEqual(input.Errors)
-                ) && 
+                ) &&
                 (
                     this.NextPageToken == input.NextPageToken ||
                     (this.NextPageToken != null &&
                     this.NextPageToken.Equals(input.NextPageToken))
-                ) && 
+                ) &&
                 (
                     this.RequestId == input.RequestId ||
                     (this.RequestId != null &&
                     this.RequestId.Equals(input.RequestId))
-                ) && 
+                ) &&
                 (
                     this.Success == input.Success ||
                     this.Success.Equals(input.Success)
-                ) && 
+                ) &&
                 (
                     this.Warnings == input.Warnings ||
                     this.Warnings != null &&

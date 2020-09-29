@@ -43,6 +43,9 @@
         "functionsExtensionVersion": {
             "type": "string",
             "defaultValue": "~2.0"
+        },
+        "loggingRedisConnectionString": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -336,6 +339,10 @@
                             {
                                 "name": "FUNCTIONS_WORKER_RUNTIME",
                                 "value": "dotnet"
+                            },
+                            {
+                                "name": "LoggingRedisConnectionString",
+                                "value": "[parameters('loggingRedisConnectionString')]"
                             }
                         ]
                     }

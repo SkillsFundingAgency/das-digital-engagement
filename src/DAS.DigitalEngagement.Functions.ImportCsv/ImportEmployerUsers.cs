@@ -22,6 +22,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             _reportService = reportService;
             _importEmployerUsersHandler = importEmployerUsersHandler;
         }
+
         [Disable]
         [FunctionName("ImportEmployerUsers")]
         public async Task Run([TimerTrigger("%Functions:EmployerUsersImportSchedule%")]TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient starter, Binder binder, ILogger log)
