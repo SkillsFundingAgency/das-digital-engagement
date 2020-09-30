@@ -86,6 +86,7 @@ steps:
   inputs:
     Contents: |
      azure/**
+     src/DAS.DigitalEngagement.Infrastructure/Configuration/Marketo/EmployerAccountDetails.json
     TargetFolder: '$(build.artifactstagingdirectory)/publish'
     OverWrite: true
 
