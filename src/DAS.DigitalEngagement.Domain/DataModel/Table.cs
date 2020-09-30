@@ -10,6 +10,7 @@ namespace DAS.DigitalEngagement.Domain.DataModel
         public string displayName { get; set; }
         public string apiName { get; set; }
         public string description { get; set; }
+        public bool showInLeadDetail => true;
         public IEnumerable<Fields> fields { get; set; }
     }
 }
