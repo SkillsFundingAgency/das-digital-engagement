@@ -1,165 +1,167 @@
-{
-  "action": "createOnly",
-  "displayName": "Employer Account Details",
-  "apiName": "employerAccountDetails",
-  "description": "Employer account and legal entity details for a lead",
-  "fields": [
-    {
-      "displayName": "Das Account Id",
-      "description": "as Account Id",
-      "name": "dasAccountId",
-      "dataType": "string",
-      "isDedupeField": true
-    },
-    {
-      "displayName": "Legal entity Id",
-      "description": "Legal entity Id",
-      "name": "legalEntityId",
-      "dataType": "string",
-      "isDedupeField": true
-    },
-    {
-      "displayName": "Employer User Id",
-      "description": "employerUserId",
-      "name": "employerUserId",
-      "isDedupeField": true,
-      "dataType": "link",
-      "relatedTo": {
-        "field": "employerUserId",
-        "name": "lead"
+[
+  {
+    "action": "createOnly",
+    "displayName": "Employer Account Details",
+    "apiName": "employerAccountDetails",
+    "description": "Employer account and legal entity details for a lead",
+    "fields": [
+      {
+        "displayName": "Das Account Id",
+        "description": "as Account Id",
+        "name": "dasAccountId",
+        "dataType": "string",
+        "isDedupeField": true
+      },
+      {
+        "displayName": "Legal entity Id",
+        "description": "Legal entity Id",
+        "name": "legalEntityId",
+        "dataType": "string",
+        "isDedupeField": true
+      },
+      {
+        "displayName": "Employer User Id",
+        "description": "employerUserId",
+        "name": "employerUserId",
+        "isDedupeField": true,
+        "dataType": "link",
+        "relatedTo": {
+          "field": "employerUserId",
+          "name": "lead"
+        }
+      },
+      {
+        "displayName": "Public hashed account Id",
+        "description": "public hashed account Id",
+        "name": "publicHashedAccountId",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Account Name",
+        "description": "Employer Account Name",
+        "name": "accountName",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Account Status",
+        "description": "Account Status",
+        "name": "accountStatus",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Account Role",
+        "description": "Account Role",
+        "name": "accountRole",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Account Created Date",
+        "description": "Account Created Date",
+        "name": "accountCreatedDate",
+        "dataType": "datetime"
+      },
+      {
+        "displayName": "Account Modified Date",
+        "description": "Account Modified Date",
+        "name": "accountModifiedDate",
+        "dataType": "datetime"
+      },
+      {
+        "displayName": "Levy Paying Employer",
+        "description": "Levy Paying Employer",
+        "name": "levyPayingEmployer",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Signed Agreement Id",
+        "description": "Signed Agreement Id",
+        "name": "signedAgreementId",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Signed Agreement Status",
+        "description": "Signed Agreement Status",
+        "name": "signedAgreementStatus",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Signed Agreement Signed Date",
+        "description": "signed Agreement Signed Date",
+        "name": "signedAgreementSignedDate",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Signed Agreement Version",
+        "description": "Signed Agreement Version",
+        "name": "signedAgreementVersion",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Pending Agreement Id",
+        "description": "Pending Agreement Id",
+        "name": "pendingAgreementId",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Pending Agreement Status",
+        "description": "Pending Agreement Status",
+        "name": "pendingAgreementStatus",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Pending Agreement Version",
+        "description": "Pending Agreement Version",
+        "name": "pendingAgreementVersion",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Employer Type",
+        "description": "Employer Type",
+        "name": "employerType",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Sector",
+        "description": "Sector",
+        "name": "sector",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Turnover",
+        "description": "Turnover",
+        "name": "turnover",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Number of Employees",
+        "description": "Number of Employees",
+        "name": "numberOfEmployees",
+        "dataType": "string"
+      },
+      {
+        "displayName": "Region",
+        "description": "Region",
+        "name": "region",
+        "dataType": "string"
+      },
+      {
+        "displayName": "lastSync",
+        "description": "Date of last Sync with source system",
+        "name": "lastSync",
+        "dataType": "datetime"
+      },
+      {
+        "displayName": "Legal Entity Created Date",
+        "description": "Legal Entity Created Date",
+        "name": "legalEntityCreatedDate",
+        "dataType": "datetime"
+      },
+      {
+        "displayName": "Legal Entity Modified Date",
+        "description": "Legal Entity Modified Date",
+        "name": "legalEntityModifiedDate",
+        "dataType": "datetime"
       }
-    },
-    {
-      "displayName": "Public hashed account Id",
-      "description": "public hashed account Id",
-      "name": "publicHashedAccountId",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Account Name",
-      "description": "Employer Account Name",
-      "name": "accountName",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Account Status",
-      "description": "Account Status",
-      "name": "accountStatus",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Account Role",
-      "description": "Account Role",
-      "name": "accountRole",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Account Created Date",
-      "description": "Account Created Date",
-      "name": "accountCreatedDate",
-      "dataType": "datetime"
-    },
-    {
-      "displayName": "Account Modified Date",
-      "description": "Account Modified Date",
-      "name": "accountModifiedDate",
-      "dataType": "datetime"
-    },
-    {
-      "displayName": "Levy Paying Employer",
-      "description": "Levy Paying Employer",
-      "name": "levyPayingEmployer",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Signed Agreement Id",
-      "description": "Signed Agreement Id",
-      "name": "signedAgreementId",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Signed Agreement Status",
-      "description": "Signed Agreement Status",
-      "name": "signedAgreementStatus",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Signed Agreement Signed Date",
-      "description": "signed Agreement Signed Date",
-      "name": "signedAgreementSignedDate",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Signed Agreement Version",
-      "description": "Signed Agreement Version",
-      "name": "signedAgreementVersion",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Pending Agreement Id",
-      "description": "Pending Agreement Id",
-      "name": "pendingAgreementId",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Pending Agreement Status",
-      "description": "Pending Agreement Status",
-      "name": "pendingAgreementStatus",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Pending Agreement Version",
-      "description": "Pending Agreement Version",
-      "name": "pendingAgreementVersion",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Employer Type",
-      "description": "Employer Type",
-      "name": "employerType",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Sector",
-      "description": "Sector",
-      "name": "sector",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Turnover",
-      "description": "Turnover",
-      "name": "turnover",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Number of Employees",
-      "description": "Number of Employees",
-      "name": "numberOfEmployees",
-      "dataType": "string"
-    },
-    {
-      "displayName": "Region",
-      "description": "Region",
-      "name": "region",
-      "dataType": "string"
-    },
-    {
-      "displayName": "lastSync",
-      "description": "Date of last Sync with source system",
-      "name": "lastSync",
-      "dataType": "datetime"
-    },
-    {
-      "displayName": "Legal Entity Created Date",
-      "description": "Legal Entity Created Date",
-      "name": "legalEntityCreatedDate",
-      "dataType": "datetime"
-    },
-    {
-      "displayName": "Legal Entity Modified Date",
-      "description": "Legal Entity Modified Date",
-      "name": "legalEntityModifiedDate",
-      "dataType": "datetime"
-    }
-  ]
-}
+    ]
+  }
+]
