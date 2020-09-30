@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Import\**" />
+    <EmbeddedResource Remove="Import\**" />
+    <None Remove="Import\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.4.4" />
     <PackageReference Include="CsvHelper" Version="15.0.5" />
     <PackageReference Include="CsvValidator" Version="1.0.4" />
@@ -23,11 +29,6 @@
     <ProjectReference Include="..\DAS.DigitalEngagement.Domain\DAS.DigitalEngagement.Domain.csproj" />
     <ProjectReference Include="..\DAS.DigitalEngagement.Infrastructure\DAS.DigitalEngagement.Infrastructure.csproj" />
     <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-    <Folder Include="Import\" />
   </ItemGroup>
 
 </Project>

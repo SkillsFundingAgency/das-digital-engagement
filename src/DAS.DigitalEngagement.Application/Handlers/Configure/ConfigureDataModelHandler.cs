@@ -30,8 +30,12 @@ namespace DAS.DigitalEngagement.Application.Handlers.Configure
             {
                 if (dataMartSetting.ObjectName != "Lead")
                 {
-                    var config = await _githubRepository.GetFile(dataMartSetting.ConfigFileLocation);
-                    var tableConfig = JsonConvert.DeserializeObject<Table>(config);
+                    if (dataMartSetting.Config == null)
+                    {
+                        dataMartSetting.Config = await _githubRepository.GetFile(dataMartSetting.ConfigFileLocation);
+                    }
+
+                    var tableConfig = JsonConvert.DeserializeObject<Table>(dataMartSetting.Config);
 
                     await _dataModelConfigurationService.ConfigureTable(tableConfig);
                 }
