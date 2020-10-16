@@ -17,6 +17,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using Refit;
+using Microsoft.Extensions.Options;
+using Das.Marketo.RestApiClient.Configuration;
 
 namespace DAS.DigitalEngagement.Application.UnitTests.Services
 {
@@ -32,7 +34,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
 
         private Mock<ILogger<MarketoBulkImportService>> _logger;
 
-        private IChunkingService _chunkingService = new ChunkingService();
+        private IChunkingService _chunkingService;
 
         private string _testCsv = CsvTestHelper.GetValidCsv_SingleChunk();
         private List<dynamic> _testLeadList = GenerateNewLeads(10);
@@ -47,7 +49,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
             _chunkingServiceMock = new Mock<IChunkingService>();
             _csvServiceMock = new Mock<ICsvService>();
             _logger = new Mock<ILogger<MarketoBulkImportService>>();
-
+            var marketoConfig = new Mock<IOptions<MarketoConfiguration>>();
 
             var jobResponse = new Response<BatchJob>()
             {
@@ -55,6 +57,12 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
                 Success = true,
                 Result = new List<BatchJob>()
             };
+
+            marketoConfig.Setup(x => x.Value.ApiRetryCount).Returns(1);
+            marketoConfig.Setup(x => x.Value.ApiRetryInitialBackOffSecs).Returns(1);
+            marketoConfig.Setup(x => x.Value.ChunkSizeKB).Returns(10000);    // 10MB chunk size
+
+            _chunkingService = new ChunkingService(marketoConfig.Object);
 
             _chunkingServiceMock.Setup(s => s.GetChunks(172, _testLeadList))
                 .Returns(_chunkingService.GetChunks(172, _testLeadList));
@@ -69,7 +77,9 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Services
                                             _csvServiceMock.Object,
                                             _logger.Object,
                                             _bulkImportStatusMapperMock.Object,
-                                            _bulkImportJobMapperMock.Object, _chunkingServiceMock.Object);
+                                            _bulkImportJobMapperMock.Object, 
+                                            _chunkingServiceMock.Object,
+                                            marketoConfig.Object);
         }
 
 

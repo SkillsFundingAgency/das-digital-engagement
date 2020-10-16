@@ -7,6 +7,9 @@
         public virtual string ApiClientSecret { get; set; }
         public virtual RegisterInterestProgramConfiguration RegisterInterestProgramConfiguration { get; set; }
         public virtual string ApiIdentityBaseUrl { get; set; }
+        public virtual int ApiRetryCount { get; set; }
+        public virtual int ApiRetryInitialBackOffSecs { get; set; }
+        public virtual int ChunkSizeKB { get; set; }
 
         public virtual string ApiRestPrefix => "/rest/v1";
         public virtual string ApiBulkImportPrefix => "/bulk/v1";

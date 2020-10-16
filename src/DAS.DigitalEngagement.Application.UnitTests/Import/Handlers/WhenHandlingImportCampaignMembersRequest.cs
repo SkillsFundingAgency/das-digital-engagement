@@ -15,6 +15,8 @@ using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Das.Marketo.RestApiClient.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 {
@@ -27,7 +29,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private Mock<ILogger<ImportCampaignMembersHandler>> _logger;
         private Mock<IReportService> _reportService;
 
-        private IChunkingService _chunkingService = new ChunkingService();
+        private IChunkingService _chunkingService;
 
         private string _testCsv = CsvTestHelper.GetValidCsv_SingleChunk();
         private IList<dynamic> _testLeadList = GenerateNewLeads(10);
@@ -40,8 +42,10 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _bulkImportService = new Mock<IBulkImportService>();
             _logger = new Mock<ILogger<ImportCampaignMembersHandler>>();
             _reportService = new Mock<IReportService>();
+            var marketoConfig = new Mock<IOptions<MarketoConfiguration>>();
+            marketoConfig.Setup(x => x.Value.ChunkSizeKB).Returns(10000);    // 10MB chunk size
 
-
+            _chunkingService = new ChunkingService(marketoConfig.Object);
             _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(_testLeadList);
             _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(),_testLeadList))
                 .Returns(new List<IList<dynamic>>());

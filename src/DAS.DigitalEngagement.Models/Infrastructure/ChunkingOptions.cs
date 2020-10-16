@@ -2,7 +2,7 @@
 {
     public class ChunkingOptions
     {
-        public int maxSize { get; set; } = 10;
+        public const int BytesInKB = 1000;
         public double maxDensity { get; set; } = 0.95;
     }
 }
