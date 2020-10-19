@@ -31,32 +31,31 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
         public async Task ConfigureTable(Table tableDefinition)
         {
-
             //Try and pull back the definition of the custom object
             var customObject = await _customObjectSchemaClient.GetCustomObjectSchema(tableDefinition.apiName);
-
-            //check if custom object exists in marketo
-            if (customObject != null  && customObject.Success && customObject.Result.FirstOrDefault().Approved != null)
-            {
-                _logger.LogInformation("Custom object: {tableDefinition.apiName} already exists in Marketo, and is approved, so no need to create");
-            }
-            else if (null == customObject)
+            if (null == customObject)
             {
                 _logger.LogError($"Error retrieving Custom Object: {tableDefinition.apiName}");
+                return;
             }
-            else
+
+            //check if custom object exists in marketo
+            if (customObject.Success && customObject.Result.FirstOrDefault().Approved != null)
             {
-                _logger.LogWarning($"Custom Object: {tableDefinition.apiName} does NOT exist in Marketo or is NOT approved - so trying to create it");
-
-                //Create custom object
-                if (await CreateCustomObject(tableDefinition) == false) return;
-
-                //Create custom object fields
-                if (await CreateCustomObjectFields(tableDefinition) == false) return;
-
-                //approve object
-                await ApproveCustomObject(tableDefinition);
+                _logger.LogInformation("Custom object: {tableDefinition.apiName} already exists in Marketo, and is approved, so no need to create");
+                return;
             }
+
+            _logger.LogWarning($"Custom Object: {tableDefinition.apiName} does NOT exist in Marketo or is NOT approved - so trying to create it");
+
+            //Create custom object
+            if (await CreateCustomObject(tableDefinition) == false) return;
+
+            //Create custom object fields
+            if (await CreateCustomObjectFields(tableDefinition) == false) return;
+
+            //approve object
+            await ApproveCustomObject(tableDefinition);
         }
 
         private async Task<bool> ApproveCustomObject(Table tableDefinition)
