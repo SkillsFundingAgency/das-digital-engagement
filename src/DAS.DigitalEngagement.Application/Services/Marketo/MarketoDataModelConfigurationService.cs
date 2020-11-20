@@ -31,29 +31,31 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
         public async Task ConfigureTable(Table tableDefinition)
         {
-
-            //Check if object already exists
+            //Try and pull back the definition of the custom object
             var customObject = await _customObjectSchemaClient.GetCustomObjectSchema(tableDefinition.apiName);
-
-            //if doesnt exist
-            if (String.IsNullOrWhiteSpace(customObject.ApiName))
+            if (null == customObject)
             {
-                //Create custom object
-
-                if (await CreateCustomObject(tableDefinition) == false) return;
-
-                //Create custom object fields
-                if (await CreateCustomObjectFields(tableDefinition, customObject) == false) return;
-
-                //approve object
-                await ApproveCustomObject(tableDefinition);
-            }
-            else
-            {
-                _logger.LogWarning("Custom object already exists so cannot create");
-
+                _logger.LogError($"Error retrieving Custom Object: {tableDefinition.apiName}");
+                return;
             }
 
+            //check if custom object exists in marketo
+            if (customObject.Success && customObject.Result.FirstOrDefault().Approved != null)
+            {
+                _logger.LogInformation("Custom object: {tableDefinition.apiName} already exists in Marketo, and is approved, so no need to create");
+                return;
+            }
+
+            _logger.LogWarning($"Custom Object: {tableDefinition.apiName} does NOT exist in Marketo or is NOT approved - so trying to create it");
+
+            //Create custom object
+            if (await CreateCustomObject(tableDefinition) == false) return;
+
+            //Create custom object fields
+            if (await CreateCustomObjectFields(tableDefinition) == false) return;
+
+            //approve object
+            await ApproveCustomObject(tableDefinition);
         }
 
         private async Task<bool> ApproveCustomObject(Table tableDefinition)
@@ -62,13 +64,13 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
             if (customObjectSchemaResponse.Success == false)
             {
-                _logger.LogError($"Unable to create custom object, Response: {customObjectSchemaResponse}");
+                _logger.LogError($"Unable to approve custom object: {tableDefinition.apiName}, Response: {customObjectSchemaResponse}");
                 return false;
             }
             return true;
         }
 
-        private async Task<bool> CreateCustomObjectFields(Table tableDefinition, CustomObject customObject)
+        private async Task<bool> CreateCustomObjectFields(Table tableDefinition)
         {
             var customObjectSchemaResponse =
                 await _customObjectSchemaClient.PushCustomObjectFields(tableDefinition.apiName,
@@ -76,7 +78,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
             if (customObjectSchemaResponse.Success == false)
             {
-                _logger.LogError($"Unable to create custom object fields, Response: {customObjectSchemaResponse.ToString()}");
+                _logger.LogError($"Unable to create custom object fields for : {tableDefinition.apiName}, Response: {customObjectSchemaResponse.ToString()}");
                 return false;
             }
 
@@ -89,7 +91,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
             if (customObjectSchemaResponse.Success == false)
             {
-                _logger.LogError($"Unable to create custom object, Response: {customObjectSchemaResponse.ToString()}");
+                _logger.LogError($"Unable to create custom object: {tableDefinition.apiName}, Response: {customObjectSchemaResponse.ToString()}");
                 return false;
             }
 

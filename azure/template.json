@@ -252,36 +252,40 @@
                     },
                     "functionAppAppSettings": {
                         "value": {
-                            "array": [
-                                {
-                                    "name": "AzureWebJobsStorage",
-                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
-                                },
-                                {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
-                                },
-                                {
-                                    "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "[parameters('functionsExtensionVersion')]"
-                                },
-                                {
-                                    "name": "ConfigName",
-                                    "value": "[parameters('configName')]"
-                                },
-                                {
-                                    "name": "EnvironmentName",
-                                    "value": "[parameters('environmentName')]"
-                                },
-                                {
-                                    "name": "ConfigurationStorageConnectionString",
-                                    "value": "[parameters('configurationStorageConnectionString')]"
-                                },
-                                {
-                                    "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
-                                }
-                            ]
+                          "array": [
+                            {
+                              "name": "AzureWebJobsStorage",
+                              "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                            },
+                            {
+                              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                              "value": "[reference('function-app-insights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                              "name": "FUNCTIONS_EXTENSION_VERSION",
+                              "value": "[parameters('functionsExtensionVersion')]"
+                            },
+                            {
+                              "name": "ConfigName",
+                              "value": "[parameters('configName')]"
+                            },
+                            {
+                              "name": "EnvironmentName",
+                              "value": "[parameters('environmentName')]"
+                            },
+                            {
+                              "name": "ConfigurationStorageConnectionString",
+                              "value": "[parameters('configurationStorageConnectionString')]"
+                            },
+                            {
+                              "name": "AppName",
+                              "value": "das-digital-engagement-employer-import"
+                            },
+                            {
+                              "name": "FUNCTIONS_WORKER_RUNTIME",
+                              "value": "dotnet"
+                            }
+                          ]
                         }
                     }
                 }

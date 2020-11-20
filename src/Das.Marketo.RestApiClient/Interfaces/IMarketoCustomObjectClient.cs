@@ -11,7 +11,7 @@ namespace Das.Marketo.RestApiClient.Interfaces
     public interface IMarketoCustomObjectSchemaClient
     {
         [Get("/customobjects/schema/{apiName}/describe.json")]
-        Task<CustomObject> GetCustomObjectSchema([AliasAs("apiName")] string name);
+        Task<Response<CustomObjectResponse>> GetCustomObjectSchema([AliasAs("apiName")] string name);
 
         [Post("/customobjects/schema.json")]
         Task<ResponseWithoutResult> PushCustomObjectSchema([Body(buffered: true)] CreateCustomObjectSchemaRequest customObjectSchema);

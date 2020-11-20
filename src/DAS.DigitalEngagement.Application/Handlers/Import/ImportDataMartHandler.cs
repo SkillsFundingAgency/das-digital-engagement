@@ -35,7 +35,7 @@ namespace DAS.DigitalEngagement.Application.Import.Handlers
 
         public async Task<BulkImportStatus> Handle(DataMartSettings config)
         {
-            _logger.LogInformation($"about to handle person import");
+            _logger.LogInformation($"about to handle employer lead import");
 
 
             var data = _dataMartRepository.RetrieveViewData(config.ViewName);

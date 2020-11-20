@@ -11,6 +11,11 @@ using DAS.DigitalEngagement.Models.Validation;
 using Das.Marketo.RestApiClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Refit;
+using Polly;
+using Das.Marketo.RestApiClient.Models;
+using Polly.Retry;
+using Das.Marketo.RestApiClient.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace DAS.DigitalEngagement.Application.Services.Marketo
 {
@@ -23,9 +28,10 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
         private readonly ILogger<MarketoBulkImportService> _logger;
         private readonly IBulkImportStatusMapper _bulkImportStatusMapper;
         private readonly IBulkImportJobMapper _bulkImportJobMapper;
+        private readonly IOptions<MarketoConfiguration> _marketoOptions;
 
         public MarketoBulkImportService(IMarketoLeadClient marketoLeadClient,
-            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<MarketoBulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, IChunkingService chunkingService)
+            IMarketoBulkImportClient marketoBulkImportClient, ICsvService csvService, ILogger<MarketoBulkImportService> logger, IBulkImportStatusMapper bulkImportStatusMapper, IBulkImportJobMapper bulkImportJobMapper, IChunkingService chunkingService, IOptions<MarketoConfiguration> marketoOptions)
         {
             _marketoLeadClient = marketoLeadClient;
             _marketoBulkImportClient = marketoBulkImportClient;
@@ -34,6 +40,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
             _bulkImportStatusMapper = bulkImportStatusMapper;
             _bulkImportJobMapper = bulkImportJobMapper;
             _chunkingService = chunkingService;
+            _marketoOptions = marketoOptions;
         }
 
 
@@ -58,6 +65,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
             var fileStatus = new BulkImportStatus();
 
             var contactsChunks = _chunkingService.GetChunks(_csvService.GetByteCount(leads), leads).ToList();
+            _logger.LogInformation($"ImportPeople: total of {leads.Count} leads to import, in {contactsChunks.Count} chunks");
 
             var index = 1;
 
@@ -67,7 +75,7 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
                     await ImportChunkedPeople(contactsList);
                 fileStatus.BulkImportJobs.Add(importResult);
 
-                _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} has been queued. \n Job details: {importResult} ");
+                _logger.LogInformation($"ImportPeople chunk {index} of {contactsChunks.Count()} has been queued. \n Job details: {importResult} ");
 
                 index++;
             }
@@ -80,16 +88,17 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
             var fileStatus = new BulkImportStatus();
 
             var contactsChunks = _chunkingService.GetChunks(_csvService.GetByteCount(data), data).ToList();
+            _logger.LogInformation($"ImportCustomObject: total of {data.Count} {objectName} to import, in {contactsChunks.Count} chunks");
 
             var index = 1;
 
             foreach (var contactsList in contactsChunks)
             {
                 var importResult =
-                    await ImportChunkedObject(contactsList,objectName);
+                    await ImportChunkedObject(contactsList, objectName);
                 fileStatus.BulkImportJobs.Add(importResult);
 
-                _logger.LogInformation($"Bulk import chunk {index} of {contactsChunks.Count()} for object: {objectName} has been queued. \n Job details: {importResult} ");
+                _logger.LogInformation($"ImportCustomObject chunk {index} of {contactsChunks.Count()} for object: {objectName} has been queued. \n Job details: {importResult} ");
 
                 index++;
             }
@@ -100,42 +109,53 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
         private async Task<BulkImportJob> ImportChunkedPeople<T>(IList<T> leads)
         {
-            var csvStrings = _csvService.ToCsv(leads);    
+            var csvStrings = _csvService.ToCsv(leads);
 
-            using (var stream = GenerateStreamFromString(csvStrings))
-            {
-                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
-
-                var bulkImportResponse = await _marketoBulkImportClient.PushLeads(streamPart);
-
-                if (bulkImportResponse.Success == false)
+            var bulkImportResponse = await MarketoApiJobRetryPolicy
+                .ExecuteAsync(async (context) =>
                 {
-                    throw new Exception(
-                        $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
+                    using (var stream = GenerateStreamFromString(csvStrings))
+                    {
+                        var streamPart = new StreamPart(stream, String.Empty, "text/csv");
+                        var val = await _marketoBulkImportClient.PushLeads(streamPart);
+                        return val;
+                    }
                 }
+                , new Context("ImportChunkedPeople")
+            ) ;
 
-                return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
+            if (bulkImportResponse.Success == false)
+            {
+                throw new Exception(
+                    $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
             }
+
+            return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
         }
 
         private async Task<BulkImportJob> ImportChunkedObject<T>(IList<T> leads,string objectName)
         {
             var csvStrings = _csvService.ToCsv(leads);
 
-            using (var stream = GenerateStreamFromString(csvStrings))
-            {
-                var streamPart = new StreamPart(stream, String.Empty, "text/csv");
-
-                var bulkImportResponse = await _marketoBulkImportClient.PushCustomObject(streamPart,objectName);
-
-                if (bulkImportResponse.Success == false)
-                {
-                    throw new Exception(
-                        $"Unable to push person due to errors: {bulkImportResponse.ToString()}");
+            var bulkImportResponse = await MarketoApiJobRetryPolicy
+                .ExecuteAsync(async (context) => {
+                    using (var stream = GenerateStreamFromString(csvStrings))
+                    {
+                        var streamPart = new StreamPart(stream, String.Empty, "text/csv");
+                        var val = await _marketoBulkImportClient.PushCustomObject(streamPart, objectName);
+                        return val;
+                    }
                 }
+                , new Context("ImportChunkedObject")
+            );
 
-                return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
+            if (bulkImportResponse.Success == false)
+            {
+                throw new Exception(
+                    $"Unable to push {objectName} due to errors: {bulkImportResponse.ToString()}");
             }
+
+            return bulkImportResponse.Result.Select(_bulkImportJobMapper.Map).FirstOrDefault();
         }
 
         public async Task<BulkImportJob> ImportToCampaign<T>(IList<T> leads, string campaignId)
@@ -195,6 +215,23 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
             var failureResponse = await _marketoBulkImportClient.GetFailures(jobId);
 
             return await failureResponse.ReadAsStringAsync();
+        }
+
+        private AsyncRetryPolicy<Response<BatchJob>> MarketoApiJobRetryPolicy
+        {
+            get
+            {
+                var retryPolicy = Policy<Response<BatchJob>>
+                    .HandleResult(j => j.Success == false)
+                    .WaitAndRetryAsync(_marketoOptions.Value.ApiRetryCount,
+                        attempt => TimeSpan.FromSeconds(_marketoOptions.Value.ApiRetryInitialBackOffSecs * Math.Pow(2, attempt)), // Exponential Back off.
+                        (response, nextRetryTimeSpan, retryCount, context) => // Capture some info for logging on each failure, before next retry
+                        {
+                            _logger.LogWarning($"  Marketo API call on retry: {retryCount} failed: {response.Result.ToString()}.  Retrying again in: {nextRetryTimeSpan.TotalMilliseconds}ms. Context: {context.OperationKey}");
+                        });
+
+                return retryPolicy;
+            }
         }
 
         private static Stream GenerateStreamFromString(string s)

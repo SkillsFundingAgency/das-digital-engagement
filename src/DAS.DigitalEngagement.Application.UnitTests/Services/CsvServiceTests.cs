@@ -19,8 +19,6 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private string _testCsvSmall = CsvTestHelper.GetValidCsv(10, "Mickey", "Mouse", "Disney");
         private string _testCsvLarge = CsvTestHelper.GetValidCsv(700000,"Donald","Duck","Disney");
 
-        private IChunkingService _chunkingService = new ChunkingService();
-
         [SetUp]
         public void Arrange()
         {

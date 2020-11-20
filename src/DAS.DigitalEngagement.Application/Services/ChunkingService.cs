@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Das.Marketo.RestApiClient.Configuration;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Models.Infrastructure;
 using Microsoft.Extensions.Options;
@@ -11,19 +12,22 @@ namespace DAS.DigitalEngagement.Application.Services
     public class ChunkingService : IChunkingService
     {
         public readonly ChunkingOptions _chunkingOptions;
+        private readonly IOptions<MarketoConfiguration> _marketoOptions;
 
-        public ChunkingService()
+        public ChunkingService(IOptions<MarketoConfiguration> marketoOptions)
         {
             _chunkingOptions = new ChunkingOptions();
+            _marketoOptions = marketoOptions;
         }
-        public ChunkingService(IOptions<ChunkingOptions> chunkingOptions)
+        public ChunkingService(IOptions<ChunkingOptions> chunkingOptions, IOptions<MarketoConfiguration> marketoOptions)
         {
             _chunkingOptions = chunkingOptions.Value;
+            _marketoOptions = marketoOptions;
         }
 
         private int CalculateChunkSize(int itemCount, long myBlobLength)
         {
-            var maxSize = _chunkingOptions.maxSize * 1000000;
+            var maxSize = _marketoOptions.Value.ChunkSizeKB * ChunkingOptions.BytesInKB;
 
             //Calculate the total number of items in a chunk. This allows for 5% just in case some items in the list are larger than the average.   
             var totalChunks = (int)Math.Ceiling(myBlobLength / (maxSize * _chunkingOptions.maxDensity));

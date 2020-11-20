@@ -18,6 +18,8 @@ using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using Das.Marketo.RestApiClient.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 {
@@ -30,7 +32,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         private Mock<IPersonMapper> _PersonMapperMock;
 
 
-        private IChunkingService _chunkingService = new ChunkingService();
+        private IChunkingService _chunkingService;
 
         private string _testCsv = CsvTestHelper.GetValidCsv_SingleChunk();
         private IList<EmployerUser> _testUserList = GenerateNewUsers(10);
@@ -46,6 +48,10 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _bulkImportServiceMock.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportStatus());
             _employerUsersRepositoryMock.Setup(s => s.GetAllUsers()).ReturnsAsync(_testUserList);
             _PersonMapperMock.Setup(s => s.Map(It.IsAny<EmployerUser>())).Returns(new Person());
+
+            var marketoConfig = new Mock<IOptions<MarketoConfiguration>>();
+            marketoConfig.Setup(x => x.Value.ChunkSizeKB).Returns(10000);    // 10MB chunk size
+            _chunkingService = new ChunkingService(marketoConfig.Object);
 
             _handler = new ImportEmployerUsersHandler(_bulkImportServiceMock.Object, _logger.Object,_employerUsersRepositoryMock.Object,_PersonMapperMock.Object);
         }
