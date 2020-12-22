@@ -448,7 +448,7 @@
             },
             "dependsOn": [
                 "function-app-service-plan",
-                "[reference(concat(variables('importFunctionAppName'),'-insights'))]",
+                "[concat(variables('importFunctionAppName'),'-insights')]",
                 "function-app-subnet"
             ]
         }
