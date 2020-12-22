@@ -373,9 +373,7 @@
                 }
             },
             "dependsOn": [
-                "function-app-service-plan",
-                "function-app-insights",
-                "function-app-subnet"
+                "function-app-service-plan"
             ]
         },
         {
@@ -447,9 +445,7 @@
                 }
             },
             "dependsOn": [
-                "function-app-service-plan",
-                "[concat(variables('importFunctionAppName'),'-insights')]",
-                "function-app-subnet"
+                "function-app-service-plan"
             ]
         }
     ],
