@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityModel" Version="4.3.0" />
-    <PackageReference Include="refit" Version="4.8.14" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="4.7.51" />
+    <PackageReference Include="IdentityModel" Version="5.0.0" />
+    <PackageReference Include="refit" Version="5.2.4" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="5.2.4" />
   </ItemGroup>
 
 </Project>

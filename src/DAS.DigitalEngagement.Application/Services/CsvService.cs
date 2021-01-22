@@ -72,8 +72,7 @@ namespace DAS.DigitalEngagement.Application.Services
             using (var writer = new StringWriter())
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csv.Configuration.RegisterClassMap<PersonMap>();
-
+                csv.Context.RegisterClassMap<PersonMap>();
                 csv.WriteRecords(leads);
 
                 writer.Flush();
