@@ -33,24 +33,25 @@ using Microsoft.Extensions.Options;
 using SFA.DAS.EmployerUsers.Api.Client;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System;
+using System.IO;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
 {
     public class Startup : FunctionsStartup
     {
-        public IConfiguration Configuration { get; private set; }
+        //public IConfiguration Configuration { get; private set; }
 
         public Startup() { }
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        //public Startup(IConfiguration configuration)
+        //{
+        //    Configuration = configuration;
+        //}
         public override void Configure(IFunctionsHostBuilder builder)
         {
 
-            builder.AddConfiguration((configBuilder) =>
+            /*builder.AddConfiguration((configBuilder) =>
             {
                 var tempConfig = configBuilder
                     .Build();
@@ -70,12 +71,36 @@ namespace DAS.DigitalEngagement.Functions.Import
                 return configuration;
             });
 
-            Configuration = builder.GetCurrentConfiguration();
-            ConfigureServices(builder.Services);
+            Configuration = builder.GetCurrentConfiguration();*/
+                        
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            var configuration = serviceProvider.GetService<IConfiguration>();
+
+            var configBuilder = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables();
+
+            if (!configuration["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
+            {
+                configBuilder.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigName"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                });
+            }
+
+            configBuilder.AddJsonFile("local.settings.json", optional: true);
+
+            var config = configBuilder.Build();
+
+            ConfigureServices(builder.Services, config);
 
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IConfigurationRoot Configuration)
         {
             services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<IEmployerUsersApiConfiguration>(Configuration.GetSection("EmployerUsersApi"));
