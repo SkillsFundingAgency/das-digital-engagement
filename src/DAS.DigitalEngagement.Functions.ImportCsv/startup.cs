@@ -17,7 +17,6 @@ using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
 using DAS.DigitalEngagement.Functions.Import.Extensions;
 using DAS.DigitalEngagement.Infrastructure.Configuration;
-using DAS.DigitalEngagement.Infrastructure.Repositories;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,14 +24,10 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using Das.Marketo.RestApiClient.Configuration;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.EmployerUsers.Api.Client;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-using System;
 using System.IO;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -52,16 +47,14 @@ namespace DAS.DigitalEngagement.Functions.Import
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables();
 
-            if (!configuration["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
+   
+            configBuilder.AddAzureTableStorage(options =>
             {
-                configBuilder.AddAzureTableStorage(options =>
-                {
-                    options.ConfigurationKeys = configuration["ConfigName"].Split(",");
-                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                    options.EnvironmentName = configuration["EnvironmentName"];
-                    options.PreFixConfigurationKeys = false;
-                });
-            }
+                options.ConfigurationKeys = configuration["ConfigName"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["EnvironmentName"];
+                options.PreFixConfigurationKeys = false;
+            });            
 
             configBuilder.AddJsonFile("local.settings.json", optional: true);
 
@@ -71,14 +64,13 @@ namespace DAS.DigitalEngagement.Functions.Import
 
         }
 
-        public void ConfigureServices(IServiceCollection services, IConfigurationRoot Configuration)
+        public void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
         {
-            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
-            services.Configure<IEmployerUsersApiConfiguration>(Configuration.GetSection("EmployerUsersApi"));
-            services.Configure<List<DataMartSettings>>(Configuration.GetSection("DataMart"));
+            services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
+            services.Configure<IEmployerUsersApiConfiguration>(configuration.GetSection("EmployerUsersApi"));
+            services.Configure<List<DataMartSettings>>(configuration.GetSection("DataMart"));
 
             services.AddOptions();
-
 
             services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
             services.AddTransient<IImportCampaignMembersHandler, ImportCampaignMembersHandler>();
@@ -98,10 +90,8 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<ICreateCustomObjectSchemaRequestMapping, CreateCustomObjectSchemaRequestMapping>();
 
 
-
-
             services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
-                new BlobContainerClientWrapper(Configuration.GetValue<string>("AzureWebJobsStorage")));
+                new BlobContainerClientWrapper(configuration.GetValue<string>("AzureWebJobsStorage")));
 
             services.AddTransient<IPersonMapper, PersonMapper>();
 
@@ -121,17 +111,17 @@ namespace DAS.DigitalEngagement.Functions.Import
                     CaptureMessageProperties = true
                 });
 
-                nLogConfiguration.ConfigureNLog(Configuration);
+                nLogConfiguration.ConfigureNLog(configuration);
             });
 
 
             services.RemoveAll<IConfigureOptions<LoggerFilterOptions>>();
             services.ConfigureOptions<LoggerFilterConfigureOptions>();
 
-            services.AddMarketoClient(Configuration);
-            services.AddEmployerUsersClient(Configuration);
-            services.AddDatamartConfiguration(Configuration);
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            services.AddMarketoClient(configuration);
+            services.AddEmployerUsersClient(configuration);
+            services.AddDatamartConfiguration(configuration);
+            services.AddApplicationInsightsTelemetry(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }
 }
