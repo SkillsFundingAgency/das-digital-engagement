@@ -32,6 +32,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.EmployerUsers.Api.Client;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using System;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
@@ -58,7 +59,8 @@ namespace DAS.DigitalEngagement.Functions.Import
                      //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                      .AddAzureTableStorage(options =>
                      {
-                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
+                         //options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
+                         options.ConfigurationKeys = new[] { Environment.GetEnvironmentVariable("configName") };
                          options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
                          options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
                          options.PreFixConfigurationKeys = false;
