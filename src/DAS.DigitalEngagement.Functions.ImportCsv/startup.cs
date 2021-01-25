@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿ 
+using System.Collections.Generic;
 using DAS.DigitalEngagement.Application.Handlers.Configure;
 using DAS.DigitalEngagement.Application.Import.Handlers;
 using DAS.DigitalEngagement.Application.Mapping;
@@ -16,6 +17,7 @@ using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
 using DAS.DigitalEngagement.Functions.Import.Extensions;
 using DAS.DigitalEngagement.Infrastructure.Configuration;
+using DAS.DigitalEngagement.Infrastructure.Repositories;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,12 +25,13 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using Das.Marketo.RestApiClient.Configuration;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.EmployerUsers.Api.Client;
-using System.IO;
-using System;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
@@ -45,30 +48,6 @@ namespace DAS.DigitalEngagement.Functions.Import
         }
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            var configuration = serviceProvider.GetService<IConfiguration>();
-            var environment = configuration["EnvironmentName"];
-
-
-            var configBuilder = new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddEnvironmentVariables();
-
-
-            if (!ConfigurationIsLocalOrDev(environment))
-            {
-                configBuilder.AddAzureTableStorage(options =>
-                {
-                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                    options.EnvironmentName = configuration["EnvironmentName"];
-                    options.PreFixConfigurationKeys = false;
-                });
-            }
-
-            /*var config = configBuilder.Build();
-            var logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger(GetType().AssemblyQualifiedName);
 
             builder.AddConfiguration((configBuilder) =>
             {
@@ -89,7 +68,7 @@ namespace DAS.DigitalEngagement.Functions.Import
                 return configuration;
             });
 
-            Configuration = builder.GetCurrentConfiguration();*/
+            Configuration = builder.GetCurrentConfiguration();
             ConfigureServices(builder.Services);
 
         }
@@ -120,7 +99,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<ICreateCustomObjectFieldsRequestMapping, CreateCustomObjectFieldsRequestMapping>();
             services.AddTransient<ICreateCustomObjectSchemaRequestMapping, CreateCustomObjectSchemaRequestMapping>();
 
-            
+
 
 
             services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
@@ -154,13 +133,7 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddMarketoClient(Configuration);
             services.AddEmployerUsersClient(Configuration);
             services.AddDatamartConfiguration(Configuration);
-           // services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
-        }
-
-        private static bool ConfigurationIsLocalOrDev(string environment)
-        {
-            return environment.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) ||
-                   environment.Equals("DEV", StringComparison.CurrentCultureIgnoreCase);
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }
 }
