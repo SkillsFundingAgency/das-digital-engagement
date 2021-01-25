@@ -40,39 +40,10 @@ namespace DAS.DigitalEngagement.Functions.Import
 {
     public class Startup : FunctionsStartup
     {
-        //public IConfiguration Configuration { get; private set; }
-
         public Startup() { }
-
-        //public Startup(IConfiguration configuration)
-        //{
-        //    Configuration = configuration;
-        //}
+      
         public override void Configure(IFunctionsHostBuilder builder)
-        {
-
-            /*builder.AddConfiguration((configBuilder) =>
-            {
-                var tempConfig = configBuilder
-                    .Build();
-
-                var configuration = configBuilder
-                     //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-                     .AddAzureTableStorage(options =>
-                     {
-                         //options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
-                         options.ConfigurationKeys = new[] { Environment.GetEnvironmentVariable("configName") };
-                         options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
-                         options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
-                         options.PreFixConfigurationKeys = false;
-                     })
-                    .Build();
-
-                return configuration;
-            });
-
-            Configuration = builder.GetCurrentConfiguration();*/
-                        
+        {                                    
             var serviceProvider = builder.Services.BuildServiceProvider();
             var configuration = serviceProvider.GetService<IConfiguration>();
 
