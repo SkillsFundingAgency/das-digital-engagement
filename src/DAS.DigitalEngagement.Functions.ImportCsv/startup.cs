@@ -40,6 +40,7 @@ namespace DAS.DigitalEngagement.Functions.Import
         public override void Configure(IFunctionsHostBuilder builder)
         {                                    
             var serviceProvider = builder.Services.BuildServiceProvider();
+            
             var configuration = serviceProvider.GetService<IConfiguration>();
 
             var configBuilder = new ConfigurationBuilder()
@@ -47,19 +48,21 @@ namespace DAS.DigitalEngagement.Functions.Import
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables();
 
-   
+#if DEBUG
+            configBuilder.AddJsonFile("local.settings.json", optional: true);
+#endif
+
             configBuilder.AddAzureTableStorage(options =>
             {
                 options.ConfigurationKeys = configuration["ConfigName"].Split(",");
                 options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
                 options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
-            });            
+            });
 
-            configBuilder.AddJsonFile("local.settings.json", optional: true);
 
             var config = configBuilder.Build();
-
+            builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
             ConfigureServices(builder.Services, config);
 
         }
