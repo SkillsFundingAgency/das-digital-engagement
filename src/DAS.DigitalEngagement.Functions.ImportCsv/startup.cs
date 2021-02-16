@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿ 
+using System.Collections.Generic;
 using DAS.DigitalEngagement.Application.Handlers.Configure;
 using DAS.DigitalEngagement.Application.Import.Handlers;
 using DAS.DigitalEngagement.Application.Mapping;
@@ -16,7 +17,6 @@ using DAS.DigitalEngagement.Framework.Infrastructure.Configuration;
 using DAS.DigitalEngagement.Functions.Import;
 using DAS.DigitalEngagement.Functions.Import.Extensions;
 using DAS.DigitalEngagement.Infrastructure.Configuration;
-using DAS.DigitalEngagement.Infrastructure.Repositories;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,62 +24,56 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using Das.Marketo.RestApiClient.Configuration;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.EmployerUsers.Api.Client;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using System.IO;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace DAS.DigitalEngagement.Functions.Import
 {
     public class Startup : FunctionsStartup
     {
-        public IConfiguration Configuration { get; private set; }
-
         public Startup() { }
-
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+      
         public override void Configure(IFunctionsHostBuilder builder)
-        {
+        {                                    
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            
+            var configuration = serviceProvider.GetService<IConfiguration>();
 
-            builder.AddConfiguration((configBuilder) =>
+            var configBuilder = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables();
+
+#if DEBUG
+            configBuilder.AddJsonFile("local.settings.json", optional: true);
+#endif
+
+            configBuilder.AddAzureTableStorage(options =>
             {
-                var tempConfig = configBuilder
-                    .Build();
-
-                var configuration = configBuilder
-                     //.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
-                     .AddAzureTableStorage(options =>
-                     {
-                         options.ConfigurationKeys = new[] { tempConfig.GetValue<string>("configName") };
-                         options.EnvironmentNameEnvironmentVariableName = "EnvironmentName";
-                         options.StorageConnectionStringEnvironmentVariableName = "ConfigurationStorageConnectionString";
-                         options.PreFixConfigurationKeys = false;
-                     })
-                    .Build();
-
-                return configuration;
+                options.ConfigurationKeys = configuration["ConfigName"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["EnvironmentName"];
+                options.PreFixConfigurationKeys = false;
             });
 
-            Configuration = builder.GetCurrentConfiguration();
-            ConfigureServices(builder.Services);
+
+            var config = configBuilder.Build();
+            builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
+            ConfigureServices(builder.Services, config);
 
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
         {
-            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
-            services.Configure<IEmployerUsersApiConfiguration>(Configuration.GetSection("EmployerUsersApi"));
-            services.Configure<List<DataMartSettings>>(Configuration.GetSection("DataMart"));
+            services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
+            services.Configure<IEmployerUsersApiConfiguration>(configuration.GetSection("EmployerUsersApi"));
+            services.Configure<List<DataMartSettings>>(configuration.GetSection("DataMart"));
 
             services.AddOptions();
-
 
             services.AddTransient<IImportPersonHandler, ImportPersonHandler>();
             services.AddTransient<IImportCampaignMembersHandler, ImportCampaignMembersHandler>();
@@ -98,11 +92,9 @@ namespace DAS.DigitalEngagement.Functions.Import
             services.AddTransient<ICreateCustomObjectFieldsRequestMapping, CreateCustomObjectFieldsRequestMapping>();
             services.AddTransient<ICreateCustomObjectSchemaRequestMapping, CreateCustomObjectSchemaRequestMapping>();
 
-            
-
 
             services.AddTransient<IBlobContainerClientWrapper, BlobContainerClientWrapper>(x =>
-                new BlobContainerClientWrapper(Configuration.GetValue<string>("AzureWebJobsStorage")));
+                new BlobContainerClientWrapper(configuration.GetValue<string>("AzureWebJobsStorage")));
 
             services.AddTransient<IPersonMapper, PersonMapper>();
 
@@ -122,17 +114,17 @@ namespace DAS.DigitalEngagement.Functions.Import
                     CaptureMessageProperties = true
                 });
 
-                nLogConfiguration.ConfigureNLog(Configuration);
+                nLogConfiguration.ConfigureNLog(configuration);
             });
 
 
             services.RemoveAll<IConfigureOptions<LoggerFilterOptions>>();
             services.ConfigureOptions<LoggerFilterConfigureOptions>();
 
-            services.AddMarketoClient(Configuration);
-            services.AddEmployerUsersClient(Configuration);
-            services.AddDatamartConfiguration(Configuration);
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
+            services.AddMarketoClient(configuration);
+            services.AddEmployerUsersClient(configuration);
+            services.AddDatamartConfiguration(configuration);
+            services.AddApplicationInsightsTelemetry(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
     }
 }
