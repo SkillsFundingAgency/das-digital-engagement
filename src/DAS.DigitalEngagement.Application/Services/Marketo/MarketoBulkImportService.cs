@@ -90,7 +90,9 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
             var contactsChunks = _chunkingService.GetChunks(_csvService.GetByteCount(data), data).ToList();
             _logger.LogInformation($"ImportCustomObject: total of {data.Count} {objectName} to import, in {contactsChunks.Count} chunks");
 
+            var runningJobsCount = 0;
             var index = 1;
+            List<int> completedJobs = new List<int>();
 
             foreach (var contactsList in contactsChunks)
             {
@@ -100,7 +102,36 @@ namespace DAS.DigitalEngagement.Application.Services.Marketo
 
                 _logger.LogInformation($"ImportCustomObject chunk {index} of {contactsChunks.Count()} for object: {objectName} has been queued. \n Job details: {importResult} ");
 
+                runningJobsCount++;
                 index++;
+
+                if (runningJobsCount > 9)
+                {
+                    bool getJobStatus = true;
+                    var notCompletedJobs = fileStatus.BulkImportJobs.Where(x => !completedJobs.Any(y => y== x.batchId))
+                                                                        .Select(x => x.batchId).ToList();
+                    while (getJobStatus)
+                    {
+                        foreach (var job in notCompletedJobs)
+                        {
+                            var val = await _marketoBulkImportClient.GetStatus(job);
+                            var status = val.Result.FirstOrDefault().status;
+                            _logger.LogInformation($"BatchStatus batchId : {job} - status :{status}");
+                          
+                            if (status == "Complete" || status == "Failed")
+                            {
+                                getJobStatus = false;
+                                runningJobsCount--;
+                                completedJobs.Add(job);
+                                break;
+                            }
+                            else
+                            {
+                                await Task.Delay(50);
+                            }
+                        }
+                    }
+                }
             }
 
             return fileStatus;
