@@ -210,6 +210,9 @@
                     },
                     "storageKind": {
                         "value": "[parameters('storageKind')]"
+                    },
+                    "allowSharedKeyAccess": {
+                        "value": true
                     }
                 }
             }
