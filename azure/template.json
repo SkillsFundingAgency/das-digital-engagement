@@ -71,6 +71,9 @@
         },
         "subnetObject": {
             "type": "object"
+        },
+        "sharedSQLServerName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -97,7 +100,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
-            "name": "function-app-subnet",
+            "name": "digital-engagement-function-app-subnet",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
@@ -120,6 +123,27 @@
                     },
                     "delegations": {
                         "value": "[parameters('subnetDelegations')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "digital-engagement-function-sql-firewall-rule",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'sql-server-firewall-rules.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serverName": {
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "subnetResourceIdList": {
+                        "value": "[createArray(reference('digital-engagement-function-app-subnet').outputs.SubnetResourceId.value)]"
                     }
                 }
             }
@@ -293,7 +317,7 @@
                         "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference('function-app-subnet').outputs.subnetResourceId.value]"
+                        "value": "[reference('digital-engagement-function-app-subnet').outputs.subnetResourceId.value]"
                     },
                     "functionAppAppSettings": {
                         "value": {
@@ -337,7 +361,7 @@
                         "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference('function-app-subnet').outputs.subnetResourceId.value]"
+                        "value": "[reference('digital-engagement-function-app-subnet').outputs.subnetResourceId.value]"
                     },
                     "functionAppAppSettings": {
                         "value": {
@@ -409,7 +433,7 @@
                         "value": "[variables('resourceGroupName')]"
                     },
                     "subnetResourceId": {
-                        "value": "[reference('function-app-subnet').outputs.subnetResourceId.value]"
+                        "value": "[reference('digital-engagement-function-app-subnet').outputs.subnetResourceId.value]"
                     },
                     "functionAppAppSettings": {
                         "value": {
