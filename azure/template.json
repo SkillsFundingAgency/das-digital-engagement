@@ -385,7 +385,7 @@
                             "array": [
                                 {
                                     "name": "AzureWebJobsStorage",
-                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                    "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -458,7 +458,7 @@
                             "array": [
                                 {
                                     "name": "AzureWebJobsStorage",
-                                    "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+                                    "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
