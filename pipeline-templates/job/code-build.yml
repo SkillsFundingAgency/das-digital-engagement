@@ -19,8 +19,6 @@ jobs:
     parameters:
       SonarCloudProjectKey: SkillsFundingAgency_das-digital-engagement
 
-  - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
-
   - task: DotNetCoreCLI@2
     displayName: 'Publish DataCollection Function'
     inputs:
