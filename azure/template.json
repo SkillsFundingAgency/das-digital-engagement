@@ -66,6 +66,9 @@
         "subnetDelegations": {
             "type": "array"
         },
+        "workerAccessRestrictions": {
+            "type": "array"
+        },
         "sharedEnvResourceGroup": {
             "type": "string"
         },
@@ -335,6 +338,9 @@
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
                     },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
+                    },
                     "functionAppAppSettings": {
                         "value": {
                             "array": [
@@ -379,6 +385,9 @@
                     },
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
                     },
                     "functionAppAppSettings": {
                         "value": {
@@ -452,6 +461,9 @@
                     },
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('workerAccessRestrictions')]"
                     },
                     "functionAppAppSettings": {
                         "value": {
