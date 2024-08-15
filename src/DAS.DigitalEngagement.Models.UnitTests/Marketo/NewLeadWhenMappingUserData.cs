@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DAS.DigitalEngagement.Application.DataCollection.Mapping;
 using DAS.DigitalEngagement.Models.DataCollection;
@@ -23,6 +24,12 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
                 FirstName = "test",
                 LastName = "tester",
                 Email = "test@test.com",
+                UkEmployerSize = "testSize",
+                MktoCompanyNotes = "testNote",
+                PrimaryIndustry = "testIndustry",
+                PrimaryLocation = "testLocation",
+                AppsgovSignUpDate = DateTime.Now,
+                PersonOrigin = "testOrigin",
                 Consent = true,
                 RouteId = "1",
                 CookieId = "1",
@@ -110,7 +117,72 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
 
             Assert.AreEqual(_userData.Email, item.Email);
         }
-        
+        [Test]
+        public void Then_First_Input_UkEmployerSize_Is_Set()
+        {
+            //Act
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.UkEmployerSize, item.UkEmployerSize);
+        }
+        [Test]
+        public void Then_First_Input_MktoCompanyNotes_Is_Set()
+        {
+            //Act
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.MktoCompanyNotes, item.MktoCompanyNotes);
+        }
+        [Test]
+        public void Then_First_Input_PrimaryIndustry_Is_Set()
+        {
+            //Act
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.PrimaryIndustry, item.PrimaryIndustry);
+        }
+        [Test]
+        public void Then_First_Input_PrimaryLocation_Is_Set()
+        {
+            //Act
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.PrimaryLocation, item.PrimaryLocation);
+        }
+        [Test]
+        public void Then_First_Input_AppsgovSignUpDate_Is_Set()
+        {
+            //Act
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.AppsgovSignUpDate, item.AppsgovSignUpDate);
+        }
+        [Test]
+        public void Then_First_Input_PersonOrigin_Is_Set()
+        {
+            //Act
+            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
+
+            //Assert
+            var item = actual.Input.First();
+
+            Assert.AreEqual(_userData.PersonOrigin, item.PersonOrigin);
+        }
         [Test]
         public void Then_First_Input_IncludeInUR_Is_Set()
         {

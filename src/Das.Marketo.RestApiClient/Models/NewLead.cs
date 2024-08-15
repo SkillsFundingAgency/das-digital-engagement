@@ -11,20 +11,20 @@ namespace Das.Marketo.RestApiClient.Models
     /// Lead record.  Always contains id, but may have any number of other fields, depending on the fields available in the target instance.
     /// </summary>
     [DataContract]
-    public partial class NewLead :  IEquatable<NewLead>, IValidatableObject
+    public partial class NewLead : IEquatable<NewLead>, IValidatableObject
     {
 
         /// <summary>
         /// Unique integer id of a lead record
         /// </summary>
         /// <value>Unique integer id of a lead record</value>
-        [DataMember(Name="email", EmitDefaultValue=false)]
+        [DataMember(Name = "email", EmitDefaultValue = false)]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or Sets Membership
         /// </summary>
-        [DataMember(Name= "firstName", EmitDefaultValue=false)]
+        [DataMember(Name = "firstName", EmitDefaultValue = false)]
         public string FirstName { get; set; }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Das.Marketo.RestApiClient.Models
         /// </summary>
         [DataMember(Name = "lastName", EmitDefaultValue = false)]
         public string LastName { get; set; }
-        
+
         /// <summary>
         /// Gets or Sets IncludeInUR
         /// </summary>
@@ -51,6 +51,19 @@ namespace Das.Marketo.RestApiClient.Models
         [DataMember(Name = "citizen", EmitDefaultValue = false)]
         public string Citizen { get; set; }
 
+        [DataMember(Name = "uKEmployerSize", EmitDefaultValue = false)]
+        public string UkEmployerSize { get; set; }
+
+        [DataMember(Name = "MktoCompanyNotes", EmitDefaultValue = false)]
+        public string MktoCompanyNotes { get; set; }
+        [DataMember(Name = "primaryIndustry", EmitDefaultValue = false)]
+        public string PrimaryIndustry { get; set; }
+        [DataMember(Name = "primaryLocation", EmitDefaultValue = false)]
+        public string PrimaryLocation { get; set; }
+        [DataMember(Name = "personOrigin", EmitDefaultValue = false)]
+        public string PersonOrigin { get; set; }
+        [DataMember(Name = "appsgovSignUpDate", EmitDefaultValue = false)]
+        public DateTime AppsgovSignUpDate { get; set; }
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -62,11 +75,17 @@ namespace Das.Marketo.RestApiClient.Models
             sb.Append("  Email: ").Append(Email).Append("\n");
             sb.Append("  FirstName: ").Append(FirstName).Append("\n");
             sb.Append("  LastName: ").Append(LastName).Append("\n");
+            sb.Append("  UkEmployerSize: ").Append(UkEmployerSize).Append("\n");
+            sb.Append("  MktoCompanyNotes: ").Append(MktoCompanyNotes).Append("\n");
+            sb.Append("  PrimaryIndustry: ").Append(PrimaryIndustry).Append("\n");
+            sb.Append("  PrimaryLocation: ").Append(PrimaryLocation).Append("\n");
+            sb.Append("  PersonOrigin: ").Append(PersonOrigin).Append("\n");
+            sb.Append("  AppsgovSignUpDate: ").Append(AppsgovSignUpDate).Append("\n");
             sb.Append("  IncludeInUR: ").Append(IncludeInUR).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
-  
+
         /// <summary>
         /// Returns the JSON string presentation of the object
         /// </summary>
@@ -96,21 +115,45 @@ namespace Das.Marketo.RestApiClient.Models
             if (input == null)
                 return false;
 
-            return 
+            return
                 (
                     this.Email == input.Email ||
                     this.Email.Equals(input.Email)
-                ) && 
+                ) &&
                 (
                     this.FirstName == input.FirstName ||
                     (this.FirstName != null &&
                     this.FirstName.Equals(input.FirstName))
-                ) && 
+                ) &&
                 (
                     this.LastName == input.LastName ||
                     (this.LastName != null &&
                     this.LastName.Equals(input.LastName))
-                ) && 
+                ) &&
+                (
+                    this.UkEmployerSize == input.UkEmployerSize ||
+                     this.UkEmployerSize.Equals(input.UkEmployerSize)
+                ) &&
+                (
+                    this.MktoCompanyNotes == input.MktoCompanyNotes ||
+                     this.MktoCompanyNotes.Equals(input.MktoCompanyNotes)
+                ) &&
+                (
+                    this.PrimaryIndustry == input.PrimaryIndustry ||
+                     this.PrimaryIndustry.Equals(input.PrimaryIndustry)
+                ) &&
+                (
+                    this.PrimaryLocation == input.PrimaryLocation ||
+                     this.PrimaryLocation.Equals(input.PrimaryLocation)
+                ) &&
+                (
+                    this.PersonOrigin == input.PersonOrigin ||
+                    this.PersonOrigin.Equals(input.PersonOrigin)
+                ) &&
+                (
+                    this.AppsgovSignUpDate == input.AppsgovSignUpDate ||
+                    this.AppsgovSignUpDate.Equals(input.AppsgovSignUpDate)
+                ) &&
                 (
                     this.IncludeInUR == input.IncludeInUR ||
                     this.IncludeInUR.Equals(input.IncludeInUR)
@@ -131,6 +174,18 @@ namespace Das.Marketo.RestApiClient.Models
                     hashCode = hashCode * 59 + this.FirstName.GetHashCode();
                 if (this.LastName != null)
                     hashCode = hashCode * 59 + this.LastName.GetHashCode();
+                if (this.UkEmployerSize != null)
+                    hashCode = hashCode * 59 + this.UkEmployerSize.GetHashCode();
+                if (this.MktoCompanyNotes != null)
+                    hashCode = hashCode * 59 + this.MktoCompanyNotes.GetHashCode();
+                if (this.PrimaryIndustry != null)
+                    hashCode = hashCode * 59 + this.PrimaryIndustry.GetHashCode();
+                if (this.PrimaryLocation != null)
+                    hashCode = hashCode * 59 + this.PrimaryLocation.GetHashCode();
+                if (this.PersonOrigin != null)
+                    hashCode = hashCode * 59 + this.PersonOrigin.GetHashCode();
+                if (this.AppsgovSignUpDate != null)
+                    hashCode = hashCode * 59 + this.AppsgovSignUpDate.GetHashCode();
                 if (this.IncludeInUR != null)
                     hashCode = hashCode * 59 + this.IncludeInUR.GetHashCode();
                 return hashCode;
