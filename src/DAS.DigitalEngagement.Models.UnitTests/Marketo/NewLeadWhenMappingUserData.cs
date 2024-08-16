@@ -117,6 +117,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
 
             Assert.AreEqual(_userData.Email, item.Email);
         }
+
         [Test]
         public void Then_First_Input_UkEmployerSize_Is_Set()
         {

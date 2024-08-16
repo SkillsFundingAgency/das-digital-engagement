@@ -50,10 +50,8 @@ namespace Das.Marketo.RestApiClient.Models
         /// </summary>
         [DataMember(Name = "citizen", EmitDefaultValue = false)]
         public string Citizen { get; set; }
-
         [DataMember(Name = "uKEmployerSize", EmitDefaultValue = false)]
         public string UkEmployerSize { get; set; }
-
         [DataMember(Name = "MktoCompanyNotes", EmitDefaultValue = false)]
         public string MktoCompanyNotes { get; set; }
         [DataMember(Name = "primaryIndustry", EmitDefaultValue = false)]
