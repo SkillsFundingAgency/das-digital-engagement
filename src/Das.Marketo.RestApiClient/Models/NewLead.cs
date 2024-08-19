@@ -52,8 +52,6 @@ namespace Das.Marketo.RestApiClient.Models
         public string Citizen { get; set; }
         [DataMember(Name = "uKEmployerSize", EmitDefaultValue = false)]
         public string UkEmployerSize { get; set; }
-        [DataMember(Name = "MktoCompanyNotes", EmitDefaultValue = false)]
-        public string MktoCompanyNotes { get; set; }
         [DataMember(Name = "primaryIndustry", EmitDefaultValue = false)]
         public string PrimaryIndustry { get; set; }
         [DataMember(Name = "primaryLocation", EmitDefaultValue = false)]
@@ -74,7 +72,6 @@ namespace Das.Marketo.RestApiClient.Models
             sb.Append("  FirstName: ").Append(FirstName).Append("\n");
             sb.Append("  LastName: ").Append(LastName).Append("\n");
             sb.Append("  UkEmployerSize: ").Append(UkEmployerSize).Append("\n");
-            sb.Append("  MktoCompanyNotes: ").Append(MktoCompanyNotes).Append("\n");
             sb.Append("  PrimaryIndustry: ").Append(PrimaryIndustry).Append("\n");
             sb.Append("  PrimaryLocation: ").Append(PrimaryLocation).Append("\n");
             sb.Append("  PersonOrigin: ").Append(PersonOrigin).Append("\n");
@@ -133,10 +130,6 @@ namespace Das.Marketo.RestApiClient.Models
                      this.UkEmployerSize.Equals(input.UkEmployerSize)
                 ) &&
                 (
-                    this.MktoCompanyNotes == input.MktoCompanyNotes ||
-                     this.MktoCompanyNotes.Equals(input.MktoCompanyNotes)
-                ) &&
-                (
                     this.PrimaryIndustry == input.PrimaryIndustry ||
                      this.PrimaryIndustry.Equals(input.PrimaryIndustry)
                 ) &&
@@ -174,8 +167,6 @@ namespace Das.Marketo.RestApiClient.Models
                     hashCode = hashCode * 59 + this.LastName.GetHashCode();
                 if (this.UkEmployerSize != null)
                     hashCode = hashCode * 59 + this.UkEmployerSize.GetHashCode();
-                if (this.MktoCompanyNotes != null)
-                    hashCode = hashCode * 59 + this.MktoCompanyNotes.GetHashCode();
                 if (this.PrimaryIndustry != null)
                     hashCode = hashCode * 59 + this.PrimaryIndustry.GetHashCode();
                 if (this.PrimaryLocation != null)

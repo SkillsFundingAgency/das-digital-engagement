@@ -25,7 +25,6 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
                 LastName = "tester",
                 Email = "test@test.com",
                 UkEmployerSize = "testSize",
-                MktoCompanyNotes = "testNote",
                 PrimaryIndustry = "testIndustry",
                 PrimaryLocation = "testLocation",
                 AppsgovSignUpDate = DateTime.Now,
@@ -128,17 +127,6 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             var item = actual.Input.First();
 
             Assert.AreEqual(_userData.UkEmployerSize, item.UkEmployerSize);
-        }
-        [Test]
-        public void Then_First_Input_MktoCompanyNotes_Is_Set()
-        {
-            //Act
-            var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
-
-            //Assert
-            var item = actual.Input.First();
-
-            Assert.AreEqual(_userData.MktoCompanyNotes, item.MktoCompanyNotes);
         }
         [Test]
         public void Then_First_Input_PrimaryIndustry_Is_Set()

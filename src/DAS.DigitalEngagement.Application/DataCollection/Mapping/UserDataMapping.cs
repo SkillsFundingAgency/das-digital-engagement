@@ -33,7 +33,6 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Mapping
                 Email = user.Email,
                 IncludeInUR = user.IncludeInUR,
                 UkEmployerSize = user.UkEmployerSize,
-                MktoCompanyNotes=user.MktoCompanyNotes,
                 PrimaryIndustry=user.PrimaryIndustry,
                 PrimaryLocation=user.PrimaryLocation,
                 PersonOrigin = user.PersonOrigin,
