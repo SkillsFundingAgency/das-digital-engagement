@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityModel" Version="4.3.0" />
-    <PackageReference Include="refit" Version="5.2.1" />
+    <PackageReference Include="IdentityModel" Version="5.0.0" />
+    <PackageReference Include="refit" Version="6.0.1" />
     <PackageReference Include="Refit.HttpClientFactory" Version="5.2.1" />
   </ItemGroup>
 
