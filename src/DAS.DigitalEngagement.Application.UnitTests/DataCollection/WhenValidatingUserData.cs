@@ -30,7 +30,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection
             var actual = _validator.Validate(new UserData());
 
             //Assert
-            Assert.IsFalse(actual);
+            Assert.That(actual, Is.False);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection
             });
 
             //Assert
-            Assert.IsTrue(actual);
+            Assert.That(actual, Is.True);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection
             });
 
             //Assert
-            Assert.IsFalse(actual);
+            Assert.That(actual, Is.False);
         }
     }
 }

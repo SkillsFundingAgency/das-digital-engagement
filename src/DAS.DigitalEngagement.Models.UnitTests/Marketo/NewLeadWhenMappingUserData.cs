@@ -46,14 +46,14 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             };
         }
 
-        [Test]  
+        [Test]
         public void Then_Program_Is_Set()
         {
             //Act
             var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
-            Assert.AreEqual(_regInfoConfig.ProgramName, actual.ProgramName);
+            Assert.That(actual.ProgramName, Is.EqualTo(_regInfoConfig.ProgramName));
         }
         [Test]
         public void Then_Source_Is_Set()
@@ -62,7 +62,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
-            Assert.AreEqual(_regInfoConfig.Source, actual.Source);
+            Assert.That(actual.Source, Is.EqualTo(_regInfoConfig.Source));
         }
         [Test]
         public void Then_LookupField_Is_Set()
@@ -71,7 +71,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
-            Assert.AreEqual(_regInfoConfig.LookupField, actual.LookupField);
+            Assert.That(actual.LookupField, Is.EqualTo(_regInfoConfig.LookupField));
         }
         [Test]
         public void Then_Input_has_one_item()
@@ -80,7 +80,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             var actual = _userDataMapping.MapFromUserData(_userData, _regInfoConfig);
 
             //Assert
-            Assert.AreEqual(1,actual.Input.Count);
+            Assert.That(actual.Input.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.FirstName, item.FirstName);
+            Assert.That(item.FirstName, Is.EqualTo(_userData.FirstName));
         }
         [Test]
         public void Then_First_Input_Lastname_Is_Set()
@@ -103,7 +103,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.LastName, item.LastName);
+            Assert.That(item.LastName, Is.EqualTo(_userData.LastName));
         }
         [Test]
         public void Then_First_Input_Email_Is_Set()
@@ -114,7 +114,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.Email, item.Email);
+            Assert.That(item.Email, Is.EqualTo(_userData.Email));
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.UkEmployerSize, item.UkEmployerSize);
+            Assert.That(item.UkEmployerSize, Is.EqualTo(_userData.UkEmployerSize));
         }
         [Test]
         public void Then_First_Input_PrimaryIndustry_Is_Set()
@@ -137,7 +137,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.PrimaryIndustry, item.PrimaryIndustry);
+            Assert.That(item.PrimaryIndustry, Is.EqualTo(_userData.PrimaryIndustry));
         }
         [Test]
         public void Then_First_Input_PrimaryLocation_Is_Set()
@@ -148,7 +148,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.PrimaryLocation, item.PrimaryLocation);
+            Assert.That(item.PrimaryLocation, Is.EqualTo(_userData.PrimaryLocation));
         }
         [Test]
         public void Then_First_Input_AppsgovSignUpDate_Is_Set()
@@ -159,7 +159,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.AppsgovSignUpDate, item.AppsgovSignUpDate);
+            Assert.That(item.AppsgovSignUpDate, Is.EqualTo(_userData.AppsgovSignUpDate));
         }
         [Test]
         public void Then_First_Input_PersonOrigin_Is_Set()
@@ -170,7 +170,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.PersonOrigin, item.PersonOrigin);
+            Assert.That(item.PersonOrigin, Is.EqualTo(_userData.PersonOrigin));
         }
         [Test]
         public void Then_First_Input_IncludeInUR_Is_Set()
@@ -181,7 +181,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests.Marketo
             //Assert
             var item = actual.Input.First();
 
-            Assert.AreEqual(_userData.IncludeInUR, item.IncludeInUR);
+            Assert.That(item.IncludeInUR, Is.EqualTo(_userData.IncludeInUR));
         }
     }
 }

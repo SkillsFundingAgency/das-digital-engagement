@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "DAS.DigitalEngagement.Functions.DataCollection": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7260",
+      "launchBrowser": false
+    }
+  }
+}
