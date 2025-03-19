@@ -11,10 +11,6 @@
         "serviceName": {
             "type": "string"
         },
-        "configName": {
-            "type": "string",
-            "defaultValue": "SFA.DAS.DigitalEngagement"
-        },
         "deployStubFunctions": {
             "type": "bool",
             "defaultValue": false
@@ -85,6 +81,16 @@
         "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
+        },
+        "logAnalyticsSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        },
+        "sharedManagementResourceGroup": {
+            "type": "string"
         }
     },
     "variables": {
@@ -96,7 +102,8 @@
         "importFunctionAppName": "[concat(variables('resourcePrefix'),'-import-fa')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
         "storageContainerNames": [ "import-person", "import-campaign-members" ],
-        "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]"
+        "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
+        "configName": "SFA.DAS.DigitalEngagement"
     },
     "resources": [
         {
@@ -206,6 +213,9 @@
                     },
                     "attachedService": {
                         "value": "[variables('functionAppName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
                     }
                 }
             },
@@ -230,7 +240,10 @@
                     },
                     "attachedService": {
                         "value": "[variables('importFunctionAppName')]"
-                    }
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
+                    }    
                 }
             },
             "dependsOn": [
@@ -404,8 +417,8 @@
                                     "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -413,7 +426,7 @@
                                 },
                                 {
                                     "name": "ConfigName",
-                                    "value": "[parameters('configName')]"
+                                    "value": "[variables('configName')]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -480,8 +493,8 @@
                                     "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('importFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('importFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -489,7 +502,7 @@
                                 },
                                 {
                                     "name": "ConfigName",
-                                    "value": "[parameters('configName')]"
+                                    "value": "[variables('configName')]"
                                 },
                                 {
                                     "name": "EnvironmentName",
