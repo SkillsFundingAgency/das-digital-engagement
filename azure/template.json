@@ -455,6 +455,14 @@
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+                                {
+                                    "name": "EmployerUsersImportSchedule",
+                                    "value": "[variables('employerUsersImportSchedule')]"
+                                },
+                                {
+                                    "name": "DataMartImportSchedule",
+                                    "value": "[variables('dataMartImportSchedule')]"
                                 }
                             ]
                         }
@@ -538,6 +546,14 @@
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+                                {
+                                    "name": "EmployerUsersImportSchedule",
+                                    "value": "[variables('employerUsersImportSchedule')]"
+                                },
+                                {
+                                    "name": "DataMartImportSchedule",
+                                    "value": "[variables('dataMartImportSchedule')]"
                                 }
                             ]
                         }
