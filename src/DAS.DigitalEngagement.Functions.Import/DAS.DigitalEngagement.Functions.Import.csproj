@@ -21,7 +21,8 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DAS.DigitalEngagement.Framework\DAS.DigitalEngagement.Framework.csproj" />
+    <ProjectReference Include="..\DAS.DigitalEngagement.Application\DAS.DigitalEngagement.Application.csproj" />
+    <ProjectReference Include="..\DAS.DigitalEngagement.Domain\DAS.DigitalEngagement.Domain.csproj" />
     <ProjectReference Include="..\DAS.DigitalEngagement.Infrastructure\DAS.DigitalEngagement.Infrastructure.csproj" />
     <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />
   </ItemGroup>
