@@ -4,7 +4,7 @@ parameters:
   Environment:
 
 jobs:
-- deployment: DeployFunctionApp
+- deployment: DeployFunctionApps
   pool:
     name: DAS - Continuous Deployment Agents
   environment: ${{ parameters.Environment }}
@@ -35,7 +35,7 @@ jobs:
           parameters:
             EnvironmentName: $(EnvironmentName)
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            SourcePath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-aodp-jobs
+            SourcePath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-digital-engagement
             StorageAccountName: $(ConfigurationStorageAccountName)
             StorageAccountResourceGroup: $(SharedEnvResourceGroup)
             TargetFileName: '*.schema.json'
