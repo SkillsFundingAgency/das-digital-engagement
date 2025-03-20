@@ -22,7 +22,7 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
-      projects: src/${{ parameters.SolutionBaseName }}.Functions.DataCollection/${{ parameters.SolutionBaseName }}.Functions.DataCollection.csproj
+      projects: src/${{ parameters.SolutionBaseName }}.DataCollection/${{ parameters.SolutionBaseName }}.DataCollection.csproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
@@ -32,7 +32,7 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
-      projects: src/${{ parameters.SolutionBaseName }}.Functions.DataCollectionStub/${{ parameters.SolutionBaseName }}.Functions.DataCollectionStub.csproj
+      projects: src/${{ parameters.SolutionBaseName }}.DataCollectionStub/${{ parameters.SolutionBaseName }}.DataCollectionStub.csproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
@@ -42,7 +42,7 @@ jobs:
     inputs:
       command: publish
       publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
-      projects: src/${{ parameters.SolutionBaseName }}.Functions.Import/${{ parameters.SolutionBaseName }}.Functions.Import.csproj
+      projects: src/${{ parameters.SolutionBaseName }}.Import/${{ parameters.SolutionBaseName }}.Import.csproj
       arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
       modifyOutputPath: true
       zipAfterPublish: true
