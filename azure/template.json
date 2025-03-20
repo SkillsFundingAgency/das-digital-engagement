@@ -99,7 +99,9 @@
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
         "storageContainerNames": [ "import-person", "import-campaign-members" ],
         "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
-        "configName": "SFA.DAS.DigitalEngagement"
+        "configName": "SFA.DAS.DigitalEngagement",
+    	"employerUsersImportSchedule": "0 */5 * * * *",
+    	"dataMartImportSchedule": "0 0 4 * * *"
     },
     "resources": [
         {
