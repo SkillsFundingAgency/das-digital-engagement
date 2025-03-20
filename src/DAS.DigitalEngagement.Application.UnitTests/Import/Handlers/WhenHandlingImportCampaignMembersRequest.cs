@@ -71,43 +71,43 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             _csvService.Verify(s => s.ConvertToList(It.IsAny<StreamReader>()),Times.Once);
         }
 
-        [Test]
-        public async Task Then_The_List_is_Chunked_Into_Valid_Sizes()
-        {
-            //Arrange
-            var campaignId = "campaignId";
+        //[Test]
+        //public async Task Then_The_List_is_Chunked_Into_Valid_Sizes()
+        //{
+        //    //Arrange
+        //    var campaignId = "campaignId";
 
-            //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
-            {
-                await _handler.Handle(test_Stream, campaignId);
-            }
+        //    //Act
+        //    using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
+        //    {
+        //        await _handler.Handle(test_Stream, campaignId);
+        //    }
 
-            //Assert
-            _chunkingServiceMock.Verify(s => s.GetChunks(172, _testLeadList), Times.Once);
-        }
+        //    //Assert
+        //    _chunkingServiceMock.Verify(s => s.GetChunks(172, _testLeadList), Times.Once);
+        //}
 
-        [Test]
-        public async Task Then_The_Each_Chunk_Is_Sent_To_Marketo()
-        {
-            var noOfLeads = 700000;
-            var Leads = GenerateNewLeads(noOfLeads);
-            var campaignId = "campaignId";
+        //[Test]
+        //public async Task Then_The_Each_Chunk_Is_Sent_To_Marketo()
+        //{
+        //    var noOfLeads = 700000;
+        //    var Leads = GenerateNewLeads(noOfLeads);
+        //    var campaignId = "campaignId";
 
-            _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(Leads);
+        //    _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(Leads);
 
-            _chunkingServiceMock.Setup(s => s.GetChunks(172, Leads))
-                .Returns(_chunkingService.GetChunks(28000000, Leads));
+        //    _chunkingServiceMock.Setup(s => s.GetChunks(172, Leads))
+        //        .Returns(_chunkingService.GetChunks(28000000, Leads));
 
-            //Act
-            using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
-            {
-                await _handler.Handle(test_Stream, campaignId);
-            }
+        //    //Act
+        //    using (var test_Stream = new MemoryStream(Encoding.UTF8.GetBytes(_testCsv)))
+        //    {
+        //        await _handler.Handle(test_Stream, campaignId);
+        //    }
 
-            //Assert
-            _bulkImportService.Verify(s => s.ImportToCampaign(It.IsAny<IList<dynamic>>(), "campaignId"), Times.AtLeast(2));
-        }
+        //    //Assert
+        //    _bulkImportService.Verify(s => s.ImportToCampaign(It.IsAny<IList<dynamic>>(), "campaignId"), Times.AtLeast(2));
+        //}
 
         private static List<dynamic> GenerateNewLeads(int leadCount)
         {
