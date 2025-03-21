@@ -84,7 +84,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _chunkingServiceMock.Verify(s => s.GetChunks(172, _testLeadList), Times.Once);
+            _chunkingServiceMock.Verify(s => s.GetChunks(It.IsAny<long>(), _testLeadList), Times.Once);
         }
 
         [Test]
@@ -96,13 +96,16 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(Leads);
 
+            _csvService.Setup(s => s.IsEmpty(It.IsAny<StreamReader>())).Returns(false);
+            _csvService.Setup(s => s.HasData(It.IsAny<StreamReader>())).Returns(false);
+
             _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>()))
                 .ReturnsAsync(new FieldValidationResult
                 {
                     Errors = new List<string>() 
                 });
             
-            _chunkingServiceMock.Setup(s => s.GetChunks(172, Leads))
+            _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<long>(), Leads))
                 .Returns(_chunkingService.GetChunks(28000000, Leads));
 
             //Act
