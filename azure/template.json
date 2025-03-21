@@ -588,6 +588,27 @@
         },
         {
             "apiVersion": "2022-09-01",
+            "name": "[concat(variables('stubFunctionAppName'), '-cors-policies-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'cors-policy.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('stubFunctionAppName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('stubFunctionAppName'), '-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "apiVersion": "2022-09-01",
             "name": "[concat(variables('importFunctionAppName'), '-cors-policies-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
