@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.DurableTask" Version="1.2.3" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.3.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
@@ -21,7 +20,8 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DAS.DigitalEngagement.Framework\DAS.DigitalEngagement.Framework.csproj" />
+    <ProjectReference Include="..\DAS.DigitalEngagement.Application\DAS.DigitalEngagement.Application.csproj" />
+    <ProjectReference Include="..\DAS.DigitalEngagement.Domain\DAS.DigitalEngagement.Domain.csproj" />
     <ProjectReference Include="..\DAS.DigitalEngagement.Infrastructure\DAS.DigitalEngagement.Infrastructure.csproj" />
     <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />
   </ItemGroup>

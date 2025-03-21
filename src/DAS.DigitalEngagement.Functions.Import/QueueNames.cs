@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DAS.DigitalEngagement.Framework
+namespace DAS.DigitalEngagement.Functions.Import
 {
     public static class QueueNames
     {

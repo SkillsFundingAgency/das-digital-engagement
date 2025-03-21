@@ -25,7 +25,6 @@ var host = new HostBuilder()
 
         s.AddOptions();
 
-        //s.Configure<global::DAS.DigitalEngagement.Models.Infrastructure.Configuration>(configuration.GetSection("Values"));
         s.Configure<DAS.DigitalEngagement.Models.Infrastructure.Configuration>(configuration.GetSection("Values"));
 
         s.AddTransient<IRegisterHandler, RegisterHandler>();

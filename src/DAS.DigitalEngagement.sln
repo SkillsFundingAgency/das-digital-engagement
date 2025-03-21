@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAS.DigitalEngagement.Framework", "DAS.DigitalEngagement.Framework\DAS.DigitalEngagement.Framework.csproj", "{81A17F71-87DB-4B56-882D-81E923D13F39}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAS.DigitalEngagement.Application", "DAS.DigitalEngagement.Application\DAS.DigitalEngagement.Application.csproj", "{BF28CAF0-67E2-475B-97A6-4243835609AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAS.DigitalEngagement.Domain", "DAS.DigitalEngagement.Domain\DAS.DigitalEngagement.Domain.csproj", "{2BF0E9DF-CF63-4FE9-97E1-7695AA54D900}"
@@ -37,10 +35,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{81A17F71-87DB-4B56-882D-81E923D13F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{81A17F71-87DB-4B56-882D-81E923D13F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{81A17F71-87DB-4B56-882D-81E923D13F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81A17F71-87DB-4B56-882D-81E923D13F39}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF28CAF0-67E2-475B-97A6-4243835609AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF28CAF0-67E2-475B-97A6-4243835609AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF28CAF0-67E2-475B-97A6-4243835609AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
