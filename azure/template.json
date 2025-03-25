@@ -406,7 +406,7 @@
                                 },
                                 {
                                     "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                                    "value": "[reference(concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
+                                    "value": "[reference(concat(variables('stubFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 }
                             ]
                         }
