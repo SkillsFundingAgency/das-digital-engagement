@@ -78,6 +78,9 @@
             "type": "string",
             "defaultValue": "TLS1_2"
         },
+        "serviceBusConnectionString": {
+            "type": "string"
+        },
         "logAnalyticsSubscriptionId": {
             "type": "string",
             "defaultValue": "[subscription().subscriptionId]"
