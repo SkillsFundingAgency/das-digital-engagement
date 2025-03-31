@@ -15,7 +15,10 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" Version="5.5.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.2" />
+    <PackageReference Include="NServiceBus.AzureFunctions.Worker.ServiceBus" Version="6.0.0" />
+    <PackageReference Include="NServiceBus.Persistence.AzureTable" Version="6.0.1" />
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.3195" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAS.DigitalEngagement.Application\DAS.DigitalEngagement.Application.csproj" />
@@ -25,10 +28,6 @@
   <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

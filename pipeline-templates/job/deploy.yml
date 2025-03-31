@@ -42,6 +42,7 @@ jobs:
             TableName: Configuration
             ConfigurationSecrets:
                Marketo:ApiClientSecret: $(Marketo:ApiClientSecret)
+	           NServiceBusLicense: $(NServiceBusLicense)
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
