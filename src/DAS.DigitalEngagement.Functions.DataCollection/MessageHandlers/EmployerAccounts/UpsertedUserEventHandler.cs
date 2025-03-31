@@ -17,7 +17,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection.MessageHandlers.Employe
         {
             try
             {
-                _logger.LogTrace("Processed UpsertedUserEvent: {@Message}", message);
+                _logger.LogInformation("Processed UpsertedUserEvent");
             }
             catch (Exception ex)
             {
