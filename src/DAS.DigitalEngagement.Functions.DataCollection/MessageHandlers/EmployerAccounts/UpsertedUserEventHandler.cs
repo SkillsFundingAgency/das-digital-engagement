@@ -21,13 +21,15 @@ namespace DAS.DigitalEngagement.Functions.DataCollection.MessageHandlers.Employe
         {
             try
             {
+                _logger.LogInformation("Process UpsertedUserEvent started");
+
                 await _upsertedUserHandler.Handle(message);
 
-                _logger.LogInformation("Processed UpsertedUserEvent: {@Message}", message);
+                _logger.LogInformation("Process UpsertedUserEvent completed");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error handling UpsertedUserEvent. Message: {@Message}", message);
+                _logger.LogError(ex, "Error handling UpsertedUserEvent. Message: {@Message}", ex.Message);
                 throw;
             }
         }
