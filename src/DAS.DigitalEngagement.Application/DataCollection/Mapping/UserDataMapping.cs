@@ -28,13 +28,18 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Mapping
 
             var newLead = new NewLead()
             {
+                EmployerAccountId = user.EmployerAccountId,
+                StageCompleted = user.StageCompleted,
+                StageCompletedText = user.StageCompletedText,
+                TotalStages = user.TotalStages,
+                DateOfEvent = user.DateOfEvent,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
                 IncludeInUR = user.IncludeInUR,
                 UkEmployerSize = user.UkEmployerSize,
-                PrimaryIndustry=user.PrimaryIndustry,
-                PrimaryLocation=user.PrimaryLocation,
+                PrimaryIndustry = user.PrimaryIndustry,
+                PrimaryLocation = user.PrimaryLocation,
                 PersonOrigin = user.PersonOrigin,
                 AppsgovSignUpDate = user.AppsgovSignUpDate,
             };

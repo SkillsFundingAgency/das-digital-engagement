@@ -17,6 +17,49 @@ namespace DAS.DigitalEngagement.Infrastructure.Configuration
     {
         private static ConfidentialClientApplicationOptions _applicationOptions;
 
+        public static IServiceCollection AddEmployerAccountsClient(this IServiceCollection services,
+IConfiguration configuration)
+        {
+
+            var employerAccountsConfig = configuration.GetSection("EmployerAccountsApi").Get<EmployerAccountsConfiguration>();
+            services.Configure<EmployerUsersConfiguration>(configuration.GetSection("EmployerAccountsApi").Bind);
+
+
+            _applicationOptions = new ConfidentialClientApplicationOptions();
+            configuration.Bind("EmployerAccountsApi", _applicationOptions);
+
+            services.AddSingleton<IConfidentialClientApplication, ConfidentialClientApplication>(x =>
+            {
+                var app = ConfidentialClientApplicationBuilder.CreateWithApplicationOptions(_applicationOptions)
+                    .Build();
+                return app as ConfidentialClientApplication;
+            });
+
+            services.AddTransient<ActiveDirectoryHttpClientHandler>(x =>
+                new ActiveDirectoryHttpClientHandler(x.GetRequiredService<IConfidentialClientApplication>(),
+                    employerAccountsConfig.Identifier));
+
+            services.AddTransient<AzureAppAuthenticationHttpClientHandler>(x =>
+                new AzureAppAuthenticationHttpClientHandler(employerAccountsConfig.Identifier,
+                    x.GetRequiredService<ILogger<AzureAppAuthenticationHttpClientHandler>>()));
+
+            var httpBuilder = services.AddRefitClient<IEmployerAccountsApiClient>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(employerAccountsConfig.ApiBaseUrl));
+
+            var environment = configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT");
+
+            if (environment == "Development")
+            {
+                httpBuilder.AddHttpMessageHandler<ActiveDirectoryHttpClientHandler>();
+            }
+            else
+            {
+                httpBuilder.AddHttpMessageHandler<AzureAppAuthenticationHttpClientHandler>();
+            }
+
+            return services;
+        }
+
         public static IServiceCollection AddEmployerUsersClient(this IServiceCollection services,
             IConfiguration configuration)
         {

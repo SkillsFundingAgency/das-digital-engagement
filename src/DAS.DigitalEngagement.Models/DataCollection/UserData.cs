@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 namespace DAS.DigitalEngagement.Models.DataCollection
 {
     public class UserData
     {
+        public string EmployerAccountId { get; set; }
+        public int StageCompleted { get; set; }
+        public string StageCompletedText { get; set; }
+        public int TotalStages { get; set; }
+        public DateTime DateOfEvent { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

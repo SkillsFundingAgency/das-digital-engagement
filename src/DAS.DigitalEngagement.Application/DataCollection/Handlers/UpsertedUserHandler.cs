@@ -1,0 +1,45 @@
+﻿using System;
+using System.Threading.Tasks;
+using DAS.DigitalEngagement.Application.Repositories;
+using DAS.DigitalEngagement.Domain.DataCollection;
+using DAS.DigitalEngagement.Models.DataCollection;
+using SFA.DAS.EmployerAccounts.Messages.Events;
+
+namespace DAS.DigitalEngagement.Application.DataCollection.Handlers
+{
+    public class UpsertedUserHandler : IUpsertedUserHandler
+    {
+        private readonly IUpsertedUserValidator _validator;
+        private readonly IMarketoService _marketoService;
+        private readonly IEmployerAccountsRepository _employerAccountsRepository;
+
+        public UpsertedUserHandler(IUpsertedUserValidator validator, IMarketoService marketoService, IEmployerAccountsRepository employerAccountsRepository)
+        {
+            _validator = validator;
+            _employerAccountsRepository = employerAccountsRepository;
+            _marketoService = marketoService;
+        }
+
+        public async Task Handle(UpsertedUserEvent upsertedUser)
+        {
+            if (!_validator.Validate(upsertedUser))
+            {
+                throw new ArgumentException("UserData model failed validation", nameof(upsertedUser));
+            }
+
+            var employerUser = await _employerAccountsRepository.GetUserByRef(upsertedUser.UserRef);
+
+            var userData = new UserData
+            {
+                Email = employerUser.Email,
+                StageCompleted = 1,
+                StageCompletedText = "Stage 1 - User details Completed",
+                TotalStages = 5,
+                DateOfEvent = DateTime.Now,
+                AppsgovSignUpDate = DateTime.Now
+            };
+
+            await _marketoService.PushLead(userData);
+        }
+    }
+}
