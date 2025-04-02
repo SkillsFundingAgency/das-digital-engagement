@@ -23,11 +23,13 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Handlers
         public async Task Handle(UpsertedUserEvent upsertedUser)
         {
             if (!_validator.Validate(upsertedUser))
-            {
-                throw new ArgumentException("UserData model failed validation", nameof(upsertedUser));
-            }
+                throw new ArgumentException("Invalid user data", nameof(upsertedUser));
 
-            var employerUser = await _employerAccountsRepository.GetUserByRef(upsertedUser.UserRef);
+            var employerUser = await _employerAccountsRepository.GetUserByRef(upsertedUser.UserRef)
+                               ?? throw new ArgumentException("Employer user not found", nameof(upsertedUser));
+
+            if (string.IsNullOrWhiteSpace(employerUser.Email))
+                throw new ArgumentException("Employer user email is required", nameof(employerUser));
 
             var userData = new UserData
             {
@@ -35,8 +37,7 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Handlers
                 StageCompleted = 1,
                 StageCompletedText = "Stage 1 - User details Completed",
                 TotalStages = 5,
-                DateOfEvent = DateTime.Now,
-                AppsgovSignUpDate = DateTime.Now
+                DateOfEvent = DateTime.Now
             };
 
             await _marketoService.PushLead(userData);

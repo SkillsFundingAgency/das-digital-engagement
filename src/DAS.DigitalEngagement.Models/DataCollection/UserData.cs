@@ -17,7 +17,7 @@ namespace DAS.DigitalEngagement.Models.DataCollection
         public string UkEmployerSize { get; set; }
         public string PrimaryIndustry { get; set; }
         public string PrimaryLocation { get; set; }
-        public DateTime AppsgovSignUpDate { get; set; }
+        public DateTime? AppsgovSignUpDate { get; set; }
         public string PersonOrigin { get; set; }
         public string EncodedEmail { get; set; }
         public bool Consent { get; set; }

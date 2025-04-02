@@ -7,13 +7,9 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Validators
     {
         public bool Validate(UpsertedUserEvent userData)
         {
+            if (userData == null) return false;
 
-            if (string.IsNullOrWhiteSpace(userData.UserRef))
-            {
-                return false;
-            }
-
-            return true;
+            return !string.IsNullOrWhiteSpace(userData.UserRef);
         }
     }
 }
