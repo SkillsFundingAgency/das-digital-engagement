@@ -33,8 +33,14 @@ var host = new HostBuilder()
 
         s.AddTransient<IRegisterHandler, RegisterHandler>();
         s.AddTransient<IUpsertedUserHandler, UpsertedUserHandler>();
+        s.AddTransient<IAddedPayeSchemeHandler, AddedPayeSchemeHandler>();
+        s.AddTransient<IChangedAccountNameHandler, ChangedAccountNameHandler>();
+        s.AddTransient<ISignedAgreementHandler, SignedAgreementHandler>();
         s.AddTransient<IUserDataValidator, UserDataValidator>();
         s.AddTransient<IUpsertedUserValidator, UpsertedUserValidator>();
+        s.AddTransient<IAddedPayeSchemeValidator, AddedPayeSchemeValidator>();
+        s.AddTransient<IChangedAccountNameValidator, ChangedAccountNameValidator>();
+        s.AddTransient<ISignedAgreementValidator, SignedAgreementValidator>();
         s.AddTransient<IEmployerAccountsRepository, EmployerAccountsRepository>();
         s.AddTransient(typeof(IHttpClient<>), typeof(HttpClient<>));
         s.AddTransient<IMarketoService, MarketoLeadService>();

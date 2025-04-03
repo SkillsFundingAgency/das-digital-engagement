@@ -59,7 +59,7 @@ namespace Das.Marketo.RestApiClient.Models
         [DataMember(Name = "personOrigin", EmitDefaultValue = false)]
         public string PersonOrigin { get; set; }
         [DataMember(Name = "employerAccountId", EmitDefaultValue = false)]
-        public string EmployerAccountId { get; set; }
+        public long EmployerAccountId { get; set; }
         [DataMember(Name = "stageCompleted", EmitDefaultValue = false)]
         public int StageCompleted { get; set; }
         [DataMember(Name = "stageCompletedText", EmitDefaultValue = false)]
