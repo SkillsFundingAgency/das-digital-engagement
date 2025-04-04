@@ -85,6 +85,19 @@
         "minimumTlsVersion": {
             "type": "string",
             "defaultValue": "TLS1_2"
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
         }
     },
     "variables": {
@@ -95,8 +108,15 @@
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
         "importFunctionAppName": "[concat(variables('resourcePrefix'),'-import-fa')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
-        "storageContainerNames": [ "import-person", "import-campaign-members" ],
-        "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]"
+        "storageContainerNames": [
+            "import-person",
+            "import-campaign-members"
+        ],
+        "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
+        },
+        "emptyObject": {}
     },
     "resources": [
         {
@@ -105,8 +125,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "location": "[parameters('resourceGroupLocation')]",
             "tags": "[parameters('tags')]",
-            "properties": {
-            }
+            "properties": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -134,6 +153,9 @@
                     },
                     "delegations": {
                         "value": "[parameters('subnetDelegations')]"
+                    },
+                    "routeTable": {
+                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
                     }
                 }
             }
@@ -312,7 +334,6 @@
                     },
                     "policyRules": {
                         "value": "[parameters('policyRules')]"
-
                     }
                 }
             },
