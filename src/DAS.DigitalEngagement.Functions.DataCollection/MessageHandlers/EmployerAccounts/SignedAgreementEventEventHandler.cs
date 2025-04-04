@@ -29,7 +29,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection.MessageHandlers.Employe
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error handling SignedAgreementEvent. Message: {@Message}", ex.Message);
+                _logger.LogError(ex, "Error handling SignedAgreementEvent");
                 throw;
             }
         }

@@ -29,7 +29,7 @@ namespace DAS.DigitalEngagement.Functions.DataCollection.MessageHandlers.Employe
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error handling AddedPayeSchemeEvent. Message: {@Message1}", ex.Message);
+                _logger.LogError(ex, "Error handling AddedPayeSchemeEvent");
                 throw;
             }
         }
