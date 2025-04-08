@@ -90,6 +90,19 @@
         },
         "sharedManagementResourceGroup": {
             "type": "string"
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
         }
     },
     "variables": {
@@ -103,8 +116,12 @@
         "storageContainerNames": [ "import-person", "import-campaign-members" ],
         "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
         "configName": "SFA.DAS.DigitalEngagement",
-    	"employerUsersImportSchedule": "0 */5 * * * *",
-    	"dataMartImportSchedule": "0 0 4 * * *"
+        "employerUsersImportSchedule": "0 */5 * * * *",
+        "dataMartImportSchedule": "0 0 4 * * *",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
+        },
+        "emptyObject": {}
     },
     "resources": [
         {
@@ -142,6 +159,9 @@
                     },
                     "delegations": {
                         "value": "[parameters('subnetDelegations')]"
+                    },
+                    "routeTable": {
+                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
                     }
                 }
             }
@@ -271,7 +291,7 @@
                     },
                     "logAnalyticsWorkspaceId": {
                         "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
-                    }    
+                    }
                 }
             },
             "dependsOn": [
