@@ -6,7 +6,7 @@ namespace DAS.DigitalEngagement.Models.DataCollection
 {
     public class UserData
     {
-        public string EmployerAccountId { get; set; }
+        public long EmployerAccountId { get; set; }
         public int StageCompleted { get; set; }
         public string StageCompletedText { get; set; }
         public int TotalStages { get; set; }
