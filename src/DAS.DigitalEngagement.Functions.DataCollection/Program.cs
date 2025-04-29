@@ -9,6 +9,8 @@ using DAS.DigitalEngagement.Domain.Infrastructure;
 using Das.Marketo.RestApiClient.Configuration;
 using Microsoft.Extensions.Hosting;
 using DAS.DigitalEngagement.Functions.DataCollection.Extensions;
+using DAS.DigitalEngagement.Application.Repositories;
+using DAS.DigitalEngagement.Infrastructure.Configuration;
 
 [assembly: NServiceBusTriggerFunction("SFA.DAS.DigitalEngagement.Functions.DataCollection")]
 var host = new HostBuilder()
@@ -30,11 +32,15 @@ var host = new HostBuilder()
         s.Configure<DAS.DigitalEngagement.Models.Infrastructure.Configuration>(configuration.GetSection("Values"));
 
         s.AddTransient<IRegisterHandler, RegisterHandler>();
+        s.AddTransient<IUpsertedUserHandler, UpsertedUserHandler>();
         s.AddTransient<IUserDataValidator, UserDataValidator>();
+        s.AddTransient<IUpsertedUserValidator, UpsertedUserValidator>();
+        s.AddTransient<IEmployerAccountsRepository, EmployerAccountsRepository>();
         s.AddTransient(typeof(IHttpClient<>), typeof(HttpClient<>));
         s.AddTransient<IMarketoService, MarketoLeadService>();
 
         s.AddMarketoClient(configuration);
+        s.AddEmployerAccountsClient(configuration);
 
         s.AddApplicationInsightsTelemetryWorkerService(options =>
         {

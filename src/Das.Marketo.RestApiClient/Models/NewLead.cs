@@ -58,8 +58,18 @@ namespace Das.Marketo.RestApiClient.Models
         public string PrimaryLocation { get; set; }
         [DataMember(Name = "personOrigin", EmitDefaultValue = false)]
         public string PersonOrigin { get; set; }
+        [DataMember(Name = "employerAccountId", EmitDefaultValue = false)]
+        public string EmployerAccountId { get; set; }
+        [DataMember(Name = "stageCompleted", EmitDefaultValue = false)]
+        public int StageCompleted { get; set; }
+        [DataMember(Name = "stageCompletedText", EmitDefaultValue = false)]
+        public string StageCompletedText { get; set; }
+        [DataMember(Name = "totalStages", EmitDefaultValue = false)]
+        public int TotalStages { get; set; }
+        [DataMember(Name = "dateOfEvent", EmitDefaultValue = false)]
+        public DateTime DateOfEvent { get; set; }
         [DataMember(Name = "appsgovSignUpDate", EmitDefaultValue = false)]
-        public DateTime AppsgovSignUpDate { get; set; }
+        public DateTime? AppsgovSignUpDate { get; set; }
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
