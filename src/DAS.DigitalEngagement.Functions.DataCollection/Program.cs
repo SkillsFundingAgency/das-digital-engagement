@@ -10,9 +10,11 @@ using Das.Marketo.RestApiClient.Configuration;
 using Microsoft.Extensions.Hosting;
 using DAS.DigitalEngagement.Functions.DataCollection.Extensions;
 
+[assembly: NServiceBusTriggerFunction("SFA.DAS.DigitalEngagement.Functions.DataCollection")]
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureAppConfiguration((hostBuilderContext, builder) => { builder.BuildDasConfiguration(); })
+    .ConfigureNServiceBus()
     .ConfigureLogging(logging =>
     {
         logging.AddFilter("Microsoft", LogLevel.Warning);

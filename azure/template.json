@@ -78,6 +78,9 @@
             "type": "string",
             "defaultValue": "TLS1_2"
         },
+        "serviceBusConnectionString": {
+            "type": "string"
+        },
         "logAnalyticsSubscriptionId": {
             "type": "string",
             "defaultValue": "[subscription().subscriptionId]"
@@ -470,6 +473,10 @@
                                 {
                                     "name": "EnvironmentName",
                                     "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus",
+                                    "value": "[parameters('serviceBusConnectionString')]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
