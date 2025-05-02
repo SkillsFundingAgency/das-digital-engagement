@@ -44,5 +44,16 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Services
                 }
             }
         }
+
+        public async Task PushEmployerRegistrationLead(UserData user)
+        {
+            var pushedLead = await _marketoLeadClient.PushEmployerRegistrationLead(_userDataMapping.MapEmployerRegistrationLeadFromUserData(user,
+                _marketoOptions.Value.RegisterInterestProgramConfiguration));
+
+            if (pushedLead.Success == false)
+            {
+                throw new Exception($"Unable to push employer registration lead to Marketo due to errors: {pushedLead.Errors}");
+            }
+        }
     }
 }

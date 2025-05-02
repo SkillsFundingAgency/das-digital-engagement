@@ -28,11 +28,6 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Mapping
 
             var newLead = new NewLead()
             {
-                EmployerAccountId = user.EmployerAccountId,
-                StageCompleted = user.StageCompleted,
-                StageCompletedText = user.StageCompletedText,
-                TotalStages = user.TotalStages,
-                DateOfEvent = user.DateOfEvent,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -42,6 +37,34 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Mapping
                 PrimaryLocation = user.PrimaryLocation,
                 PersonOrigin = user.PersonOrigin,
                 AppsgovSignUpDate = user.AppsgovSignUpDate,
+            };
+
+            newLeadRequest.Input.Add(newLead);
+
+            return newLeadRequest;
+        }
+
+        public PushEmployerRegistrationLeadToMarketoRequest MapEmployerRegistrationLeadFromUserData(UserData user,
+            RegisterInterestProgramConfiguration programConfiguration)
+        {
+
+            var newLeadRequest = new PushEmployerRegistrationLeadToMarketoRequest();
+
+            newLeadRequest.ProgramName = programConfiguration.ProgramName;
+            newLeadRequest.Source = programConfiguration.Source;
+            newLeadRequest.Reason = user.RouteId == "1" ? programConfiguration.CitizenReason : programConfiguration.EmployerReason;
+            newLeadRequest.LookupField = programConfiguration.LookupField;
+
+            newLeadRequest.Input = new List<EmployerRegistrationLead>();
+
+            var newLead = new EmployerRegistrationLead()
+            {
+                EmployerAccountId = user.EmployerAccountId,
+                StageCompleted = user.StageCompleted,
+                //StageCompletedText = user.StageCompletedText,
+                TotalStages = user.TotalStages,
+                DateOfEvent = user.DateOfEvent,
+                Email = user.Email,
             };
 
             newLeadRequest.Input.Add(newLead);
