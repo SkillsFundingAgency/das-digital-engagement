@@ -13,6 +13,8 @@ namespace Das.Marketo.RestApiClient.Interfaces
         Task<ResponseOfLead> Get(int id);
         [Post("/leads/push.json")]
         Task<ResponseOfPushLeadToMarketo> PushLead(PushLeadToMarketoRequest pushLead);
+        [Post("/leads/push.json")]
+        Task<ResponseOfPushLeadToMarketo> PushEmployerRegistrationLead(PushEmployerRegistrationLeadToMarketoRequest pushLead);
         [Post("/leads/{id}/associate.json")]
         Task<ResponseWithoutResult> AssociateLead(int id, [AliasAs("cookie")]string cookieId);
     }

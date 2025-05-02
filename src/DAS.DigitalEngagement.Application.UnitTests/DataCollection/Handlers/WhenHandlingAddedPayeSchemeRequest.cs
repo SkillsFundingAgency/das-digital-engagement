@@ -76,7 +76,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Handlers
 
             await _handler.Handle(addedPayeScheme);
 
-            _marketoService.Verify(x => x.PushLead(It.Is<UserData>(
+            _marketoService.Verify(x => x.PushEmployerRegistrationLead(It.Is<UserData>(
                 data => data.Email == employerUser.Email &&
                         data.StageCompleted == 2 &&
                         data.StageCompletedText == "Stage 2 - PAYE Added" &&

@@ -219,5 +219,18 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Services.Ma
             Assert.ThrowsAsync<Exception>(async () => await _marketoLeadService.PushLead(_employerUserData));
         }
 
+        [Test]
+        public async Task Then_EmployerRegistrationLead_Is_Pushed_Successfully()
+        {
+            _marketoLeadClient.Setup(s => s.PushEmployerRegistrationLead(It.IsAny<PushEmployerRegistrationLeadToMarketoRequest>()))
+                .ReturnsAsync(new ResponseOfPushLeadToMarketo(success: true)
+                {
+                    Result = new List<Lead> { new Lead { Id = 456 } }
+                });
+
+            await _marketoLeadService.PushEmployerRegistrationLead(_employerUserData);
+
+            _marketoLeadClient.Verify(x => x.PushEmployerRegistrationLead(It.IsAny<PushEmployerRegistrationLeadToMarketoRequest>()), Times.Once);
+        }
     }
 }

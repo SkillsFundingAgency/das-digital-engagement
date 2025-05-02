@@ -40,7 +40,7 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Handlers
                 DateOfEvent = DateTime.Now
             };
 
-            await _marketoService.PushLead(userData);
+            await _marketoService.PushEmployerRegistrationLead(userData);
         }
     }
 }
