@@ -75,7 +75,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.DataCollection.Handlers
 
             await _handler.Handle(upsertedUser);
 
-            _marketoService.Verify(x => x.PushLead(It.Is<UserData>(
+            _marketoService.Verify(x => x.PushEmployerRegistrationLead(It.Is<UserData>(
                 data => data.Email == employerUser.Email &&
                         data.StageCompleted == 1 &&
                         data.StageCompletedText == "Stage 1 - User details Completed" &&

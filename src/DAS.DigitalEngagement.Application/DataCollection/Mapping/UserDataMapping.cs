@@ -61,7 +61,7 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Mapping
             {
                 EmployerAccountId = user.EmployerAccountId,
                 StageCompleted = user.StageCompleted,
-                //StageCompletedText = user.StageCompletedText,
+                StageCompletedText = user.StageCompletedText,
                 TotalStages = user.TotalStages,
                 DateOfEvent = user.DateOfEvent,
                 Email = user.Email,

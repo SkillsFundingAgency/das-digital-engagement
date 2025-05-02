@@ -12,6 +12,8 @@ namespace Das.Marketo.RestApiClient.Models
         public long EmployerAccountId { get; set; }
         [DataMember(Name = "stageCompleted", EmitDefaultValue = false)]
         public int StageCompleted { get; set; }
+        [DataMember(Name = "stageCompletedText", EmitDefaultValue = false)]
+        public string StageCompletedText { get; set; }
         [DataMember(Name = "totalStages", EmitDefaultValue = false)]
         public int TotalStages { get; set; }
         [DataMember(Name = "dateOfEvent", EmitDefaultValue = false)]
