@@ -33,6 +33,7 @@ namespace DAS.DigitalEngagement.Application.DataCollection.Handlers
 
             var userData = new UserData
             {
+                EmployerAccountId = accountTaskListComplete.AccountId,
                 Email = employerUser.Email,
                 StageCompleted = 5,
                 StageCompletedText = "Stage 5 - Completed",
