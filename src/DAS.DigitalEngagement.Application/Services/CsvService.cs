@@ -25,7 +25,7 @@ namespace DAS.DigitalEngagement.Application.Services
 
             for (int i = 0; i < fields.Count; i++)
             {
-                config.Columns.Add(i,new ColumnValidatorConfiguration()
+                config.Columns.Add(i, new ColumnValidatorConfiguration()
                 {
                     Name = fields[i],
                     IsNumeric = false,
@@ -45,7 +45,7 @@ namespace DAS.DigitalEngagement.Application.Services
 
 
             return validationResult;
-            }
+        }
 
         public async Task<IList<dynamic>> ConvertToList(StreamReader personCsv)
         {
@@ -72,7 +72,7 @@ namespace DAS.DigitalEngagement.Application.Services
             using (var writer = new StringWriter())
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csv.Configuration.RegisterClassMap<PersonMap>();
+                csv.Context.RegisterClassMap<PersonMap>();
 
                 csv.WriteRecords(leads);
 
@@ -83,7 +83,7 @@ namespace DAS.DigitalEngagement.Application.Services
 
         public bool IsEmpty(StreamReader stream)
         {
-            
+
             stream.DiscardBufferedData();
             stream.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
 

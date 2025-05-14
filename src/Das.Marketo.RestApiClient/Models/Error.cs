@@ -24,7 +24,7 @@ namespace Das.Marketo.RestApiClient.Models
         /// </summary>
         /// <param name="code">Integer error code of the error (required).</param>
         /// <param name="message">Message describing the cause of the Error (required).</param>
-        public Error(int code = default(int), string message = default(string))
+        public Error(string code = default(string), string message = default(string))
         {
             // to ensure "code" is required (not null)
             if (code == null)
@@ -53,7 +53,7 @@ namespace Das.Marketo.RestApiClient.Models
         /// </summary>
         /// <value>Integer error code of the error</value>
         [DataMember(Name="code", EmitDefaultValue=false)]
-        public int Code { get; set; }
+        public string Code { get; set; }
 
         /// <summary>
         /// Message describing the cause of the Error

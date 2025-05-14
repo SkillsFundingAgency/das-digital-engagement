@@ -33,7 +33,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests
             var actual = _personMapping.Map(_employerUser);
 
             //Assert
-            Assert.AreEqual(_employerUser.Email, actual.Email);
+            Assert.That(actual.Email, Is.EqualTo(_employerUser.Email));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests
             var actual = _personMapping.Map(_employerUser);
 
             //Assert
-            Assert.AreEqual(_employerUser.FirstName, actual.FirstName);
+            Assert.That(actual.FirstName, Is.EqualTo(_employerUser.FirstName));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace DAS.DigitalEngagement.Models.UnitTests
             var actual = _personMapping.Map(_employerUser);
 
             //Assert
-            Assert.AreEqual(_employerUser.LastName, actual.LastName);
+            Assert.That(actual.LastName, Is.EqualTo(_employerUser.LastName));
         }
     }
 }

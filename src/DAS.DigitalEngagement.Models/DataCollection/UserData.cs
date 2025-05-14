@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 namespace DAS.DigitalEngagement.Models.DataCollection
 {
     public class UserData
     {
+        public long EmployerAccountId { get; set; }
+        public int StageCompleted { get; set; }
+        public string StageCompletedText { get; set; }
+        public int TotalStages { get; set; }
+        public DateTime DateOfEvent { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string UkEmployerSize { get; set; }
         public string PrimaryIndustry { get; set; }
         public string PrimaryLocation { get; set; }
-        public DateTime AppsgovSignUpDate { get; set; }
+        public DateTime? AppsgovSignUpDate { get; set; }
         public string PersonOrigin { get; set; }
         public string EncodedEmail { get; set; }
         public bool Consent { get; set; }

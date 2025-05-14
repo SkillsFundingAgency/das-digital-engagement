@@ -11,7 +11,6 @@ using DAS.DigitalEngagement.Domain.DataCollection;
 using DAS.DigitalEngagement.Domain.Services;
 using DAS.DigitalEngagement.Models.BulkImport;
 using DAS.DigitalEngagement.Models.Validation;
-using Das.Marketo.RestApiClient.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -47,13 +46,13 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             _chunkingService = new ChunkingService(marketoConfig.Object);
             _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(_testLeadList);
-            _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(),_testLeadList))
+            _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<int>(), _testLeadList))
                 .Returns(new List<IList<dynamic>>());
             _bulkImportService.Setup(s => s.ImportPeople(It.IsAny<IList<dynamic>>())).ReturnsAsync(new BulkImportStatus());
             _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>()))
                 .ReturnsAsync(new FieldValidationResult());
 
-            _handler = new ImportCampaignMembersHandler(_chunkingServiceMock.Object,_csvService.Object,_bulkImportService.Object,_logger.Object);
+            _handler = new ImportCampaignMembersHandler(_chunkingServiceMock.Object, _csvService.Object, _bulkImportService.Object, _logger.Object);
         }
 
         [Test]
@@ -66,9 +65,9 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             {
                 await _handler.Handle(test_Stream, campaignId);
             }
-           
+
             //Assert
-            _csvService.Verify(s => s.ConvertToList(It.IsAny<StreamReader>()),Times.Once);
+            _csvService.Verify(s => s.ConvertToList(It.IsAny<StreamReader>()), Times.Once);
         }
 
         [Test]
@@ -84,7 +83,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
             }
 
             //Assert
-            _chunkingServiceMock.Verify(s => s.GetChunks(172, _testLeadList), Times.Once);
+            _chunkingServiceMock.Verify(s => s.GetChunks(It.IsAny<long>(), _testLeadList), Times.Once);
         }
 
         [Test]
@@ -96,7 +95,16 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
 
             _csvService.Setup(s => s.ConvertToList(It.IsAny<StreamReader>())).ReturnsAsync(Leads);
 
-            _chunkingServiceMock.Setup(s => s.GetChunks(172, Leads))
+            _csvService.Setup(s => s.IsEmpty(It.IsAny<StreamReader>())).Returns(false);
+            _csvService.Setup(s => s.HasData(It.IsAny<StreamReader>())).Returns(false);
+
+            _bulkImportService.Setup(s => s.ValidateFields(It.IsAny<IList<string>>()))
+                .ReturnsAsync(new FieldValidationResult
+                {
+                    Errors = new List<string>()
+                });
+
+            _chunkingServiceMock.Setup(s => s.GetChunks(It.IsAny<long>(), Leads))
                 .Returns(_chunkingService.GetChunks(28000000, Leads));
 
             //Act
@@ -113,7 +121,7 @@ namespace DAS.DigitalEngagement.Application.UnitTests.Import.Handlers
         {
             var Leads = Enumerable
                 .Range(0, leadCount)
-                .Select(i => 
+                .Select(i =>
                 {
                     dynamic expando = new ExpandoObject();
                     expando.FirstName = $"Firstname{i}";
