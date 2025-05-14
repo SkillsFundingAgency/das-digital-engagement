@@ -16,9 +16,11 @@ public static partial class ConfigureNServiceBusExtension
 
             endpointConfiguration.AdvancedConfiguration.EnableInstallers();
 
+            TimeSpan regexTimeout = TimeSpan.FromSeconds(1);
+
             endpointConfiguration.AdvancedConfiguration.Conventions()
-                .DefiningCommandsAs(t => Regex.IsMatch(t.Name, "Command(V\\d+)?$"))
-                .DefiningEventsAs(t => Regex.IsMatch(t.Name, "Event(V\\d+)?$"));
+                .DefiningCommandsAs(t => Regex.IsMatch(t.Name, "Command(V\\d+)?$", RegexOptions.None, regexTimeout))
+                .DefiningEventsAs(t => Regex.IsMatch(t.Name, "Event(V\\d+)?$", RegexOptions.None, regexTimeout));
 
             endpointConfiguration.AdvancedConfiguration.SendFailedMessagesTo(ErrorEndpointName);
 
