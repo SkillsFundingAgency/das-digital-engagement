@@ -34,6 +34,8 @@ var host = new HostBuilder()
         s.AddTransient<IRegisterHandler, RegisterHandler>();
         s.AddTransient<IUpsertedUserHandler, UpsertedUserHandler>();
         s.AddTransient<IAddedPayeSchemeHandler, AddedPayeSchemeHandler>();
+        s.AddTransient<ICreatedAccountTaskListCompleteHandler, CreatedAccountTaskListCompleteHandler>();
+        s.AddTransient<ICreatedAccountTaskListCompleteValidator, CreatedAccountTaskListCompleteValidator>();
         s.AddTransient<IChangedAccountNameHandler, ChangedAccountNameHandler>();
         s.AddTransient<ISignedAgreementHandler, SignedAgreementHandler>();
         s.AddTransient<IUserDataValidator, UserDataValidator>();
