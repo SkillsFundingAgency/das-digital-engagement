@@ -112,7 +112,7 @@ namespace Das.Marketo.RestApiClient.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object input)
         {
-            return this.Equals(input as PushLeadToMarketoRequest);
+            return this.Equals(input as PushEmployerRegistrationLeadToMarketoRequest);
         }
 
         /// <summary>
