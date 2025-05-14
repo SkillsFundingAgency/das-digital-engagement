@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.3195" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAS.DigitalEngagement.Models\DAS.DigitalEngagement.Models.csproj" />
     <ProjectReference Include="..\Das.Marketo.RestApiClient\Das.Marketo.RestApiClient.csproj" />

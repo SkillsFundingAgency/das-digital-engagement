@@ -59,7 +59,7 @@ namespace Das.Marketo.RestApiClient.Models
         [DataMember(Name = "personOrigin", EmitDefaultValue = false)]
         public string PersonOrigin { get; set; }
         [DataMember(Name = "appsgovSignUpDate", EmitDefaultValue = false)]
-        public DateTime AppsgovSignUpDate { get; set; }
+        public DateTime? AppsgovSignUpDate { get; set; }
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>

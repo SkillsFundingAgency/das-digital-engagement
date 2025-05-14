@@ -22,6 +22,7 @@
     <PackageReference Include="SFA.DAS.EmployerUsers.Api.Types" Version="1.1.338" />
     <PackageReference Include="System.Net.Requests" Version="4.3.0" />
     <PackageReference Include="Threenine.LinqToCsv" Version="1.6.0" />
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Messages" Version="1.6.3195" />
   </ItemGroup>
 
   <ItemGroup>
