@@ -27,8 +27,6 @@ namespace DAS.DigitalEngagement.Functions.DataCollection
                 var userData = JsonConvert.DeserializeObject<UserData>(message);
 
                 await _registerHandler.Handle(userData);
-
-                _logger.LogTrace($"C# Queue trigger function processed message: {message}");
             }
             catch (Exception e)
             {
