@@ -11,10 +11,6 @@
         "serviceName": {
             "type": "string"
         },
-        "configName": {
-            "type": "string",
-            "defaultValue": "SFA.DAS.DigitalEngagement"
-        },
         "deployStubFunctions": {
             "type": "bool",
             "defaultValue": false
@@ -43,10 +39,6 @@
         },
         "storageKind": {
             "type": "string"
-        },
-        "functionsExtensionVersion": {
-            "type": "string",
-            "defaultValue": "~3"
         },
         "loggingRedisConnectionString": {
             "type": "securestring"
@@ -86,6 +78,32 @@
             "type": "string",
             "defaultValue": "TLS1_2"
         },
+        "serviceBusConnectionString": {
+            "type": "string"
+        },
+        "logAnalyticsSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        },
+        "sharedManagementResourceGroup": {
+            "type": "string"
+        },
+        "EnableRouteTableAssociation": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
+        "SharedRouteTableName": {
+            "type": "string",
+            "metadata": {
+                "description": "Determines whether to enable route table association on subnet"
+            }
+        },
         "deployPrivateLinkedScopedResource": {
             "type": "bool"
         }
@@ -100,6 +118,13 @@
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
         "storageContainerNames": [ "import-person", "import-campaign-members" ],
         "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
+        "configName": "SFA.DAS.DigitalEngagement",
+        "employerUsersImportSchedule": "0 */5 * * * *",
+        "dataMartImportSchedule": "0 0 4 * * *",
+        "routeTableId": {
+            "id": "[resourceId(subscription().subscriptionId, parameters('sharedEnvResourceGroup'), 'Microsoft.Network/routeTables', parameters('SharedRouteTableName'))]"
+        },
+        "emptyObject": {},
         "privateLinkScopeName": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-shared-ampls'))]"
     },
     "resources": [
@@ -138,6 +163,9 @@
                     },
                     "delegations": {
                         "value": "[parameters('subnetDelegations')]"
+                    },
+                    "routeTable": {
+                        "value": "[if(parameters('enableRouteTableAssociation'), variables('routeTableId') , variables('emptyObject'))]"
                     }
                 }
             }
@@ -210,6 +238,9 @@
                     },
                     "attachedService": {
                         "value": "[variables('functionAppName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
                     }
                 }
             },
@@ -244,6 +275,58 @@
         },
         {
             "apiVersion": "2021-04-01",
+            "name": "[concat(variables('stubFunctionAppName'), '-application-insights-', parameters('utcValue'))]",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[variables('stubFunctionAppName')]"
+                    },
+                    "attachedService": {
+                        "value": "[variables('stubFunctionAppName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
+        },
+        {
+            "condition": "[parameters('deployPrivateLinkedScopedResource')]",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(variables('stubFunctionAppName'), '-private-link-scoped-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'private-linked-scoped-resource.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "privateLinkScopeName": {
+                        "value": "[variables('privateLinkScopeName')]"
+                    },
+                    "scopedResourceName": {
+                        "value": "[variables('stubFunctionAppName')]"
+                    },
+                    "scopedResourceId": {
+                        "value": "[reference(concat(variables('stubFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.AppInsightsResourceId.value]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
             "name": "[concat(variables('importFunctionAppName'), '-application-insights-', parameters('utcValue'))]",
             "resourceGroup": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/deployments",
@@ -259,6 +342,9 @@
                     },
                     "attachedService": {
                         "value": "[variables('importFunctionAppName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
                     }
                 }
             },
@@ -396,6 +482,9 @@
                     "appServicePlanResourceGroup": {
                         "value": "[variables('resourceGroupName')]"
                     },
+                    "netFrameworkVersion": {
+                        "value": "v8.0"
+                    },
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
                     },
@@ -407,11 +496,19 @@
                             "array": [
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "[parameters('functionsExtensionVersion')]"
+                                    "value": "~4"
+                                },
+                                {
+                                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                                    "value": "dotnet-isolated"
                                 },
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+                                {
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('stubFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 }
                             ]
                         }
@@ -444,6 +541,9 @@
                     "appServicePlanResourceGroup": {
                         "value": "[variables('resourceGroupName')]"
                     },
+                    "netFrameworkVersion": {
+                        "value": "v8.0"
+                    },
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
                     },
@@ -458,20 +558,24 @@
                                     "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('functionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "[parameters('functionsExtensionVersion')]"
+                                    "value": "~4"
                                 },
                                 {
                                     "name": "ConfigName",
-                                    "value": "[parameters('configName')]"
+                                    "value": "[variables('configName')]"
                                 },
                                 {
                                     "name": "EnvironmentName",
                                     "value": "[parameters('environmentName')]"
+                                },
+                                {
+                                    "name": "AzureWebJobsServiceBus",
+                                    "value": "[parameters('serviceBusConnectionString')]"
                                 },
                                 {
                                     "name": "ConfigurationStorageConnectionString",
@@ -483,11 +587,19 @@
                                 },
                                 {
                                     "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
+                                    "value": "dotnet-isolated"
                                 },
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+                                {
+                                    "name": "EmployerUsersImportSchedule",
+                                    "value": "[variables('employerUsersImportSchedule')]"
+                                },
+                                {
+                                    "name": "DataMartImportSchedule",
+                                    "value": "[variables('dataMartImportSchedule')]"
                                 }
                             ]
                         }
@@ -520,6 +632,9 @@
                     "appServicePlanResourceGroup": {
                         "value": "[variables('resourceGroupName')]"
                     },
+                    "netFrameworkVersion": {
+                        "value": "v8.0"
+                    },
                     "subnetResourceId": {
                         "value": "[reference(concat(parameters('subnetObject').name, '-', parameters('utcValue'))).outputs.subnetResourceId.value]"
                     },
@@ -534,16 +649,16 @@
                                     "value": "[reference(concat(variables('storageAccountName'), '-', parameters('utcValue'))).outputs.storageConnectionString.value]"
                                 },
                                 {
-                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference(concat(variables('importFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                    "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                                    "value": "[reference(concat(variables('importFunctionAppName'), '-application-insights-', parameters('utcValue'))).outputs.ConnectionString.value]"
                                 },
                                 {
                                     "name": "FUNCTIONS_EXTENSION_VERSION",
-                                    "value": "[parameters('functionsExtensionVersion')]"
+                                    "value": "~4"
                                 },
                                 {
                                     "name": "ConfigName",
-                                    "value": "[parameters('configName')]"
+                                    "value": "[variables('configName')]"
                                 },
                                 {
                                     "name": "EnvironmentName",
@@ -559,7 +674,7 @@
                                 },
                                 {
                                     "name": "FUNCTIONS_WORKER_RUNTIME",
-                                    "value": "dotnet"
+                                    "value": "dotnet-isolated"
                                 },
                                 {
                                     "name": "LoggingRedisConnectionString",
@@ -568,6 +683,14 @@
                                 {
                                     "name": "WEBSITE_RUN_FROM_PACKAGE",
                                     "value": "1"
+                                },
+                                {
+                                    "name": "EmployerUsersImportSchedule",
+                                    "value": "[variables('employerUsersImportSchedule')]"
+                                },
+                                {
+                                    "name": "DataMartImportSchedule",
+                                    "value": "[variables('dataMartImportSchedule')]"
                                 }
                             ]
                         }
@@ -577,6 +700,69 @@
             "dependsOn": [
                 "[variables('resourceGroupName')]",
                 "[concat(variables('appServicePlanName'), '-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "apiVersion": "2022-09-01",
+            "name": "[concat(variables('functionAppName'), '-cors-policies-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'cors-policy.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('functionAppName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('functionAppName'), '-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "apiVersion": "2022-09-01",
+            "name": "[concat(variables('stubFunctionAppName'), '-cors-policies-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'cors-policy.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('stubFunctionAppName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('stubFunctionAppName'), '-', parameters('utcValue'))]"
+            ]
+        },
+        {
+            "apiVersion": "2022-09-01",
+            "name": "[concat(variables('importFunctionAppName'), '-cors-policies-', parameters('utcValue'))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'cors-policy.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[variables('importFunctionAppName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('importFunctionAppName'), '-', parameters('utcValue'))]"
             ]
         }
     ],

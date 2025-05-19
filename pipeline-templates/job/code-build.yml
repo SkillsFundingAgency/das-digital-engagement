@@ -1,58 +1,62 @@
+parameters:
+  SolutionBaseName:
+  BuildConfiguration:
+
 jobs:
 - job: CodeBuild
   pool:
-    name: DAS - Continuous Integration
-    demands: Agent.OS -equals Windows_NT
-  workspace:
-    clean: all
+    name: DAS - Continuous Integration Agents
+    workspace:
+      clean: all
   variables:
-  - name: buildConfiguration
-    value: 'release'
-  - name: buildPlatform
-    value: 'anycpu'
   - group: BUILD Management Resources
-
   steps:
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
     parameters:
-      SonarCloudProjectKey: SkillsFundingAgency_das-digital-engagement
       ContinueOnVulnerablePackageScanError: true
 
   - task: DotNetCoreCLI@2
-    displayName: 'Publish DataCollection Function'
+    displayName: Publish - dotnet publish DataCollection Function
     inputs:
       command: publish
-      publishWebProjects: false
-      projects: 'src/DAS.DigitalEngagement.DataCollectionSubscribe.Function/DAS.DigitalEngagement.Functions.DataCollection.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
-
+      publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
+      projects: src/${{ parameters.SolutionBaseName }}.DataCollection/${{ parameters.SolutionBaseName }}.DataCollection.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+  
   - task: DotNetCoreCLI@2
-    displayName: 'Publish Stub Function'
+    displayName: Publish - dotnet publish Stub Function
     inputs:
       command: publish
-      publishWebProjects: false
-      projects: 'src/DAS.DigitalEngagement.DataCollectionStub.Function/DAS.DigitalEngagement.Functions.DataCollectionStub.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
-
+      publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
+      projects: src/${{ parameters.SolutionBaseName }}.DataCollectionStub/${{ parameters.SolutionBaseName }}.DataCollectionStub.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
+  
   - task: DotNetCoreCLI@2
-    displayName: 'Publish Csv Import'
+    displayName: Publish - dotnet publish Csv Import
     inputs:
       command: publish
-      publishWebProjects: false
-      projects: 'src/DAS.DigitalEngagement.Functions.ImportCsv/DAS.DigitalEngagement.Functions.Import.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish'
+      publishWebProjects: false #set to false as this setting (which defaults to true) will parse the entire repo for web projects
+      projects: src/${{ parameters.SolutionBaseName }}.Import/${{ parameters.SolutionBaseName }}.Import.csproj
+      arguments: -o $(build.artifactstagingdirectory)/publish -c ${{ parameters.BuildConfiguration }} --no-build
+      modifyOutputPath: true
+      zipAfterPublish: true
 
   - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    displayName: Copy Files to $(build.artifactstagingdirectory)/publish
     inputs:
       Contents: |
         azure/**
-      TargetFolder: '$(build.artifactstagingdirectory)/publish'
+      TargetFolder: $(build.artifactstagingdirectory)/publish
       OverWrite: true
 
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact'
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Build Artifact
     inputs:
-      PathtoPublish: '$(build.artifactstagingdirectory)/publish'
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: ${{ parameters.SolutionBaseName }}
