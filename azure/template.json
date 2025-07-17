@@ -106,6 +106,10 @@
         },
         "deployPrivateLinkedScopedResource": {
             "type": "bool"
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false
         }
     },
     "variables": {
@@ -116,7 +120,10 @@
         "functionAppName": "[concat(variables('resourcePrefix'),'-data-fa')]",
         "importFunctionAppName": "[concat(variables('resourcePrefix'),'-import-fa')]",
         "storageAccountName": "[concat('das',toLower(parameters('resourceEnvironmentName')),parameters('serviceName'),'str')]",
-        "storageContainerNames": [ "import-person", "import-campaign-members" ],
+        "storageContainerNames": [
+            "import-person",
+            "import-campaign-members"
+        ],
         "resourceGroupName": "[concat(variables('resourcePrefix'), '-rg')]",
         "configName": "SFA.DAS.DigitalEngagement",
         "employerUsersImportSchedule": "0 */5 * * * *",
@@ -134,8 +141,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "location": "[parameters('resourceGroupLocation')]",
             "tags": "[parameters('tags')]",
-            "properties": {
-            }
+            "properties": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -452,7 +458,6 @@
                     },
                     "policyRules": {
                         "value": "[parameters('policyRules')]"
-
                     }
                 }
             },
@@ -512,6 +517,9 @@
                                 }
                             ]
                         }
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             },
@@ -603,6 +611,9 @@
                                 }
                             ]
                         }
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             },
@@ -694,6 +705,9 @@
                                 }
                             ]
                         }
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             },
