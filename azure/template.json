@@ -37,9 +37,6 @@
                 "description": "A list of management policy rules"
             }
         },
-        "storageKind": {
-            "type": "string"
-        },
         "loggingRedisConnectionString": {
             "type": "securestring"
         },
@@ -399,7 +396,7 @@
                         "value": "[variables('storageAccountName')]"
                     },
                     "storageKind": {
-                        "value": "[parameters('storageKind')]"
+                        "value": "StorageV2"
                     },
                     "allowSharedKeyAccess": {
                         "value": true
