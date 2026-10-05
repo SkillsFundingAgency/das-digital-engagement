@@ -6,6 +6,8 @@
 
 A collection of Azure Functions which allow lead information to be imported into Marketo (SaaS Digital Engagement platform).  There are two main ways in which lead information is imported.  Firstly, via a manual CSV file upload, and secondly via an automated upload of employer leads taken from the service.
 
+**Built with:** .NET 10
+
 ### CSV upload
 
 A CSV file containing lead information can be uploaded to BLOB storage, which triggers an Azure function.  The function validates the CSV file and uploads it to Marketo.  A report is created (again, in BLOB storage) which details any issues in processing the import.  Such imports are adhoc, and the data in Marketo will only be updated again as and when an updated CSV file is uploaded for processing.
@@ -15,6 +17,15 @@ A CSV file containing lead information can be uploaded to BLOB storage, which tr
 An Azure function runs on a schedule (CRON), and on each execution all employer lead information is read from the Apprenticeship Service and imported into Marketo (whole dataset each time, not deltas).  As this is run on a schedule, on-service employer leads are always up to date in Marketo.  The import populates two items in Marketo, the out the box Lead object, and also a custom object to hold extended attributes.  A report is created (again, in BLOB storage) which details any issues in processing the import.
 
 ## Running locally
+
+### Prerequisites
+
+- **.NET 10 SDK** - Required to build and run the solution locally
+- **Azure Functions Core Tools** (v4.x or later) - For local Azure Functions development
+- **Azure Storage Emulator** or **Azurite** - For local blob and table storage emulation
+- **Visual Studio 2026** or later (recommended) or **Visual Studio Code** with C# Dev Kit extension
+
+### Setup Instructions
 
 In order to run this repo locally, you will need follow the standard Microsoft instructions for running any Azure Functions locally - this is a prerequisite.  Additionally, you will require local Storage Account emulation, and  will need a local.settings.json with appropriate values.
 
